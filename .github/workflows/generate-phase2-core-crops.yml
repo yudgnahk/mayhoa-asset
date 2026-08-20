@@ -1,0 +1,48 @@
+name: Generate Phase 2 core crop assets
+
+on:
+  push:
+    branches:
+      - phase2-core-crops
+    paths:
+      - scripts/generate_phase2_core_crops.py
+      - .github/workflows/generate-phase2-core-crops.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v4
+        with:
+          ref: phase2-core-crops
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install deterministic image dependency
+        run: python -m pip install Pillow==11.3.0
+
+      - name: Generate and verify assets
+        run: python scripts/generate_phase2_core_crops.py --root .
+
+      - name: Commit generated Phase 2 pack
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add masters/farm/crops runtime/1x/farm/crops runtime/core_crops_v01.json
+          if git diff --cached --quiet; then
+            echo "No generated changes."
+            exit 0
+          fi
+          git commit -m "assets: add core crop growth stages [skip ci]"
+          git push origin HEAD:phase2-core-crops
