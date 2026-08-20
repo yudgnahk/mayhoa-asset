@@ -1,0 +1,180 @@
+{
+  "format": "mayhoa-core-crops-atlas-v1",
+  "image": "1x/farm/crops/core_crops_v01.png",
+  "cellSize": {
+    "w": 192,
+    "h": 192
+  },
+  "masterCanvas": {
+    "w": 512,
+    "h": 512
+  },
+  "placementAnchor": {
+    "x": 0.5,
+    "y": 0.684
+  },
+  "crops": [
+    "rice",
+    "corn",
+    "carrot"
+  ],
+  "stageOrder": [
+    "stage-01_seeded",
+    "stage-02_sprout",
+    "stage-03_young",
+    "stage-04_mature",
+    "stage-05_harvestable"
+  ],
+  "frames": {
+    "rice_stage-01_seeded": {
+      "x": 0,
+      "y": 0,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.684
+      }
+    },
+    "rice_stage-02_sprout": {
+      "x": 192,
+      "y": 0,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.684
+      }
+    },
+    "rice_stage-03_young": {
+      "x": 384,
+      "y": 0,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.684
+      }
+    },
+    "rice_stage-04_mature": {
+      "x": 576,
+      "y": 0,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.684
+      }
+    },
+    "rice_stage-05_harvestable": {
+      "x": 768,
+      "y": 0,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.684
+      }
+    },
+    "corn_stage-01_seeded": {
+      "x": 0,
+      "y": 192,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.684
+      }
+    },
+    "corn_stage-02_sprout": {
+      "x": 192,
+      "y": 192,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.684
+      }
+    },
+    "corn_stage-03_young": {
+      "x": 384,
+      "y": 192,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.684
+      }
+    },
+    "corn_stage-04_mature": {
+      "x": 576,
+      "y": 192,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.684
+      }
+    },
+    "corn_stage-05_harvestable": {
+      "x": 768,
+      "y": 192,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.684
+      }
+    },
+    "carrot_stage-01_seeded": {
+      "x": 0,
+      "y": 384,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.684
+      }
+    },
+    "carrot_stage-02_sprout": {
+      "x": 192,
+      "y": 384,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.684
+      }
+    },
+    "carrot_stage-03_young": {
+      "x": 384,
+      "y": 384,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.684
+      }
+    },
+    "carrot_stage-04_mature": {
+      "x": 576,
+      "y": 384,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.684
+      }
+    },
+    "carrot_stage-05_harvestable": {
+      "x": 768,
+      "y": 384,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.684
+      }
+    }
+  }
+}
