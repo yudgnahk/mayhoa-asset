@@ -1,0 +1,49 @@
+name: Install painted Phase 2 from staged payload
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+
+jobs:
+  install:
+    if: github.event.issue.title == '[automation] install painted phase2'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out master
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+
+      - name: Fetch staged payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin phase2-painted-final
+          git show origin/phase2-painted-final:.phase2-painted/payload.tar.gz > /tmp/phase2-painted-assets.tar.gz
+          test -s /tmp/phase2-painted-assets.tar.gz
+
+      - name: Install and verify painted assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          tar -xzf /tmp/phase2-painted-assets.tar.gz
+          test -s masters/farm/soil/soil_empty_v01.png
+          test -s runtime/1x/farm/crops/core_crops_v01.png
+          test "$(find masters/farm/crops -type f -name '*_v01.png' | wc -l)" -eq 15
+          rm -f scripts/generate_phase2_core_crops.py
+          rm -f .github/workflows/generate-phase2-core-crops.yml
+          rm -f .github/workflows/install-painted-phase2-from-issue.yml
+
+      - name: Commit to master
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "assets: replace Phase 2 with painted crop art [skip ci]"
+          git push origin HEAD:master
