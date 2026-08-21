@@ -1,0 +1,26 @@
+{
+  "format": "mayhoa-herb-crops-atlas-v1",
+  "image": "1x/farm/crops/herb_crops_v01.png",
+  "cellSize": {"w": 192, "h": 192},
+  "masterCanvas": {"w": 512, "h": 512},
+  "placementAnchor": {"x": 0.5, "y": 0.684},
+  "crops": ["thien-ly", "ngo-gai", "mint"],
+  "stageOrder": ["stage-01_seeded", "stage-02_sprout", "stage-03_young", "stage-04_mature", "stage-05_harvestable"],
+  "frames": {
+    "thien-ly_stage-01_seeded": {"x":0,"y":0,"w":192,"h":192,"anchor":{"x":0.5,"y":0.684}},
+    "thien-ly_stage-02_sprout": {"x":192,"y":0,"w":192,"h":192,"anchor":{"x":0.5,"y":0.684}},
+    "thien-ly_stage-03_young": {"x":384,"y":0,"w":192,"h":192,"anchor":{"x":0.5,"y":0.684}},
+    "thien-ly_stage-04_mature": {"x":576,"y":0,"w":192,"h":192,"anchor":{"x":0.5,"y":0.684}},
+    "thien-ly_stage-05_harvestable": {"x":768,"y":0,"w":192,"h":192,"anchor":{"x":0.5,"y":0.684}},
+    "ngo-gai_stage-01_seeded": {"x":0,"y":192,"w":192,"h":192,"anchor":{"x":0.5,"y":0.684}},
+    "ngo-gai_stage-02_sprout": {"x":192,"y":192,"w":192,"h":192,"anchor":{"x":0.5,"y":0.684}},
+    "ngo-gai_stage-03_young": {"x":384,"y":192,"w":192,"h":192,"anchor":{"x":0.5,"y":0.684}},
+    "ngo-gai_stage-04_mature": {"x":576,"y":192,"w":192,"h":192,"anchor":{"x":0.5,"y":0.684}},
+    "ngo-gai_stage-05_harvestable": {"x":768,"y":192,"w":192,"h":192,"anchor":{"x":0.5,"y":0.684}},
+    "mint_stage-01_seeded": {"x":0,"y":384,"w":192,"h":192,"anchor":{"x":0.5,"y":0.684}},
+    "mint_stage-02_sprout": {"x":192,"y":384,"w":192,"h":192,"anchor":{"x":0.5,"y":0.684}},
+    "mint_stage-03_young": {"x":384,"y":384,"w":192,"h":192,"anchor":{"x":0.5,"y":0.684}},
+    "mint_stage-04_mature": {"x":576,"y":384,"w":192,"h":192,"anchor":{"x":0.5,"y":0.684}},
+    "mint_stage-05_harvestable": {"x":768,"y":384,"w":192,"h":192,"anchor":{"x":0.5,"y":0.684}}
+  }
+}
