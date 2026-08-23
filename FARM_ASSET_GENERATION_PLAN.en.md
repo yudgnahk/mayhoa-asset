@@ -365,8 +365,8 @@ Examples:
 ```text
 rice_stage-01_seeded_v01.png
 rice_stage-05_harvestable_v01.png
-mango_stage-01_sapling_v01.png
-mango_stage-04_fruiting_v01.png
+mango_stage-01_sprout_v01.png
+mango_stage-04_flowering_v01.png
 weed_small_v01.png
 pest_caterpillar_single_v01.png
 tool_watering-can_idle_v01.png
@@ -387,7 +387,7 @@ Generate representative states first:
 1. `soil_tilled`
 2. `rice_stage-05_harvestable`
 3. `corn_stage-05_harvestable`
-4. `mango_stage-04_fruiting`
+4. `mango_stage-05_fruiting`
 5. `weed_small_01`
 6. `caterpillar_single`
 7. `tool_watering-can_idle`
@@ -455,12 +455,13 @@ Generate:
 3. lemon
 4. star apple
 
-Four stages each:
+Five stages each:
 
+- sprout / early sapling
 - sapling
 - young
-- mature
-- fruiting/harvestable
+- flowering
+- fruiting / harvestable
 
 ---
 
@@ -543,8 +544,39 @@ The tool pack must be evaluated at UI interaction size, not using crop/tree worl
 Every phase follows this loop:
 
 ```text
-PLAN -> GENERATE -> REVIEW -> REVISE -> APPROVE -> OPTIMIZE -> COMMIT
+PLAN -> GENERATE -> REVIEW -> REVISE -> APPROVE -> SYNC -> VERIFY -> OPTIMIZE -> COMMIT
 ```
+
+### Asset sync transport
+
+Use Google Drive as the staging layer between ChatGPT and the local Mayhoa workspace.
+
+Canonical transport flow:
+
+```text
+ChatGPT generated/uploaded image
+-> upload to the Google Drive folder `Mayhoa`
+-> capture the Drive file ID
+-> download locally with authenticated `gws`
+-> verify MIME, dimensions, and image readability
+-> move/write to the intended `masters/...` path
+```
+
+For binary Drive files, the local download command is:
+
+```bash
+gws drive files get \
+  --params '{"fileId":"<DRIVE_FILE_ID>","alt":"media"}' \
+  --output <WORKSPACE_RELATIVE_DESTINATION>
+```
+
+Rules:
+
+- Do not require public Drive links; use the authenticated local `gws` session.
+- Do not rely on ChatGPT `openai/fileParams` for canonical asset transport.
+- Do not invoke local Codex, Codex CLI, `codex exec`, or any Codex-backed executor for asset syncing. CodexPro may only be used as a filesystem/shell bridge when needed.
+- Keep rejected or temporary transfer tests under `.ai-bridge/`; only approved assets belong under `masters/`.
+- Verify the downloaded file is the expected image type before accepting it into the canonical asset set.
 
 Do not start production for the next phase until the current phase passes acceptance criteria, unless an asset is explicitly exploratory and will not be merged into the canonical production set.
 
@@ -652,7 +684,7 @@ Generate seven representative assets:
 soil_tilled
 rice_stage-05_harvestable
 corn_stage-05_harvestable
-mango_stage-04_fruiting
+mango_stage-05_fruiting
 weed_small_01
 pest_caterpillar_single_v01
 tool_watering-can_idle_v01

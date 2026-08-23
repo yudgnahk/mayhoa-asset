@@ -365,8 +365,8 @@ Ví dụ:
 ```text
 rice_stage-01_seeded_v01.png
 rice_stage-05_harvestable_v01.png
-mango_stage-01_sapling_v01.png
-mango_stage-04_fruiting_v01.png
+mango_stage-01_sprout_v01.png
+mango_stage-04_flowering_v01.png
 weed_small_v01.png
 pest_caterpillar_single_v01.png
 tool_watering-can_idle_v01.png
@@ -387,7 +387,7 @@ Generate representative state trước:
 1. `soil_tilled`
 2. `rice_stage-05_harvestable`
 3. `corn_stage-05_harvestable`
-4. `mango_stage-04_fruiting`
+4. `mango_stage-05_fruiting`
 5. `weed_small_01`
 6. `caterpillar_single`
 7. `tool_watering-can_idle`
@@ -455,12 +455,13 @@ Generate:
 3. lemon
 4. star-apple
 
-Mỗi loại 4 stage:
+Mỗi loại 5 stage:
 
+- sprout / early sapling
 - sapling
 - young
-- mature
-- fruiting/harvestable
+- flowering
+- fruiting / harvestable
 
 ---
 
@@ -543,8 +544,39 @@ Tool pack cần được test ở UI interaction size riêng, không đánh giá
 Mỗi phase được thực hiện theo chu trình:
 
 ```text
-PLAN -> GENERATE -> REVIEW -> REVISE -> APPROVE -> OPTIMIZE -> COMMIT
+PLAN -> GENERATE -> REVIEW -> REVISE -> APPROVE -> SYNC -> VERIFY -> OPTIMIZE -> COMMIT
 ```
+
+### Asset sync transport
+
+Dùng Google Drive làm staging layer giữa ChatGPT và local Mayhoa workspace.
+
+Luồng transport chính thức:
+
+```text
+ChatGPT generated/uploaded image
+-> upload vào Google Drive folder `Mayhoa`
+-> lấy Drive file ID
+-> download về local bằng `gws` đã authenticated
+-> verify MIME, dimensions và image readability
+-> move/write vào đúng path `masters/...`
+```
+
+Với binary file trên Drive, dùng command local:
+
+```bash
+gws drive files get \
+  --params '{"fileId":"<DRIVE_FILE_ID>","alt":"media"}' \
+  --output <WORKSPACE_RELATIVE_DESTINATION>
+```
+
+Quy tắc:
+
+- Không cần public Drive link; dùng authenticated local `gws` session.
+- Không dựa vào ChatGPT `openai/fileParams` cho canonical asset transport.
+- Không invoke local Codex, Codex CLI, `codex exec` hoặc bất kỳ Codex-backed executor nào để sync asset. CodexPro chỉ được dùng như filesystem/shell bridge khi cần.
+- Giữ rejected asset hoặc transfer test tạm trong `.ai-bridge/`; chỉ approved asset mới được đưa vào `masters/`.
+- Phải verify downloaded file đúng image type mong đợi trước khi nhận vào canonical asset set.
 
 Không generate phase tiếp theo trước khi phase hiện tại đạt acceptance criteria, trừ khi asset chỉ được tạo thử nghiệm và không merge vào production set.
 
@@ -652,7 +684,7 @@ Generate 7 representative assets:
 soil_tilled
 rice_stage-05_harvestable
 corn_stage-05_harvestable
-mango_stage-04_fruiting
+mango_stage-05_fruiting
 weed_small_01
 pest_caterpillar_single_v01
 tool_watering-can_idle_v01
