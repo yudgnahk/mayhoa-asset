@@ -15,6 +15,7 @@ Build the foundational farm artwork set for direct use in the game, including:
 
 - soil plots and soil states;
 - short-cycle crops;
+- aquatic crops for pond / water-surface farming areas;
 - fruit trees and perennial plants;
 - weeds that appear on farm plots;
 - pests and infestation overlays;
@@ -38,6 +39,7 @@ Execution principles:
 farm/
   soil/
   crops/
+  aquatic-crops/
   trees/
   weeds/
   pests/
@@ -59,7 +61,17 @@ Short-cycle, low, or medium-height crops:
 - ngo-gai / culantro
 - mint
 
-### 2.3 `farm/trees`
+### 2.3 `farm/aquatic-crops`
+
+Aquatic or semi-aquatic crops planted on water slots rather than soil tiles:
+
+- lotus / sen (`Nelumbo nucifera`)
+- water mimosa / rau nhut (`Neptunia oleracea`)
+- water spinach / rau muong (`Ipomoea aquatica`)
+
+Plant artwork must stay separate from water surfaces, pond edges, and ripple FX so it can compose with a dedicated pond/water system.
+
+### 2.4 `farm/trees`
 
 Fruit trees and perennial plants:
 
@@ -74,15 +86,15 @@ Fruit trees and perennial plants:
 - rambutan
 - lychee
 
-### 2.4 `farm/weeds`
+### 2.5 `farm/weeds`
 
 Separate weed overlays placed together with crops on farm plots.
 
-### 2.5 `farm/pests`
+### 2.6 `farm/pests`
 
 Pests, bugs, and infestation overlays.
 
-### 2.6 `farm/tools`
+### 2.7 `farm/tools`
 
 - harvest hand
 - watering can
@@ -112,7 +124,23 @@ Characteristics:
 - readable at gameplay scale;
 - default 5-stage growth system.
 
-### 3.2 Fruit trees
+### 3.2 Aquatic crops
+
+```text
+lotus
+water-mimosa
+water-spinach
+```
+
+Characteristics:
+
+- anchor to a shared waterline / root origin rather than canvas center;
+- never bake water, pond edges, soil, or ripple FX into the plant sprite;
+- lotus uses a taller/wider silhouette while water mimosa and water spinach spread more horizontally;
+- foliage may extend slightly outside the visual slot, but the gameplay footprint must remain stable;
+- use the default 5-stage lifecycle, with real structural development rather than scaled copies.
+
+### 3.3 Fruit trees
 
 ```text
 mango
@@ -130,7 +158,7 @@ Characteristics:
 - fruit count only needs to be sufficient for species recognition;
 - consistent relative scale across the tree family.
 
-### 3.3 Special tropical structures
+### 3.4 Special tropical structures
 
 ```text
 coconut
@@ -139,7 +167,7 @@ dragon-fruit
 
 These require their own batch because their silhouettes differ strongly from conventional fruit trees.
 
-### 3.4 Industrial / perennial crops
+### 3.5 Industrial / perennial crops
 
 ```text
 coffee
@@ -164,18 +192,42 @@ stage-05_harvestable
 
 Every stage must change silhouette and structural complexity.
 
-### 4.2 Fruit trees / perennials — default 4 stages
+### 4.2 Aquatic crops — 5 stages
 
 ```text
-stage-01_sapling
-stage-02_young
-stage-03_mature
-stage-04_harvestable
+stage-01_planted
+stage-02_sprout
+stage-03_young
+stage-04_mature
+stage-05_harvestable
+```
+
+Visual state names may specialize by species. Lotus may use `stage-04_budding` and `stage-05_flowering`, while water mimosa and water spinach communicate maturity mainly through foliage density and spread.
+
+Lotus supports multiple harvest outputs from the same species:
+
+```text
+lotus_flower
+lotus_rhizome   # lotus root / cu sen
+lotus_stem      # ngo sen
+lotus_seed
+```
+
+These are gameplay/item IDs, not four independent lifecycle sprite sets. If gameplay needs separate harvest timing, add optional late-stage variants/overlays such as `flowering` or `seed-pod`. Inventory artwork for rhizome, stem, and seed belongs in a separate item/inventory pack. Submerged rhizomes must not be exposed in the normal world sprite.
+
+Water mimosa and water spinach primarily harvest tender stems/leaves. If gameplay later supports cut-and-regrow behavior, add a `regrowing` state outside the core 5-stage set.
+
+### 4.3 Fruit trees / perennials — default 5 stages
+
+```text
+stage-01_sprout
+stage-02_sapling
+stage-03_young
+stage-04_flowering-or-mature
+stage-05_harvestable
 ```
 
 `harvestable` may be represented as `fruiting`, `berry`, or `tapping` depending on the plant.
-
-If gameplay later needs a flowering state, add it as a separate stage rather than baking it into mature.
 
 ---
 
@@ -189,6 +241,7 @@ Do not ship master artwork directly as runtime textures.
 |---|---:|
 | Small crop / weed / pest | 512×512 |
 | Medium crop / herb | 768×768 |
+| Aquatic crop | 768×768; lotus may use 1024×1024 when extra canopy/flower breathing room is needed |
 | Tree / animal-sized farm asset | 1024×1024 |
 | Tall/special tree | 1024×1280 or square master with padding |
 | Tool icon | 512×512 |
@@ -198,15 +251,17 @@ Do not ship master artwork directly as runtime textures.
 | Class | Suggested display range | Typical use |
 |---|---:|---|
 | S | 64–96 px | weed, pest, tiny growth stage, small tool |
-| M | 128–160 px | rice, carrot, herbs, mature low crop |
-| L | 192–256 px | corn, coffee, dragon fruit |
+| M | 128–160 px | rice, carrot, herbs, water mimosa, water spinach, mature low crop |
+| L | 192–256 px | corn, coffee, dragon fruit, lotus |
 | XL | 256–384 px | mango, pomelo, coconut, rubber, fruit trees |
 
 Final runtime size may be tuned to camera and world scale, but perceived scale must stay consistent across related assets.
 
 ---
 
-## 6. Soil system
+## 6. Grounding / surface systems
+
+### 6.1 Soil system
 
 `farm/soil` is the visual calibration foundation for the whole farm set.
 
@@ -228,6 +283,21 @@ soil_harvested
 - footprint and camera angle remain fixed;
 - weeds and pests are not baked permanently into soil textures;
 - crop shadows must match the soil grounding system.
+
+### 6.2 Aquatic crop area
+
+The aquatic crop area is a shallow-water / pond farming surface for lotus, water mimosa, and water spinach.
+
+Rules:
+
+- `farm/aquatic-crops` contains plant artwork only;
+- water surfaces / pond tiles, pond edges, and ripple FX belong to a separate environment/water system and must not be baked into crop masters;
+- all stages of one species share the same waterline/root anchor so sprite replacement does not jump;
+- do not center plants by canvas; preserve a stable gameplay anchor;
+- contact ripples/shadows are optional overlays or runtime FX;
+- do not expose submerged rhizomes/roots in normal world sprites;
+- when sharing a pond with fish gameplay, foliage must not cover so much water that fish or interaction markers lose readability;
+- preserve the same camera angle, upper-left lighting, and perceived world scale as the rest of the farm.
 
 ---
 
@@ -326,6 +396,10 @@ masters/
       thien-ly/
       ngo-gai/
       mint/
+    aquatic-crops/
+      lotus/
+      water-mimosa/
+      water-spinach/
     trees/
       mango/
       pomelo/
@@ -472,7 +546,7 @@ Generate:
 1. rambutan
 2. lychee
 
-Four stages each.
+Five stages each, following the standard fruit-tree/perennial lifecycle.
 
 ---
 
@@ -482,6 +556,8 @@ Generate:
 
 1. coconut
 2. dragon fruit
+
+Five stages each; state names may specialize for each species structure.
 
 Each needs individual footprint and vertical-scale calibration while still following the shared world scale.
 
@@ -494,11 +570,34 @@ Generate:
 1. coffee
 2. rubber
 
+Five stages each, following the standard perennial lifecycle.
+
 Coffee harvest state should use berry focal points. Rubber harvest state may use a tapping representation if gameplay confirms that mechanic.
 
 ---
 
-# Phase 8 — Weed Pack
+# Phase 8 — Aquatic Crop Area Pack
+
+Generate full growth stages for:
+
+1. lotus
+2. water-mimosa
+3. water-spinach
+
+Five stages each.
+
+Specific acceptance requirements:
+
+- stable shared waterline/root anchor across every stage;
+- no baked water surface or pond edge in plant sprites;
+- final lotus stage reads clearly through leaves plus a flower or seed-pod focal point;
+- lotus gameplay mapping supports `lotus_flower`, `lotus_rhizome`, `lotus_stem`, and `lotus_seed` without requiring four independent lifecycles;
+- water mimosa and water spinach must remain visually distinct at runtime size;
+- test composition on at least one neutral water tile before approval.
+
+---
+
+# Phase 9 — Weed Pack
 
 Generate the full weed set:
 
@@ -510,7 +609,7 @@ Test overlays with at least rice, corn, carrot, and a fruit-tree plot when appli
 
 ---
 
-# Phase 9 — Pest Pack
+# Phase 10 — Pest Pack
 
 Generate:
 
@@ -525,7 +624,7 @@ Test on low foliage crops, tall crops, and tree foliage.
 
 ---
 
-# Phase 10 — Farming Tool Pack
+# Phase 11 — Farming Tool Pack
 
 Generate:
 
@@ -621,6 +720,7 @@ assets: add core fruit tree pack
 assets: add tropical fruit tree pack
 assets: add special tropical crops
 assets: add perennial crop pack
+assets: add aquatic crop area pack
 assets: add weed pack
 assets: add pest pack
 assets: add farming tool pack
@@ -643,12 +743,13 @@ Approximate initial production masters:
 
 - Soil: ~6
 - Field crops: ~30
-- Trees/perennials: ~40
+- Aquatic crops: ~15
+- Trees/perennials: ~50
 - Weeds: ~5
 - Pests: ~6
 - Tools: ~5
 
-Total: approximately **90+ master sprites**, excluding revisions and optional UI/animation variants.
+Total: approximately **115+ master sprites**, excluding revisions, harvest-item artwork, and optional UI/animation variants.
 
 ---
 
@@ -665,9 +766,10 @@ Phase 4  Core Fruit Tree Pack
 Phase 5  Tropical Fruit Tree Pack
 Phase 6  Special Structure Pack
 Phase 7  Industrial / Perennial Pack
-Phase 8  Weed Pack
-Phase 9  Pest Pack
-Phase 10 Farming Tool Pack
+Phase 8  Aquatic Crop Area Pack
+Phase 9  Weed Pack
+Phase 10 Pest Pack
+Phase 11 Farming Tool Pack
 ```
 
 After Phase 0 is approved, artwork should be generated sequentially in this order unless gameplay priority changes.

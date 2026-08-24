@@ -15,6 +15,7 @@ Xây dựng bộ artwork farm nền tảng có thể dùng trực tiếp trong g
 
 - ô đất và các trạng thái đất;
 - cây trồng ngắn ngày;
+- cây trồng thủy sinh cho khu vực mặt nước / ao;
 - cây ăn quả / cây lâu năm;
 - cỏ dại xuất hiện trên ô đất;
 - sâu, bọ và infestation overlays;
@@ -38,6 +39,7 @@ Nguyên tắc triển khai:
 farm/
   soil/
   crops/
+  aquatic-crops/
   trees/
   weeds/
   pests/
@@ -59,7 +61,17 @@ Cây trồng ngắn ngày / cây thấp hoặc trung bình:
 - ngo-gai / ngò gai
 - mint / bạc hà
 
-### 2.3 `farm/trees`
+### 2.3 `farm/aquatic-crops`
+
+Cây trồng thủy sinh hoặc bán thủy sinh, được trồng trên slot mặt nước thay vì soil tile:
+
+- lotus / sen (`Nelumbo nucifera`)
+- water-mimosa / rau nhút (`Neptunia oleracea`)
+- water-spinach / rau muống (`Ipomoea aquatica`)
+
+Artwork cây phải tách khỏi water surface, pond edge và ripple FX để có thể compose với hệ ao / mặt nước riêng.
+
+### 2.4 `farm/trees`
 
 Cây ăn quả và cây lâu năm:
 
@@ -74,15 +86,15 @@ Cây ăn quả và cây lâu năm:
 - rambutan / chôm chôm
 - lychee / vải
 
-### 2.4 `farm/weeds`
+### 2.5 `farm/weeds`
 
 Cỏ dại được render như overlay riêng và đặt chung với cây trên ô đất.
 
-### 2.5 `farm/pests`
+### 2.6 `farm/pests`
 
 Sâu, bọ, infestation overlays.
 
-### 2.6 `farm/tools`
+### 2.7 `farm/tools`
 
 - harvest hand / bàn tay thu hoạch
 - watering can / bình tưới
@@ -112,7 +124,23 @@ mint
 - đọc rõ ở gameplay size;
 - dùng growth system 5 stage mặc định.
 
-### 3.2 Fruit trees
+### 3.2 Aquatic crops
+
+```text
+lotus
+water-mimosa
+water-spinach
+```
+
+Đặc điểm:
+
+- anchor theo waterline / root-origin chung, không center theo canvas;
+- không bake nước, bờ ao, đất hoặc ripple vào sprite cây;
+- lotus có silhouette cao và rộng hơn, còn rau nhút / rau muống thiên về cụm ngang;
+- foliage có thể vượt nhẹ khỏi slot hình học nhưng gameplay footprint phải ổn định;
+- dùng growth system 5 stage, mỗi stage phải phát triển cấu trúc thật chứ không scale cùng một ảnh.
+
+### 3.3 Fruit trees
 
 ```text
 mango
@@ -130,7 +158,7 @@ lychee
 - fruit chỉ cần đủ để nhận diện species;
 - scale tương đối phải nhất quán giữa các tree.
 
-### 3.3 Special tropical structures
+### 3.4 Special tropical structures
 
 ```text
 coconut
@@ -139,7 +167,7 @@ dragon-fruit
 
 Hai asset này cần batch riêng vì silhouette khác mạnh so với fruit tree thông thường.
 
-### 3.4 Industrial / perennial crops
+### 3.5 Industrial / perennial crops
 
 ```text
 coffee
@@ -164,18 +192,42 @@ stage-05_harvestable
 
 Mỗi stage phải thay đổi silhouette và structural complexity.
 
-### 4.2 Fruit tree / perennial — 4 stage mặc định
+### 4.2 Aquatic crop — 5 stage
 
 ```text
-stage-01_sapling
-stage-02_young
-stage-03_mature
-stage-04_harvestable
+stage-01_planted
+stage-02_sprout
+stage-03_young
+stage-04_mature
+stage-05_harvestable
+```
+
+Tên visual state có thể chuyên biệt theo species. Lotus có thể dùng `stage-04_budding` và `stage-05_flowering`, còn rau nhút / rau muống thể hiện độ trưởng thành chủ yếu bằng mật độ và độ lan của foliage.
+
+Lotus hỗ trợ nhiều harvest output từ cùng một species:
+
+```text
+lotus_flower    # hoa sen
+lotus_rhizome   # củ sen
+lotus_stem      # ngó sen
+lotus_seed      # hạt sen
+```
+
+Đây là gameplay/item IDs, không phải bốn lifecycle sprite độc lập. Nếu gameplay cần phân biệt thời điểm thu hoạch, thêm late-stage variant/overlay như `flowering` hoặc `seed-pod`; inventory artwork cho củ sen, ngó sen và hạt sen thuộc item/inventory pack riêng. Phần thân rễ chìm dưới nước không vẽ lộ trong world sprite thông thường.
+
+Rau nhút và rau muống mặc định thu hoạch thân/lá non. Nếu sau này có cơ chế cắt rồi mọc lại, thêm `regrowing` state ngoài core 5-stage set.
+
+### 4.3 Fruit tree / perennial — 5 stage mặc định
+
+```text
+stage-01_sprout
+stage-02_sapling
+stage-03_young
+stage-04_flowering-or-mature
+stage-05_harvestable
 ```
 
 `harvestable` có thể là `fruiting`, `berry`, hoặc `tapping` tùy loại cây.
-
-Nếu gameplay sau này cần flowering state, thêm một stage riêng thay vì bake vào mature.
 
 ---
 
@@ -189,6 +241,7 @@ Không ship master artwork trực tiếp vào runtime.
 |---|---:|
 | Small crop / weed / pest | 512×512 |
 | Medium crop / herb | 768×768 |
+| Aquatic crop | 768×768; lotus có thể dùng 1024×1024 nếu cần canopy/flower breathing room |
 | Tree / animal-sized farm asset | 1024×1024 |
 | Tall/special tree | 1024×1280 hoặc square master với padding |
 | Tool icon | 512×512 |
@@ -198,15 +251,17 @@ Không ship master artwork trực tiếp vào runtime.
 | Class | Khoảng hiển thị gợi ý | Dùng cho |
 |---|---:|---|
 | S | 64–96 px | weed, pest, tiny growth stage, small tool |
-| M | 128–160 px | rice, carrot, herbs, mature low crop |
-| L | 192–256 px | corn, coffee, dragon fruit |
+| M | 128–160 px | rice, carrot, herbs, rau nhút, rau muống, mature low crop |
+| L | 192–256 px | corn, coffee, dragon fruit, lotus |
 | XL | 256–384 px | mango, pomelo, coconut, rubber, fruit trees |
 
 Kích thước runtime cuối cùng sẽ được điều chỉnh theo camera và world scale của game, nhưng phải giữ cùng perceived scale giữa các asset.
 
 ---
 
-## 6. Soil system
+## 6. Grounding / surface systems
+
+### 6.1 Soil system
 
 `farm/soil` là foundation của toàn bộ visual calibration.
 
@@ -228,6 +283,21 @@ soil_harvested
 - footprint và camera angle phải cố định;
 - weed/pest không bake cố định vào soil texture;
 - crop shadow phải tương thích với grounding của soil tile.
+
+### 6.2 Aquatic crop area
+
+Khu aquatic crop là vùng canh tác trên mặt nước nông / ao, dùng cho lotus, water-mimosa và water-spinach.
+
+Quy tắc:
+
+- `farm/aquatic-crops` chỉ chứa artwork cây;
+- water surface / pond tile, bờ ao và ripple FX thuộc hệ environment/water riêng, không bake vào crop master;
+- mọi stage của cùng species dùng chung waterline/root anchor để đổi sprite không bị nhảy vị trí;
+- không center cây theo canvas; giữ gameplay anchor ổn định;
+- contact ripple/shadow chỉ là optional overlay/FX;
+- không vẽ lộ phần thân rễ/củ chìm dưới nước trong world sprite thông thường;
+- khi đặt chung fish/pond gameplay, foliage không được che kín vùng nước tới mức làm mất readability của cá hoặc interaction marker;
+- giữ cùng camera angle, upper-left lighting và perceived world scale với phần farm còn lại.
 
 ---
 
@@ -326,6 +396,10 @@ masters/
       thien-ly/
       ngo-gai/
       mint/
+    aquatic-crops/
+      lotus/
+      water-mimosa/
+      water-spinach/
     trees/
       mango/
       pomelo/
@@ -472,7 +546,7 @@ Generate:
 1. rambutan
 2. lychee
 
-Mỗi loại 4 stage.
+Mỗi loại 5 stage theo lifecycle fruit tree/perennial chuẩn.
 
 ---
 
@@ -482,6 +556,8 @@ Generate:
 
 1. coconut
 2. dragon-fruit
+
+Mỗi loại 5 stage; tên state có thể chuyên biệt theo cấu trúc của species.
 
 Mỗi loại cần visual calibration riêng về footprint và vertical scale, nhưng vẫn phải tuân world scale chung.
 
@@ -494,11 +570,34 @@ Generate:
 1. coffee
 2. rubber
 
+Mỗi loại 5 stage theo lifecycle perennial chuẩn.
+
 Coffee harvest state cần berry focal points. Rubber harvest state có thể dùng tapping representation nếu gameplay xác nhận cơ chế này.
 
 ---
 
-# Phase 8 — Weed Pack
+# Phase 8 — Aquatic Crop Area Pack
+
+Generate full growth stages cho:
+
+1. lotus
+2. water-mimosa
+3. water-spinach
+
+Mỗi loại 5 stage.
+
+Acceptance requirements riêng:
+
+- shared waterline/root anchor ổn định giữa mọi stage;
+- không bake water surface hoặc pond edge vào plant sprite;
+- lotus stage cuối phải đọc rõ identity bằng lá + hoa hoặc seed-pod focal point;
+- lotus gameplay mapping hỗ trợ `lotus_flower`, `lotus_rhizome`, `lotus_stem`, `lotus_seed` mà không cần bốn lifecycle độc lập;
+- rau nhút và rau muống phải có silhouette đủ khác nhau ở runtime size;
+- test composition trên ít nhất một neutral water tile trước khi approve.
+
+---
+
+# Phase 9 — Weed Pack
 
 Generate full weed variants:
 
@@ -510,7 +609,7 @@ Test overlay với ít nhất rice, corn, carrot và mango/fruit tree plot nếu
 
 ---
 
-# Phase 9 — Pest Pack
+# Phase 10 — Pest Pack
 
 Generate:
 
@@ -525,7 +624,7 @@ Test trên crop có foliage thấp, cao và tree foliage.
 
 ---
 
-# Phase 10 — Farming Tool Pack
+# Phase 11 — Farming Tool Pack
 
 Generate:
 
@@ -621,6 +720,7 @@ assets: add core fruit tree pack
 assets: add tropical fruit tree pack
 assets: add special tropical crops
 assets: add perennial crop pack
+assets: add aquatic crop area pack
 assets: add weed pack
 assets: add pest pack
 assets: add farming tool pack
@@ -643,12 +743,13 @@ Nếu cần giữ exploratory generations, đặt ở khu vực riêng và khôn
 
 - Soil: ~6
 - Field crops: ~30
-- Trees/perennials: ~40
+- Aquatic crops: ~15
+- Trees/perennials: ~50
 - Weeds: ~5
 - Pests: ~6
 - Tools: ~5
 
-Tổng khoảng **90+ master sprites**, chưa tính revisions và optional UI/animation variants.
+Tổng khoảng **115+ master sprites**, chưa tính revisions, harvest-item artwork và optional UI/animation variants.
 
 ---
 
@@ -665,9 +766,10 @@ Phase 4  Core Fruit Tree Pack
 Phase 5  Tropical Fruit Tree Pack
 Phase 6  Special Structure Pack
 Phase 7  Industrial / Perennial Pack
-Phase 8  Weed Pack
-Phase 9  Pest Pack
-Phase 10 Farming Tool Pack
+Phase 8  Aquatic Crop Area Pack
+Phase 9  Weed Pack
+Phase 10 Pest Pack
+Phase 11 Farming Tool Pack
 ```
 
 Sau khi Phase 0 được approve, artwork sẽ được generate tuần tự theo thứ tự trên trừ khi gameplay priority thay đổi.
