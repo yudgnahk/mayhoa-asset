@@ -229,6 +229,34 @@ stage-05_harvestable
 
 `harvestable` có thể là `fruiting`, `berry`, hoặc `tapping` tùy loại cây.
 
+#### 4.3.1 Hard generation contract cho fruit tree
+
+Mọi lần generate một fruit tree/perennial theo lifecycle 5 stage phải tuân các rule sau:
+
+1. **5 stages = 5 ảnh độc lập.** Phải output đúng năm image asset riêng biệt, mỗi ảnh chứa đúng một stage. Không ghép năm cây vào cùng một ảnh, không tạo contact sheet, không tạo sprite sheet thay cho năm master image.
+2. **Cùng canvas, cùng root anchor.** Cả năm ảnh phải dùng cùng canvas size / aspect ratio và cùng một tọa độ `root-origin` / điểm tiếp xúc thấp nhất của gốc cây. Không center từng stage theo bounding box riêng; gameplay anchor mới là điểm cố định.
+3. **Scale tăng tuần tự.** Perceived height, canopy spread và structural complexity phải tăng rõ ràng theo thứ tự `stage-01 < stage-02 < stage-03 < stage-04 < stage-05`. Mỗi stage phải lớn hơn stage trước một cách hợp lý, không được có early stage lớn ngang hoặc lớn hơn mature stage.
+4. **Không chỉ scale cùng một hình.** Mỗi stage phải phát triển cấu trúc thật: thân dày dần, branching logic rõ hơn, canopy phức tạp hơn và silhouette thay đổi theo lifecycle.
+5. **Stage 01 — sprout:** nhỏ nhất; thân non / early trunk, rất ít lá, chưa có canopy trưởng thành; không hoa, không trái.
+6. **Stage 02 — sapling:** cây non rõ ràng; thân mảnh, một vài nhánh, canopy nhỏ; **không hoa và tuyệt đối không có trái**.
+7. **Stage 03 — young:** cây trẻ; branching và canopy phát triển hơn stage 02 nhưng vẫn chưa trưởng thành; **không hoa, không trái**.
+8. **Stage 04 — flowering-or-mature:** cây trưởng thành hơn stage 03. Với species có flowering state, hoa bắt đầu xuất hiện ở đây; không render harvest-ready fruit trừ khi gameplay/spec của species explicit yêu cầu khác.
+9. **Stage 05 — harvestable / fruiting:** stage lớn nhất và hoàn thiện nhất; fruit/berry/harvest focal point xuất hiện ở đây theo species.
+10. Nếu dùng stage 05 hoặc ảnh reference có trái để giữ species identity, reference đó chỉ được dùng cho morphology, leaf/trunk language và fruit identity; **không copy hoa/trái ngược lifecycle vào stage 01–03**.
+11. Tree sprite không bake soil, pot, ground tile hoặc environment vào master artwork trừ khi spec của asset explicit yêu cầu.
+
+Prompt generation cho một full fruit-tree set phải explicit chứa các constraint tương đương:
+
+```text
+OUTPUT REQUIREMENT: Generate exactly five separate image assets, not one composite image and not a sprite sheet. One output image per lifecycle stage: stage-01, stage-02, stage-03, stage-04, stage-05.
+
+ANCHOR REQUIREMENT: All five images must use the exact same canvas size and the exact same root-origin coordinate. The lowest/root contact point of the trunk must remain fixed across all five outputs. Do not center each tree independently.
+
+GROWTH REQUIREMENT: Tree size and structural complexity must increase monotonically from stage 01 through stage 05. Each successive stage must be visibly larger than the previous stage while preserving believable biological growth.
+
+LIFECYCLE REQUIREMENT: stage-02 is strictly a sapling — foliage only, no flowers and absolutely no fruit. stage-03 is a young vegetative tree — no flowers and no fruit. Flowers begin only at stage-04 when applicable; harvestable fruit appears only at stage-05.
+```
+
 ---
 
 ## 5. Size system

@@ -229,6 +229,34 @@ stage-05_harvestable
 
 `harvestable` may be represented as `fruiting`, `berry`, or `tapping` depending on the plant.
 
+#### 4.3.1 Hard generation contract for fruit trees
+
+Every generation run for a 5-stage fruit tree / perennial lifecycle must follow these rules:
+
+1. **5 stages = 5 separate images.** Output exactly five independent image assets, one image containing one stage. Do not combine all five trees into one image, contact sheet, or sprite sheet in place of the five master images.
+2. **Same canvas, same root anchor.** All five images must use the same canvas size / aspect ratio and the same `root-origin` / lowest trunk-contact coordinate. Do not center each stage independently by its bounding box; the gameplay anchor is the fixed point.
+3. **Monotonic scale progression.** Perceived height, canopy spread, and structural complexity must clearly increase in the order `stage-01 < stage-02 < stage-03 < stage-04 < stage-05`. An early stage must never appear as large as, or larger than, a later mature stage.
+4. **Do not only scale one drawing.** Each stage must show real structural development: thicker trunk, clearer branching logic, more complex canopy, and lifecycle-appropriate silhouette changes.
+5. **Stage 01 — sprout:** smallest stage; early stem/trunk, very limited foliage, no mature canopy; no flowers and no fruit.
+6. **Stage 02 — sapling:** clearly juvenile; slim trunk, a few branches, small canopy; **no flowers and absolutely no fruit**.
+7. **Stage 03 — young:** more developed branching and canopy than stage 02 but still not mature; **no flowers and no fruit**.
+8. **Stage 04 — flowering-or-mature:** more mature than stage 03. For species with a flowering state, flowers begin here; do not render harvest-ready fruit unless the species gameplay/spec explicitly requires otherwise.
+9. **Stage 05 — harvestable / fruiting:** largest and most complete stage; species-appropriate fruit/berry/harvest focal points appear here.
+10. If stage 05 or another fruit-bearing reference is used to preserve species identity, use it only for morphology, leaf/trunk language, and fruit identity; **do not copy flowers or fruit backward into stages 01–03**.
+11. Tree sprites must not bake soil, pots, ground tiles, or environment into the master artwork unless the asset spec explicitly requires it.
+
+A full fruit-tree generation prompt must explicitly contain equivalent constraints:
+
+```text
+OUTPUT REQUIREMENT: Generate exactly five separate image assets, not one composite image and not a sprite sheet. One output image per lifecycle stage: stage-01, stage-02, stage-03, stage-04, stage-05.
+
+ANCHOR REQUIREMENT: All five images must use the exact same canvas size and the exact same root-origin coordinate. The lowest/root contact point of the trunk must remain fixed across all five outputs. Do not center each tree independently.
+
+GROWTH REQUIREMENT: Tree size and structural complexity must increase monotonically from stage 01 through stage 05. Each successive stage must be visibly larger than the previous stage while preserving believable biological growth.
+
+LIFECYCLE REQUIREMENT: stage-02 is strictly a sapling — foliage only, no flowers and absolutely no fruit. stage-03 is a young vegetative tree — no flowers and no fruit. Flowers begin only at stage-04 when applicable; harvestable fruit appears only at stage-05.
+```
+
 ---
 
 ## 5. Size system

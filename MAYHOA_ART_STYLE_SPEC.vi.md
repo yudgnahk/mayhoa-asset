@@ -630,6 +630,8 @@ Mỗi prompt generate cho mayhoa nên ngầm hoặc explicit chứa các ý sau:
 - no neon colors
 - no over-detail
 
+Với asset lifecycle nhiều stage, prompt còn phải nói rõ **số output image**, **shared anchor**, **growth progression** và **stage semantics**; không được chỉ mô tả style rồi để model tự suy diễn số ảnh hoặc lifecycle. Với fruit tree 5 stage, dùng hard contract trong `FARM_ASSET_GENERATION_PLAN.vi.md`: đúng 5 ảnh riêng, cùng root anchor, scale tăng dần, stage 02 là sapling không hoa/trái, stage 03 không hoa/trái, stage 04 flowering/mature và stage 05 harvestable/fruiting.
+
 ---
 
 ## 21. Hard “Do Not”
