@@ -213,7 +213,7 @@ lotus_stem      # ngó sen
 lotus_seed      # hạt sen
 ```
 
-Đây là gameplay/item IDs, không phải bốn lifecycle sprite độc lập. Nếu gameplay cần phân biệt thời điểm thu hoạch, thêm late-stage variant/overlay như `flowering` hoặc `seed-pod`; inventory artwork cho củ sen, ngó sen và hạt sen thuộc item/inventory pack riêng. Phần thân rễ chìm dưới nước không vẽ lộ trong world sprite thông thường.
+Đây là gameplay/item IDs, không phải bốn lifecycle sprite độc lập. **Scope plant/aquatic hiện tại chỉ cần 5 world lifecycle assets của lotus** (`planted`, `sprout`, `young`, `budding`, `flowering`). Artwork thu hoạch/inventory cho cả bốn output `lotus_flower`, `lotus_rhizome`, `lotus_stem`, `lotus_seed` **được defer sang item/inventory phase sau và không phải generate cùng bộ 5 lifecycle hiện tại**. Nếu gameplay sau này cần phân biệt thời điểm thu hoạch, có thể thêm late-stage variant/overlay như `flowering` hoặc `seed-pod`. Phần thân rễ chìm dưới nước không vẽ lộ trong world sprite thông thường.
 
 Rau nhút và rau muống mặc định thu hoạch thân/lá non. Nếu sau này có cơ chế cắt rồi mọc lại, thêm `regrowing` state ngoài core 5-stage set.
 

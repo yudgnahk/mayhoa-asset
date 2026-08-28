@@ -29,7 +29,7 @@ Thư mục này chứa master của 5 giai đoạn phát triển cho lúa, bắp
 ## Quy tắc production đã khóa
 
 - master canvas trong suốt 512x512;
-- placement anchor chung khoảng `(0.5, 0.684)`;
+- crop là sprite bottom-anchor: root `(256, 458)` = `(0.5, 0.89453125)`, engine ghim vào tâm soil plate (thay anchor cũ `(0.5, 0.684)` từ 2026-08-26);
 - chân asset căn theo footprint đất của Phase 1;
 - ánh sáng từ trên-trái, contact shadow mềm, viền chromatic tối có chọn lọc;
 - không bake soil, weed, pest, UI, chữ hay background scene;

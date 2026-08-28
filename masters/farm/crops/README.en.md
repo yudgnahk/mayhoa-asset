@@ -29,7 +29,7 @@ This folder contains the Phase 2 growth-stage masters for rice, corn, and carrot
 ## Locked production rules
 
 - transparent 512x512 master canvas;
-- common placement anchor around `(0.5, 0.684)`;
+- crops are bottom-anchored sprites: root `(256, 458)` = `(0.5, 0.89453125)`, pinned by the engine to the soil-plate center (replaces the legacy `(0.5, 0.684)` anchor as of 2026-08-26);
 - visual base aligns to the Phase 1 soil footprint;
 - upper-left lighting, soft contact shadow, selective dark-chromatic outlines;
 - no baked soil, weeds, pests, UI, text, or scene background;

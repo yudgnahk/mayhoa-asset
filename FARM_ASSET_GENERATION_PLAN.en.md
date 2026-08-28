@@ -213,7 +213,7 @@ lotus_stem      # ngo sen
 lotus_seed
 ```
 
-These are gameplay/item IDs, not four independent lifecycle sprite sets. If gameplay needs separate harvest timing, add optional late-stage variants/overlays such as `flowering` or `seed-pod`. Inventory artwork for rhizome, stem, and seed belongs in a separate item/inventory pack. Submerged rhizomes must not be exposed in the normal world sprite.
+These are gameplay/item IDs, not four independent lifecycle sprite sets. **The current plant/aquatic scope requires only the 5 lotus world lifecycle assets** (`planted`, `sprout`, `young`, `budding`, `flowering`). Harvest/inventory artwork for all four outputs — `lotus_flower`, `lotus_rhizome`, `lotus_stem`, and `lotus_seed` — **is deferred to a later item/inventory phase and must not be generated as part of the current 5-stage lifecycle set**. If gameplay later needs separate harvest timing, optional late-stage variants/overlays such as `flowering` or `seed-pod` may be added. Submerged rhizomes must not be exposed in the normal world sprite.
 
 Water mimosa and water spinach primarily harvest tender stems/leaves. If gameplay later supports cut-and-regrow behavior, add a `regrowing` state outside the core 5-stage set.
 
