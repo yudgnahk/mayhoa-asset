@@ -213,7 +213,14 @@ Calibration display scale đã chốt (không đụng master): corn → class L 
 Hai nhóm dưới đây **không sửa được bằng code**, đã cố ý để checkbox trống.
 
 ### Cần pipeline sinh ảnh (ChatGPT Create image → Drive → gws)
-- [ ] `soil_tilled_v01.png` — file duy nhất trong đợt QC buộc phải generate lại.
+- [x] `soil_tilled_v01.png` — đã generate lại thành **`soil_tilled_v02.png`** (2026-09-05).
+      Qua 3 vòng: v1 aspect 2.13 (loại — đính nhầm `soil_empty_v01` làm reference nên bám tỷ lệ
+      của tile đó), v2 1.80 (còn viền đỏ artifact 339px), **v3 1.64 — chọn bản này**.
+      Fit về 512² bằng uniform scale 0.3818 khớp bề ngang: bbox `(81,147)-(430,360)` so với
+      nhóm `dry/harvested/planted/wet` `(82,157)-(430,360)` — mép trái/phải lệch 1px, contactY
+      khớp chính xác, sâu hơn 10px phía sau plate (chênh aspect còn lại, uniform scale không
+      khử được). RGBA8. `v01` giữ nguyên trong repo dù hỏng, để đối chiếu lịch sử.
+- [ ] Rebuild `runtime/soil_states_v01` từ `soil_tilled_v02` — atlas hiện dựng từ bản v01 hỏng.
 
 ### Cần quyết định visual của user
 - [ ] `water-mimosa` vs `water-spinach` — silhouette gần trùng, xem 9.4.
