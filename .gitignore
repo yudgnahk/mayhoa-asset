@@ -1,2 +1,4 @@
 .ai-bridge
 playground
+.claude/settings.local.json
+tools/__pycache__/
