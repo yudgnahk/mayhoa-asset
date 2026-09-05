@@ -1,6 +1,6 @@
 # Mayhoa — Asset Geometry Fix Checklist
 
-**Status:** ĐÃ THỰC THI 2026-08-26 — masters normalize xong toàn bộ; còn 3 việc chờ (xem mục 7–8)
+**Status:** normalize 2026-08-26 xong; **QC lại 2026-09-05** — 95/95 file plant PASS geometry core, phát sinh 2 việc blocking + 3 lỗ hổng tài liệu (xem mục 9)
 **Baseline:** đo 2026-08-26 bằng `tools/geometry_audit.py` (alpha ≥ 24/255, bottom band 3%) — chi tiết ở §20 của spec
 **Spec:** `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.vi.md` (source of truth cho mọi con số)
 
@@ -46,7 +46,10 @@ Root đích `(512, 970)` trên `1024×1024`. Scale **thực tế đã áp** (aut
 | [x] star-apple | 0.7554 | contactY 970 Δ0, rootX 511.6–512.4, margin ≥ 25 |
 | [x] lychee | 0.7855 | contactY 970 Δ0, rootX 511.6–512.3, margin ≥ 26 |
 | [x] rambutan | 0.7682 | contactY 970 Δ0, rootX 511.7–512.1, margin ≥ 25 |
+| [x] rubber | không truy được (*) | contactY 970 Δ0, rootX 512.0–512.4, margin ≥ 25 |
 | [x] coconut | per-stage, xem mục 3 | contactY 970 Δ0, rootX 511.6–512.3, margin ≥ 26 |
+
+(*) `rubber` **đã qua cùng pass normalize 2026-08-26 nhưng không được ghi lại hệ số scale** — không truy ngược được từ lịch sử, đừng đoán số. Provenance: pack chỉ xuất hiện ở commit `dd224e1`, mtime `Aug 26 03:42` (muộn hơn 6 pack còn lại ở `01:01–01:02`). Xác minh 2026-09-05: canvas `1024²`, RGBA8, ratio visH = 0.400 / 0.600 / 0.820 / 0.939 / 1.000 — cả 5 stage nằm trong band Profile A. Số đo per-stage ở Appendix B.
 
 ## 3. Coconut Profile B per-stage rescale — DONE (gộp 1 pass với mục 2)
 
@@ -118,6 +121,62 @@ Calibration display scale đã chốt (không đụng master): corn → class L 
 
 ---
 
+## 9. QC round 2026-09-05 — audit lại toàn bộ 19 pack
+
+**Cách chạy:** 4 subagent read-only song song (trees ×2, aquatic, crops) dùng `tools/geometry_audit.py`. Không file PNG nào bị sửa; `normalize_pack.py` không được gọi.
+
+**Kết quả tổng:** geometry core (canvas / contactY Δ0 / rootX / RGBA8) **PASS 95/95 file plant**. **Không có regression** so với đợt normalize 2026-08-26 — số đo 4 pack ở mục 2 và 6 pack ở mục 5 trùng khớp chính xác bảng đã ghi.
+
+| Nhóm | PASS | WARN | FAIL |
+|---|---|---|---|
+| trees (10) | coconut, coffee, rubber, pomelo, lychee, star-apple | dragon-fruit, mango, lemon, rambutan | — |
+| aquatic (3) | water-mimosa, water-spinach | lotus | — |
+| crops (6) | rice | corn, thien-ly, ngo-gai, mint | carrot |
+| soil (6) | — | 5 tile (palette ct=3) | soil_tilled |
+
+### 9.1 Blocking — phải sửa
+
+- [x] **carrot s04 — vi phạm margin (PHÁT HIỆN MỚI).** `carrot_stage-04_mature_v01.png` bbox=(57,22)-(433,458), top margin **22 px < 24**. Không phải regression mà là **fix chưa trọn** ở mục 5: scale `0.9040` hơi lỏng, đúng phải ≈ `0.8999` (trần visH hợp lệ = 458−24+1 = 435, hiện 437). Baseline trước normalize là 12 px → đã cải thiện nhưng chưa đạt.
+      **Bắt buộc:** normalize lại **từ bản gốc trong git**, KHÔNG transform chồng lên file hiện tại (tránh resample lần hai).
+- [x] **`tools/geometry_audit.py` không bắt `zlib.error`.** Hàm `main()` chỉ `except ValueError`, nên gặp file IDAT hỏng là crash giữa chừng và **bỏ im lặng mọi file phía sau** trong glob (lần này bỏ sót `soil_wet_v01.png`). Hệ quả: mọi kết quả audit batch chạy trên thư mục có file hỏng đều có thể thiếu mà không ai biết. Bọc `zlib.decompress` trong `alpha_rows()` và raise `ValueError` để `main()` báo `ERR` rồi chạy tiếp.
+
+### 9.2 Lỗ hổng tài liệu — 3 pack đã normalize đúng nhưng KHÔNG được ghi
+
+`grep -n "rubber\|water-mimosa\|water-spinach"` trên file này → **0 hit**. Cả ba pack thực tế đều đã đạt chuẩn (số đo ở Appendix B). Đây là lỗi tài liệu, **không phải lỗi asset — KHÔNG normalize lại**.
+
+- [x] Thêm `rubber` vào bảng mục 2 và vào Appendix B. Ratio visH = 0.400 / 0.600 / 0.820 / 0.939 / 1.000 — cả 5 stage nằm trong band Profile A. Provenance: chỉ có trong commit `dd224e1`, mtime `Aug 26 03:42` (muộn hơn 6 pack còn lại), tức đã qua cùng pass normalize nhưng không được ghi lại.
+- [x] Sửa spec `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.vi.md` §5.4 (dòng ~297): `water-mimosa` / `water-spinach` hiện ghi *"anchor chốt khi generate"*. Anchor thực tế **đã chốt là `(384, 728)`** — trong đó `728 = round(768 × 970/1024)`, đúng tỷ lệ bottom-padding convention của tree/lotus. Align X dùng **bbox center** (Profile E), không phải bottom-band.
+- [x] **RỦI RO CỤ THỂ nếu không sửa:** session sau đọc doc sẽ tưởng 2 pack chưa làm và chạy `normalize_pack.py`. Nếu chạy **không có `--rootx` override**, bottom-band heuristic sẽ dịch `water-mimosa` s02 khoảng **−90 px** và **phá alignment đang đúng** (rootX bottom-band pack này trải 376.9–474.0 — đúng ca hỏng heuristic mà §7.1 đã gọi tên `water-mimosa`).
+
+### 9.3 Soil — mở rộng phạm vi mục 6
+
+- [ ] `soil_tilled_v01.png` — **xác nhận lại: hỏng vĩnh viễn.** IHDR/PLTE/tRNS/IEND CRC hợp lệ, riêng IDAT (5634 B) **CRC FAIL**; zlib `Error -3: incorrect data check`, giải nén ra 0/262656 byte. md5 working tree **trùng git HEAD** → không có bản lành trong lịch sử để restore. Phải regenerate.
+- [x] **5 soil tile còn lại đều là palette PNG (colortype 3)** — vi phạm §6.3 (master bắt buộc RGBA8), giống các crop pack cũ trước khi normalize. Chưa từng được ghi nhận. Gộp vào cùng đợt regenerate `soil_tilled`.
+
+### 9.4 Cần visual review của user (máy không kết luận được)
+
+- [ ] **`water-mimosa` vs `water-spinach` giống nhau đáng ngờ.** X-extent gần trùng từng pixel ở cả 5 stage: visW `213/368/509/636/707` vs `213/369/509/636/708`; bbox s03 `(130,466)-(638,728)` vs `(129,466)-(637,728)`. Spec dòng ~628 yêu cầu water-spinach có *"distinct silhouette from water-mimosa"*. Geometry PASS, nhưng cần xem cạnh nhau để xác nhận không đọc ra cùng một cây.
+- [ ] **`mango` s05 thấp hơn s04 80 px** (visH 921 → 841; top bbox 50 → 130) và **`rambutan` s05 co lại cả hai chiều** (visW −39, visH −44). Cả hai đã được duyệt visual ở mục 6 với lý do tán rủ khi đậu quả / trưởng thành đọc qua mật độ quả, nhưng vẫn lệch contract global "size tăng rõ s01<s02<s03<s04<s05". **Cần anh chốt: chấp nhận như species-specific reason, hay đưa vào regenerate queue.**
+- [ ] `lotus` s05 visH 907 < s04 928 — art issue, normalize không sửa được. Đã nằm sẵn trong regenerate queue mục 6 (bông sen quá to).
+
+> **Đã thực thi 2026-09-05** (branch `fix/geometry-qc-2026-09-05`): 9.1 và 9.2 xong; 9.3 mới xong phần convert RGBA8.
+> `soil_tilled` và toàn bộ 9.4 vẫn treo — xem mục 9.7.
+
+### 9.5 WARN không cần hành động (morphology đúng spec)
+
+- `corn` visW thu hẹp khi lên cao — thân đơn, visH đơn điệu → §9.3 dominant metric PASS.
+- `dragon-fruit` visH bão hòa ~942–945 px — Profile C support-structure, trụ giàn cố định chi phối; metric thật là visW (0.328/0.787/0.874/1.001/1.000).
+- `lemon` s05 visH −3 px, `mint` s02 visW −6 px — dưới ngưỡng nhiễu đo.
+- `ngo-gai` / `mint` / `thien-ly` rootX bottom-band trải rộng — rosette/bbox-center theo §7.1, margin L/R đối xứng Δ≤2 px xác nhận align đúng.
+
+### 9.6 Cảnh báo cho đợt regenerate sắp tới
+
+**Margin stage-05 đang sát trần 24 px, cushion chỉ 1–2 px:** rubber s05 top 25, mango s05 left 25, pomelo s05 top 25, carrot s04 top 22 (đã FAIL), coconut s05 top 26, dragon-fruit s03 top 26.
+
+→ Queue regenerate ở mục 6 (soil_tilled, carrot s05, thien-ly ×5, lotus s05, 6 fruit tree) khi chạy normalize **phải xuất phát từ artwork gốc**, không transform chồng lên master hiện tại — jitter LANCZOS một lần resample nữa là tụt dưới ngưỡng.
+
+---
+
 ## Appendix A — Số đo nguồn per-stage TRƯỚC normalize (2026-08-26, để đối chiếu)
 
 Định dạng: `contactY / rootX / visW×visH`.
@@ -134,3 +193,40 @@ Calibration display scale đã chốt (không đụng master): corn → class L 
 | lychee (1254²) | 1155 / 649.8 / 518×684 | 1187 / 698.0 / 745×976 | 1191 / 679.7 / 895×1103 | 1217 / 664.7 / 1163×1185 | 1230 / 659.7 / 1176×1203 |
 | rambutan (1254²) | 1182 / 641.1 / 407×538 | 1177 / 647.5 / 572×844 | 1173 / 646.6 / 791×1032 | 1211 / 643.9 / 1233×1200 | 1188 / 640.9 / 1183×1143 |
 | lotus (1254²) | 1187 / 626.6 / 292×476 | 1187 / 631.7 / 750×817 | 1186 / 647.5 / 951×974 | 1185 / 585.4 / 1116×1115 | 1187 / 597.1 / 1169×1090 |
+
+## Appendix B — Số đo SAU normalize cho 3 pack thiếu trong Appendix A (đo 2026-09-05)
+
+Định dạng: `contactY / rootX / visW×visH`. Cả 3 pack RGBA8 (ct=6), non-interlaced, canvas đồng nhất 5/5 stage.
+
+| Pack | s01 | s02 | s03 | s04 | s05 |
+|---|---|---|---|---|---|
+| rubber (1024²) | 970 / 512.4 / 259×378 | 970 / 512.2 / 361×568 | 970 / 512.0 / 613×776 | 970 / 512.4 / 763×888 | 970 / 512.0 / 844×946 |
+| water-mimosa (768²) | 728 / 376.9 / 213×79 | 728 / 474.0 / 368×154 | 728 / 423.8 / 509×263 | 728 / 411.7 / 636×344 | 728 / 390.9 / 707×432 |
+| water-spinach (768²) | 728 / 385.1 / 213×113 | 728 / 401.3 / 369×186 | 728 / 390.9 / 509×263 | 728 / 381.9 / 636×336 | 728 / 410.8 / 708×402 |
+
+**Lưu ý đọc bảng:** `rootX` của 2 pack aquatic là bottom-band centroid — **chỉ tham khảo**, không dùng để PASS/FAIL (§7.1, Profile E). Alignment thật của chúng là **bbox center X = 383.0–384.5** (tâm canvas 383.5, Δ ≤ 1.5 px), margin L/R đối xứng trong 1–2 px ở mọi stage.
+
+---
+
+## 9.7 Còn treo sau đợt fix 2026-09-05 — cần input ngoài
+
+Hai nhóm dưới đây **không sửa được bằng code**, đã cố ý để checkbox trống.
+
+### Cần pipeline sinh ảnh (ChatGPT Create image → Drive → gws)
+- [ ] `soil_tilled_v01.png` — file duy nhất trong đợt QC buộc phải generate lại.
+
+### Cần quyết định visual của user
+- [ ] `water-mimosa` vs `water-spinach` — silhouette gần trùng, xem 9.4.
+- [ ] `mango` s05 / `rambutan` s05 — chấp nhận species-specific reason hay đưa vào regen queue.
+- [ ] `lotus` s05 — đã nằm trong queue mục 6 từ trước.
+
+### Ghi chú vận hành cho session sau
+Bridge Claude-in-Chrome hỏng lại ngày 2026-09-05: `~/.claude/chrome/chrome-native-host` bị sinh lại
+với đường dẫn pin version (`2.1.250`) trong khi CLI đã là `2.1.261` → `pgrep -fl chrome-native-host`
+rỗng. Đã repoint về `/opt/homebrew/bin/claude --chrome-native-host` (backup `.bak.2.1.250`).
+**Kiểm tra dòng exec của wrapper trước mỗi lần chạy pipeline asset.**
+
+Session Claude Code chỉ có browser tool khi được khởi động với cờ `--chrome` (hoặc bật
+"Enabled by default" qua `/chrome`) — không tự bật được giữa session. Theo docs
+`code.claude.com/docs/en/chrome`: dùng `/chrome` để xem trạng thái và "Reconnect extension";
+chỉ cần restart Chrome khi file cấu hình native messaging host mới được tạo lần đầu.

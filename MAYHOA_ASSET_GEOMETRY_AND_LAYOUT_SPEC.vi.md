@@ -294,7 +294,12 @@ Trạng thái đo 2026-08-26 — `lotus` (đã LOCKED):
 - rootX bottom-band dao động 585–647 — phần lớn do heuristic không hợp morphology radial (xem §7.1), phải align thủ công;
 - spread progression 0.25 / 0.64 / 0.81 / 0.95 — gần khớp Profile D.
 
-Quyết định: lotus **LOCKED `1024×1024`, anchor `(512, 970)`** theo cùng bottom-padding convention của tree. Resample `×0.835` + align root thủ công từng stage. `water-mimosa` / `water-spinach` giữ target `768×768`, anchor chốt khi generate.
+Quyết định: lotus **LOCKED `1024×1024`, anchor `(512, 970)`** theo cùng bottom-padding convention của tree. Resample `×0.835` + align root thủ công từng stage. `water-mimosa` / `water-spinach` **LOCKED `768×768`, anchor `(384, 728)`** — trong đó `728 = round(768 × 970/1024)`, đúng tỷ lệ bottom-padding convention của tree/lotus. Align X dùng **bbox center** (Profile E), **không** dùng bottom-band centroid.
+
+Trạng thái đo 2026-09-05 — cả hai pack aquatic horizontal **đã normalize xong và đạt chuẩn**: canvas `768×768` đồng nhất 5/5 stage, RGBA8, contactY = 728 (Δ0), bbox center X = 383.0–384.5 (tâm canvas 383.5, Δ ≤ 1.5 px), margin L/R đối xứng trong 1–2 px. Số đo per-stage ở Appendix B của `ASSET_GEOMETRY_FIX_CHECKLIST.vi.md`.
+
+> **CẢNH BÁO — KHÔNG normalize lại `water-mimosa` / `water-spinach`.**
+> Hai pack này đã đạt chuẩn. Nếu chạy `tools/normalize_pack.py` lên chúng mà **không có `--rootx` override**, bottom-band heuristic sẽ **phá alignment đang đúng**: rootX bottom-band của `water-mimosa` trải `376.9–474.0` (Δ 97 px) vì morphology aquatic-horizontal, nên script sẽ dịch stage s02 khoảng **−90 px**. Đây đúng là ca hỏng heuristic mà §7.1 đã mô tả và gọi tên `water-mimosa`. `rootX` bottom-band của 2 pack này **chỉ tham khảo**, không phải số PASS/FAIL — số PASS/FAIL là bbox center X.
 
 ### 5.5 Animal / fish / dragon / object
 
@@ -385,7 +390,8 @@ Bottom-band centroid chỉ tin cậy cho morphology thân đơn (tree / palm / t
 
 - không dùng bottom-band centroid làm số PASS/FAIL tự động;
 - đánh anchor thủ công (visual) hoặc dùng band cao hơn quanh cụm gốc;
-- ghi rõ phương pháp đo trong audit report.
+- ghi rõ phương pháp đo trong audit report;
+- **không chạy lại normalize bằng heuristic này lên pack đã align đúng bằng bbox center** — `water-mimosa` / `water-spinach` là ca cụ thể, xem cảnh báo ở §5.4.
 
 ---
 
@@ -624,8 +630,8 @@ Tất cả species trong `FARM_REMAINING_PLANT_ASSET_PLAN.vi.md` phải được
 | `coffee` | compact tree/shrub | `1024×1024` | fixed root `(512,970)` | L | A | visible height + canopy complexity | compact; phải thấp hơn major fruit trees/coconut/rubber ở world scale |
 | `rubber` | tall industrial tree | `1024×1024` nếu fit; `1024×1280` nếu cần | fixed ground root; square/tall root contract tương ứng | XL | A | height + trunk thickness | tall; lớn hơn coffee, exact relation với coconut/major tree khóa sau audit |
 | `lotus` | aquatic upright/radial | `1024×1024` — LOCKED | fixed root `(512,970)`; align thủ công (radial morphology, §7.1) | L | D | radial spread + stem/leaf structure + final flower envelope | không so raw height trực tiếp với land tree |
-| `water-mimosa` | aquatic horizontal | `768×768` | fixed waterline/root anchor per pack | M | E | horizontal spread + density | low/wide; width progression quan trọng hơn height |
-| `water-spinach` | aquatic horizontal | `768×768` | fixed waterline/root anchor per pack | M | E | horizontal spread + density | low/wide; distinct silhouette from water-mimosa |
+| `water-mimosa` | aquatic horizontal | `768×768` — LOCKED | fixed waterline/root anchor `(384, 728)`; align X theo bbox center (§5.4) | M | E | horizontal spread + density | low/wide; width progression quan trọng hơn height |
+| `water-spinach` | aquatic horizontal | `768×768` — LOCKED | fixed waterline/root anchor `(384, 728)`; align X theo bbox center (§5.4) | M | E | horizontal spread + density | low/wide; distinct silhouette from water-mimosa |
 
 `Stage-05 scale policy` trong bảng trên là cross-species intent. Exact master-pixel target chỉ được `LOCKED` sau khi session audit đo toàn bộ references và chọn calibration set.
 
@@ -1044,7 +1050,7 @@ Kế hoạch xử lý chi tiết + scale factors: xem `ASSET_GEOMETRY_FIX_CHECKL
 
 Normalize pass đã chạy xong bằng `tools/normalize_pack.py`. Kết quả đo lại:
 
-- **Tất cả 9 tree pack + lotus**: canvas `1024×1024`, contactY = 970 (Δ0), rootX 511.6–512.5 (Δ ≤ 1 px), mọi margin ≥ 25 px — **PASS toàn bộ**.
+- **Tất cả 10 tree pack + lotus**: canvas `1024×1024`, contactY = 970 (Δ0), rootX 511.6–512.5 (Δ ≤ 1 px), mọi margin ≥ 25 px — **PASS toàn bộ**.
 - **coconut**: per-stage rescale theo Profile B, ratio mới 0.332 / 0.506 / 0.725 / 0.916 / 1.0 — trong band.
 - **crops (rev 2 cuối, cùng ngày)**: hai bước — (a) composite QC phát hiện chân crop lòi dưới soil plate; (b) calibration sheet xác nhận cây phải đứng **tâm plate**, dẫn tới chuyển crop sang **bottom-anchor sprite** root `(256, 458)`. Transform từ bản gốc (single resample): rice / thien-ly / ngo-gai / mint scale 1.0 (chỉ translate), corn 0.8855, carrot 0.904. Herb rosette align X theo bbox center. Runtime `placementAnchor` cả 2 JSON đổi → `(0.5, 0.89453125)`, texture rebuild. Cả 3 pack palette thành RGBA8. Composite 30 frame + playground verify PASS. **Chờ xác nhận phía game code: điểm ghim trên tile = tâm plate.**
 - **Visual QC**: 6/6 case trong regenerate queue PASS — không file nào phải generate lại.
