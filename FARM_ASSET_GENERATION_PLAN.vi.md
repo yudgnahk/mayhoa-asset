@@ -676,34 +676,41 @@ PLAN -> GENERATE -> REVIEW -> REVISE -> APPROVE -> SYNC -> VERIFY -> OPTIMIZE ->
 
 ### Asset sync transport
 
-Dùng Google Drive làm staging layer giữa ChatGPT và local Mayhoa workspace.
+Claude-in-Chrome tải thẳng ảnh từ ChatGPT xuống đĩa local. **Không dùng Google Drive, không dùng `gws`.**
 
 Luồng transport chính thức:
 
 ```text
-ChatGPT generated/uploaded image
--> upload vào Google Drive folder `Mayhoa`
--> lấy Drive file ID
--> download về local bằng `gws` đã authenticated
--> verify MIME, dimensions và image readability
--> move/write vào đúng path `masters/...`
+ChatGPT Create image output
+-> mở ảnh ở fullscreen viewer, bấm nút "Save"
+-> file rơi vào ~/Downloads, tên dạng "ChatGPT Image <ngày giờ>.png"
+-> nhận diện file mới theo mốc thời gian
+-> verify MIME, dimensions, alpha thật
+-> move vào `.ai-bridge/<species>/`; chỉ bản approved mới vào `masters/...`
 ```
 
-Với binary file trên Drive, dùng command local:
+Nhận diện file mới an toàn cho cả mẻ nhiều ảnh — đặt mốc **trước** khi bấm Save:
 
 ```bash
-gws drive files get \
-  --params '{"fileId":"<DRIVE_FILE_ID>","alt":"media"}' \
-  --output <WORKSPACE_RELATIVE_DESTINATION>
+MARK=$(mktemp); touch "$MARK"
+# ... bấm Save lần lượt theo đúng thứ tự stage ...
+find ~/Downloads -name 'ChatGPT Image*.png' -newer "$MARK" -print0 | xargs -0 ls -tr
+# thứ tự cũ -> mới = đúng thứ tự đã bấm
 ```
 
 Quy tắc:
 
-- Không cần public Drive link; dùng authenticated local `gws` session.
+- Nút tải tên là **"Save"**, chỉ có trong fullscreen viewer (cùng thanh với Remove BG / Erase). Khung chat KHÔNG có nút Download.
+- Cách này chỉ đúng khi Chrome và repo ở **cùng một máy** — đúng với setup hiện tại. Nếu tách máy thì phải quay lại dùng staging layer.
 - Không dựa vào ChatGPT `openai/fileParams` cho canonical asset transport.
-- Không invoke local Codex, Codex CLI, `codex exec` hoặc bất kỳ Codex-backed executor nào để sync asset. CodexPro chỉ được dùng như filesystem/shell bridge khi cần.
-- Giữ rejected asset hoặc transfer test tạm trong `.ai-bridge/`; chỉ approved asset mới được đưa vào `masters/`.
-- Phải verify downloaded file đúng image type mong đợi trước khi nhận vào canonical asset set.
+- Không invoke local Codex, Codex CLI, `codex exec` hoặc bất kỳ Codex-backed executor nào để sync asset.
+- Giữ raw + prompt trong `.ai-bridge/<species>/`; chỉ approved asset mới được đưa vào `masters/`.
+- Phải verify downloaded file đúng image type và có alpha thật trước khi nhận vào canonical asset set.
+
+> **Lịch sử:** trước 2026-09-05 luồng này đi qua Google Drive + `gws` vì CodexPro2 không nhận binary
+> trực tiếp từ Create image. Chuyển sang Claude-in-Chrome thì bỏ được cả chặng đó: bớt một connector
+> call, bớt một lần click Allow, và bỏ hẳn rủi ro OAuth token hết hạn — `gws` token đã bị revoke đúng
+> lúc cần dùng (2026-09-05).
 
 Không generate phase tiếp theo trước khi phase hiện tại đạt acceptance criteria, trừ khi asset chỉ được tạo thử nghiệm và không merge vào production set.
 

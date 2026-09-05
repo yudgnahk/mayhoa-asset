@@ -212,7 +212,7 @@ Calibration display scale đã chốt (không đụng master): corn → class L 
 
 Hai nhóm dưới đây **không sửa được bằng code**, đã cố ý để checkbox trống.
 
-### Cần pipeline sinh ảnh (ChatGPT Create image → Drive → gws)
+### Cần pipeline sinh ảnh (ChatGPT Create image → Save thẳng về ~/Downloads)
 - [x] `soil_tilled_v01.png` — đã generate lại thành **`soil_tilled_v02.png`** (2026-09-05).
       Qua 3 vòng: v1 aspect 2.13 (loại — đính nhầm `soil_empty_v01` làm reference nên bám tỷ lệ
       của tile đó), v2 1.80 (còn viền đỏ artifact 339px), **v3 1.64 — chọn bản này**.

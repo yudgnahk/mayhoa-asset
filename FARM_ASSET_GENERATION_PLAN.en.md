@@ -676,34 +676,41 @@ PLAN -> GENERATE -> REVIEW -> REVISE -> APPROVE -> SYNC -> VERIFY -> OPTIMIZE ->
 
 ### Asset sync transport
 
-Use Google Drive as the staging layer between ChatGPT and the local Mayhoa workspace.
+Claude-in-Chrome downloads images from ChatGPT straight to the local disk. **No Google Drive, no `gws`.**
 
 Canonical transport flow:
 
 ```text
-ChatGPT generated/uploaded image
--> upload to the Google Drive folder `Mayhoa`
--> capture the Drive file ID
--> download locally with authenticated `gws`
--> verify MIME, dimensions, and image readability
--> move/write to the intended `masters/...` path
+ChatGPT Create image output
+-> open the image in the fullscreen viewer, click "Save"
+-> the file lands in ~/Downloads as "ChatGPT Image <date time>.png"
+-> identify new files by timestamp
+-> verify MIME, dimensions, real alpha
+-> move to `.ai-bridge/<species>/`; only approved assets go to `masters/...`
 ```
 
-For binary Drive files, the local download command is:
+Identifying new files safely for a multi-image batch — set the marker **before** clicking Save:
 
 ```bash
-gws drive files get \
-  --params '{"fileId":"<DRIVE_FILE_ID>","alt":"media"}' \
-  --output <WORKSPACE_RELATIVE_DESTINATION>
+MARK=$(mktemp); touch "$MARK"
+# ... click Save for each image in stage order ...
+find ~/Downloads -name 'ChatGPT Image*.png' -newer "$MARK" -print0 | xargs -0 ls -tr
+# oldest -> newest matches the order you clicked
 ```
 
 Rules:
 
-- Do not require public Drive links; use the authenticated local `gws` session.
+- The download button is labelled **"Save"** and exists only in the fullscreen viewer (same bar as Remove BG / Erase). There is NO download button in the chat pane.
+- This only works while Chrome and the repo are on the **same machine** — true for the current setup. Split them and you must go back to a staging layer.
 - Do not rely on ChatGPT `openai/fileParams` for canonical asset transport.
-- Do not invoke local Codex, Codex CLI, `codex exec`, or any Codex-backed executor for asset syncing. CodexPro may only be used as a filesystem/shell bridge when needed.
-- Keep rejected or temporary transfer tests under `.ai-bridge/`; only approved assets belong under `masters/`.
-- Verify the downloaded file is the expected image type before accepting it into the canonical asset set.
+- Do not invoke local Codex, Codex CLI, `codex exec`, or any Codex-backed executor for asset syncing.
+- Keep raws and prompts under `.ai-bridge/<species>/`; only approved assets belong under `masters/`.
+- Verify the downloaded file is the expected image type and carries real alpha before accepting it.
+
+> **History:** before 2026-09-05 this ran through Google Drive + `gws`, because CodexPro2 could not
+> accept binaries directly from Create image. Moving to Claude-in-Chrome removed that leg entirely:
+> one fewer connector call, one fewer Allow click, and no OAuth-token expiry risk — the `gws` token
+> had in fact been revoked exactly when it was needed (2026-09-05).
 
 Do not start production for the next phase until the current phase passes acceptance criteria, unless an asset is explicitly exploratory and will not be merged into the canonical production set.
 
