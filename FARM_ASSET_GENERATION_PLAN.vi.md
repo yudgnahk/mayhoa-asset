@@ -9,6 +9,16 @@ Tài liệu này định nghĩa kế hoạch generate artwork cho hệ thống f
 
 ---
 
+## Trạng thái và quan hệ với tài liệu khác
+
+Tài liệu này **vẫn active** cho phần roadmap: asset taxonomy (§2–3), growth-stage system (§4), folder/naming convention (§10–11), production phases và **thứ tự thực thi chính thức** (§12, §17).
+
+Phần **canvas/anchor cụ thể ở §5 (Size system) đã bị `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.vi.md` ghi đè** — spec hình học đó là nguồn sự thật cho số đo canvas/anchor thật sự (ví dụ anchor crop đã đổi so với số liệu ngầm định ở đây). Khi hai tài liệu lệch nhau về số hình học, `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.vi.md` thắng.
+
+Lưu ý vận hành: thứ tự Phase ở §17 (pest = Phase 10, tool = Phase 11, xếp sau cả tree/aquatic Phase 4–8) là nguồn của xung đột `C-ART-02` đang OPEN trong repo `mayhoa` — Gate A của demo cần pest + tool sớm hơn thứ tự này quy định. Xem `README.md` ở root repo này để biết chi tiết.
+
+---
+
 ## 1. Mục tiêu
 
 Xây dựng bộ artwork farm nền tảng có thể dùng trực tiếp trong game, bao gồm:

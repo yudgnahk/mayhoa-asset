@@ -6,6 +6,16 @@
 
 ---
 
+## Trạng thái và quan hệ với tài liệu khác
+
+Đây là **execution record**, không phải spec — không định nghĩa quy tắc hình học mới, chỉ ghi lại việc áp dụng `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.vi.md` lên `masters/` hiện có. Đợt normalize chính (mục 0–6) đã **thực thi xong** ngày 2026-08-26.
+
+Đợt QC lại toàn bộ 19 pack ngày 2026-09-05 nằm ở **mục 9** — geometry core PASS 95/95 file plant, không regression. Naming atlas (mục 7) **đã chốt**: một atlas cho mỗi class, sinh bằng `tools/build_atlas.py`. Còn 7 mục chờ, liệt kê ở **mục 9.7**: 4 mục cần pipeline sinh ảnh, 2 mục cần game code (chưa tồn tại), 1 mục trùng lặp.
+
+Mục 6 của file này liệt kê thêm một hàng chờ regenerate phát sinh từ visual review sau normalize (soil_tilled — đã xong bằng `v02`, carrot s05, tonkin-jasmine, lotus s05, 6 fruit tree) — phần đó đã được chuyển thành spec/prompt cụ thể trong `FARM_REGENERATION_PROMPTS.vi.md`, là tài liệu active cho công việc regenerate tiếp theo; coi file đó là nguồn hành động, không phải mục 6 ở đây.
+
+---
+
 ## Quy tắc chung
 
 **Công thức normalize mỗi pack** (chỉ dùng transform được phép theo spec §12.1 — scale + translate, KHÔNG redraw):

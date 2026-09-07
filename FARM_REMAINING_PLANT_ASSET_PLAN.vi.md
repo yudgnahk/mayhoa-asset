@@ -8,6 +8,16 @@
 
 ---
 
+## Trạng thái và quan hệ với tài liệu khác
+
+**Sản xuất coi như đã xong.** Cả 7 species trong scope của file này (coconut, dragon-fruit, coffee, rubber, lotus, water-mimosa, water-spinach) đã có đủ 5/5 master file trong `masters/farm/` — khớp với snapshot "Còn phải generate" ở §1 bên dưới, vốn đã được tick hết `[x]`.
+
+Lưu ý khi đọc tiếp: các checklist chi tiết hơn ở §4–§9 (per-task checkbox, acceptance criteria, execution wave, final integration checklist) **không được cập nhật đồng bộ** — chỉ `rubber`, `water-mimosa`, `water-spinach` được tick ở đó, còn `coconut`, `dragon-fruit`, `coffee`, `lotus` vẫn hiện `[ ]` dù artwork đã tồn tại và đã qua normalize hình học (xem §20.1 của `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.vi.md`). Coi **§1 là nguồn đúng cho trạng thái sản xuất**, không phải các checkbox ở phần sau.
+
+Tài liệu này bổ trợ `FARM_ASSET_GENERATION_PLAN.vi.md` (Phase 4–8, roadmap gốc cho các species này) và tuân theo per-species geometry policy ở §9.6 của `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.vi.md`.
+
+---
+
 ## 1. Snapshot hiện tại
 
 Đã kiểm tra trực tiếp `masters/farm/`.
