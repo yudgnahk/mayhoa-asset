@@ -222,9 +222,18 @@ Hai nhóm dưới đây **không sửa được bằng code**, đã cố ý đ�
       khử được). RGBA8. `v01` giữ nguyên trong repo dù hỏng, để đối chiếu lịch sử.
 - [ ] Rebuild `runtime/soil_states_v01` từ `soil_tilled_v02` — atlas hiện dựng từ bản v01 hỏng.
 
-### Cần quyết định visual của user
-- [ ] `water-mimosa` vs `water-spinach` — silhouette gần trùng, xem 9.4.
-- [ ] `mango` s05 / `rambutan` s05 — chấp nhận species-specific reason hay đưa vào regen queue.
+### Cần quyết định visual (đã xử lý xong 2026-09-05, trừ lotus)
+- [x] `water-mimosa` vs `water-spinach` — **PASS, báo động nhầm** (visual check 2026-09-05).
+      Hai loài khác hẳn: mimosa lá kép lông chim dạng dương xỉ, spinach lá mũi tên to bản trên
+      thân đứng. Nghi ngờ ban đầu xuất phát từ bbox/visW trùng nhau trong 1px — nhưng đó là hệ quả
+      của việc normalize về cùng canvas/anchor, **không suy ra được artwork giống nhau**. Bài học:
+      đừng kết luận nội dung từ số đo hình học, phải mở ảnh ra xem.
+- [x] `mango` s05 / `rambutan` s05 — **chấp nhận là species-specific reason** (visual check 2026-09-05).
+      Cây thấp đi ở s05 vì **chùm hoa của s04 biến mất**, không phải vì cây teo: hoa xoài/chôm chôm
+      mọc thành chùm vươn đứng khỏi tán, tới stage quả thì hết hoa và quả treo rủ. Cả hai s05 vẫn
+      đọc ra trưởng thành hơn s04 rõ. Spec §9.3 cho phép ngoại lệ này.
+      Ghi nhận kèm: ảnh so sánh xác nhận tán mango và rambutan gần như cùng một vòm tròn, chỉ khác
+      màu quả — củng cố mục '6 fruit tree' đang chờ trong regenerate queue mục 6.
 - [ ] `lotus` s05 — đã nằm trong queue mục 6 từ trước.
 
 ### Ghi chú vận hành cho session sau
