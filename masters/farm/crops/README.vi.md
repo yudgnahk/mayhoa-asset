@@ -1,5 +1,7 @@
 # Phase 2 crop cốt lõi và Phase 3 herb / low crop
 
+**Ngôn ngữ:** Tiếng Việt · [English](README.en.md)
+
 **Trạng thái:** Reference growth-stage chuẩn của Phase 2 và Phase 3<br>
 **Project:** Mayhoa<br>
 **Phong cách:** Mayhoa Nostalgic Hand-Painted Farm Sprite

@@ -1,5 +1,7 @@
 # Mayhoa — Asset Geometry Fix Checklist
 
+**Ngôn ngữ:** Tiếng Việt · [English](ASSET_GEOMETRY_FIX_CHECKLIST.en.md)
+
 **Status:** normalize 2026-08-26 xong; **QC lại 2026-09-05** — 95/95 file plant PASS geometry core, phát sinh 2 việc blocking + 3 lỗ hổng tài liệu (xem mục 9)
 **Baseline:** đo 2026-08-26 bằng `tools/geometry_audit.py` (alpha ≥ 24/255, bottom band 3%) — chi tiết ở §20 của spec
 **Spec:** `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.vi.md` (source of truth cho mọi con số)
@@ -10,7 +12,7 @@
 
 Đây là **execution record**, không phải spec — không định nghĩa quy tắc hình học mới, chỉ ghi lại việc áp dụng `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.vi.md` lên `masters/` hiện có. Đợt normalize chính (mục 0–6) đã **thực thi xong** ngày 2026-08-26.
 
-Đợt QC lại toàn bộ 19 pack ngày 2026-09-05 nằm ở **mục 9** — geometry core PASS 95/95 file plant, không regression. Naming atlas (mục 7) **đã chốt**: một atlas cho mỗi class, sinh bằng `tools/build_atlas.py`. Còn 7 mục chờ, liệt kê ở **mục 9.7**: 4 mục cần pipeline sinh ảnh, 2 mục cần game code (chưa tồn tại), 1 mục trùng lặp.
+Đợt QC lại toàn bộ 19 pack ngày 2026-09-05 nằm ở **mục 9** — geometry core PASS 95/95 file plant, không regression. Naming atlas (mục 7) **đã chốt**: một atlas cho mỗi class, sinh bằng `tools/build_atlas.py`. Còn 7 mục chờ, nằm rải ở mục 5, 6, 8 và 9.7: 4 mục cần pipeline sinh ảnh (mục 6), 2 mục cần môi trường game chưa tồn tại (mục 5 và 8), 1 mục ở 9.7 trỏ ngược về mục 6.
 
 Mục 6 của file này liệt kê thêm một hàng chờ regenerate phát sinh từ visual review sau normalize (soil_tilled — đã xong bằng `v02`, carrot s05, tonkin-jasmine, lotus s05, 6 fruit tree) — phần đó đã được chuyển thành spec/prompt cụ thể trong `FARM_REGENERATION_PROMPTS.vi.md`, là tài liệu active cho công việc regenerate tiếp theo; coi file đó là nguồn hành động, không phải mục 6 ở đây.
 
@@ -92,7 +94,7 @@ Hai vòng chỉnh: (a) composite lên `soil_planted` (plate y 157–360) phát h
 - [x] Visual checks giữ nguyên kết luận cũ: carrot s05 củ cam rõ, tonkin-jasmine s05 hoa vàng rõ, culantro cân đối — không regenerate.
 - [ ] **Chờ game code ra đời** (2026-09-07: game code chưa tồn tại nên chưa xác nhận được). Khi có, engine phải ghim crop anchor vào tâm plate của tile (không phải mép/điểm khác), khớp anchor mới `(0.5, 0.89453125)`.
 
-## 6. Regenerate queue — RỖNG 🎉
+## 6. Regenerate queue — ban đầu RỖNG, sau bổ sung 4 mục
 
 Toàn bộ 6 case ứng viên đều PASS visual check, không file nào phải generate lại:
 
@@ -160,7 +162,7 @@ Chốt 2026-09-07:
 | crops (6) | rice | corn, tonkin-jasmine, culantro, mint | carrot |
 | soil (6) | — | 5 tile (palette ct=3) | soil_tilled |
 
-### 9.1 Blocking — phải sửa
+### 9.1 Blocking — phải sửa (ĐÃ XONG 2026-09-05)
 
 - [x] **carrot s04 — vi phạm margin (PHÁT HIỆN MỚI).** `carrot_stage-04_mature_v01.png` bbox=(57,22)-(433,458), top margin **22 px < 24**. Không phải regression mà là **fix chưa trọn** ở mục 5: scale `0.9040` hơi lỏng, đúng phải ≈ `0.8999` (trần visH hợp lệ = 458−24+1 = 435, hiện 437). Baseline trước normalize là 12 px → đã cải thiện nhưng chưa đạt.
       **Bắt buộc:** normalize lại **từ bản gốc trong git**, KHÔNG transform chồng lên file hiện tại (tránh resample lần hai).
@@ -176,10 +178,10 @@ Chốt 2026-09-07:
 
 ### 9.3 Soil — mở rộng phạm vi mục 6
 
-- [x] `soil_tilled_v01.png` — **xác nhận hỏng vĩnh viễn, đã generate lại thành `soil_tilled_v02.png`.** IHDR/PLTE/tRNS/IEND CRC hợp lệ, riêng IDAT (5634 B) **CRC FAIL**; zlib `Error -3: incorrect data check`, giải nén ra 0/262656 byte. md5 working tree **trùng git HEAD** → không có bản lành trong lịch sử để restore. Phải regenerate.
+- [x] `soil_tilled_v01.png` — **xác nhận hỏng vĩnh viễn, đã generate lại thành `soil_tilled_v02.png`.** IHDR/PLTE/tRNS/IEND CRC hợp lệ, riêng IDAT (5634 B) **CRC FAIL**; zlib `Error -3: incorrect data check`, giải nén ra 0/262656 byte. md5 working tree **trùng git HEAD** → không có bản lành trong lịch sử để restore. Đã regenerate thành `soil_tilled_v02.png`.
 - [x] **5 soil tile còn lại đều là palette PNG (colortype 3)** — vi phạm §6.3 (master bắt buộc RGBA8), giống các crop pack cũ trước khi normalize. Chưa từng được ghi nhận. Gộp vào cùng đợt regenerate `soil_tilled`.
 
-### 9.4 Cần visual review của user (máy không kết luận được)
+### 9.4 Cần visual review (ĐÃ XONG 2026-09-05 — xem kết luận từng mục)
 
 - [x] **`water-mimosa` vs `water-spinach` — ĐÃ KIỂM, PASS (báo động nhầm).** Xem kết luận ở 9.7.
       Nghi ngờ ban đầu: X-extent gần trùng từng pixel ở cả 5 stage: visW `213/368/509/636/707` vs `213/369/509/636/708`; bbox s03 `(130,466)-(638,728)` vs `(129,466)-(637,728)`. Spec dòng ~628 yêu cầu water-spinach có *"distinct silhouette from water-mimosa"*. Geometry PASS, nhưng cần xem cạnh nhau để xác nhận không đọc ra cùng một cây.
@@ -238,7 +240,7 @@ Chốt 2026-09-07:
 
 ## 9.7 Còn treo sau đợt fix 2026-09-05 — cần input ngoài
 
-Hai nhóm dưới đây **không sửa được bằng code**, đã cố ý để checkbox trống.
+Hai nhóm dưới đây **không sửa được bằng code**. Phần visual review đã xử lý xong 2026-09-05; phần cần pipeline sinh ảnh còn `soil_tilled` (đã xong) và các mục ở queue mục 6.
 
 ### Cần pipeline sinh ảnh (ChatGPT Create image → Save thẳng về ~/Downloads)
 - [x] `soil_tilled_v01.png` — đã generate lại thành **`soil_tilled_v02.png`** (2026-09-05).

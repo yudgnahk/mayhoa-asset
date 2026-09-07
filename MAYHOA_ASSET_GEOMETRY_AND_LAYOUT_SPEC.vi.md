@@ -1,8 +1,9 @@
 # Mayhoa — Asset Geometry, Anchor & Layout Spec
 
+**Ngôn ngữ:** Tiếng Việt · [English](MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.en.md)
+
 **Status:** Canonical geometry/layout contract for asset audit and production  
 **Project:** Mayhoa  
-**Language:** Vietnamese  
 **Scope:** Master assets, multi-stage assets, runtime anchor metadata, normalization/QC  
 **Related specs:** `MAYHOA_ART_STYLE_SPEC.vi.md`, `FARM_ASSET_GENERATION_PLAN.vi.md`, `FARM_REMAINING_PLANT_ASSET_PLAN.vi.md`, `ASSET_GEOMETRY_FIX_CHECKLIST.vi.md`
 

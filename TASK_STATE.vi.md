@@ -1,5 +1,7 @@
 # TASK_STATE — bàn giao phiên 2026-09-05/07
 
+**Ngôn ngữ:** Tiếng Việt · [English](TASK_STATE.en.md)
+
 > Đọc file này trước khi làm gì. Cập nhật nó khi trạng thái đổi, hoặc xoá khi PR #2 đã merge và queue đã hết.
 
 ## Mục tiêu đang theo đuổi

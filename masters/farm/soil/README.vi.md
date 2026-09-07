@@ -1,5 +1,7 @@
 # Phase 1 - Nền tảng đất trồng
 
+**Ngôn ngữ:** Tiếng Việt · [English](README.en.md)
+
 **Trạng thái:** Reference đất chuẩn của Phase 1  
 **Project:** Mayhoa  
 **Phong cách:** Mayhoa Nostalgic Hand-Painted Farm Sprite

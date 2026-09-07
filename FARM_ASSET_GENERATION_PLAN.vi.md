@@ -1,9 +1,10 @@
 # Mayhoa Farm Asset Generation Plan
 
+**Ngôn ngữ:** Tiếng Việt · [English](FARM_ASSET_GENERATION_PLAN.en.md)
+
 **Status:** Production roadmap  
 **Project:** Mayhoa  
 **Art style:** Mayhoa Nostalgic Hand-Painted Farm Sprite  
-**Language:** Tiếng Việt  
 
 Tài liệu này định nghĩa kế hoạch generate artwork cho hệ thống farm đầu tiên của Mayhoa. Mọi asset trong kế hoạch này phải tuân theo `MAYHOA_ART_STYLE_SPEC.vi.md`.
 
@@ -15,7 +16,7 @@ Tài liệu này **vẫn active** cho phần roadmap: asset taxonomy (§2–3), 
 
 Phần **canvas/anchor cụ thể ở §5 (Size system) đã bị `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.vi.md` ghi đè** — spec hình học đó là nguồn sự thật cho số đo canvas/anchor thật sự (ví dụ anchor crop đã đổi so với số liệu ngầm định ở đây). Khi hai tài liệu lệch nhau về số hình học, `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.vi.md` thắng.
 
-Lưu ý vận hành: thứ tự Phase ở §17 (pest = Phase 10, tool = Phase 11, xếp sau cả tree/aquatic Phase 4–8) là nguồn của xung đột `C-ART-02` đang OPEN trong repo `mayhoa` — Gate A của demo cần pest + tool sớm hơn thứ tự này quy định. Xem `README.md` ở root repo này để biết chi tiết.
+Lưu ý vận hành: thứ tự Phase ở §17 (pest = Phase 10, tool = Phase 11, xếp sau cả tree/aquatic Phase 4–8) là nguồn của xung đột `C-ART-02` đang OPEN trong repo `mayhoa` — Gate A của demo cần pest + tool sớm hơn thứ tự này quy định. Xem `README.vi.md` ở root repo này để biết chi tiết.
 
 ---
 

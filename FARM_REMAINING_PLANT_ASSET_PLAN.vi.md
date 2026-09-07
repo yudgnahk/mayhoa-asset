@@ -1,5 +1,7 @@
 # Mayhoa — Remaining Plant Asset Generation Plan
 
+**Ngôn ngữ:** Tiếng Việt · [English](FARM_REMAINING_PLANT_ASSET_PLAN.en.md)
+
 **Status:** Ready for parallel execution  
 **Project:** Mayhoa  
 **Art style:** Mayhoa Nostalgic Hand-Painted Farm Sprite  

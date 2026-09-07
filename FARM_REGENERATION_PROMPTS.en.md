@@ -1,37 +1,37 @@
-# Mayhoa — Regeneration Specs & Prompts (Đợt 1)
+# Mayhoa — Regeneration Specs & Prompts (Round 1)
 
-**Ngôn ngữ:** Tiếng Việt · [English](FARM_REGENERATION_PROMPTS.en.md)
+**Language:** [Tiếng Việt](FARM_REGENERATION_PROMPTS.vi.md) · English
 
-**Status:** Sẵn sàng generate
-**Nguồn queue:** `ASSET_GEOMETRY_FIX_CHECKLIST.vi.md` mục 6 (visual review 2026-08-26)
-**Specs liên quan:** `MAYHOA_ART_STYLE_SPEC.vi.md`, `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.vi.md`
+**Status:** Ready to generate
+**Queue source:** `ASSET_GEOMETRY_FIX_CHECKLIST.en.md` section 6 (visual review 2026-08-26)
+**Related specs:** `MAYHOA_ART_STYLE_SPEC.en.md`, `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.en.md`
 
 ---
 
 ## 1. Workflow
 
-1. Với mỗi hạng mục bên dưới: paste **Shared Style Block + prompt riêng** vào ChatGPT (kèm ảnh reference được ghi chú).
-2. Tải PNG về, đặt tên đúng convention trong bảng, bỏ vào đúng thư mục `masters/`.
-3. Báo Claude → pipeline tự chạy: `geometry_audit.py` → `normalize_pack.py` (resample + căn root) → composite QC lên soil tile → playground → báo PASS/FAIL từng file.
+1. For each item below: paste the **Shared Style Block + the item's own prompt** into ChatGPT (together with the noted reference images).
+2. Download the PNG, name it exactly per the convention in the table, and put it into the correct `masters/` folder.
+3. Tell Claude → the pipeline runs by itself: `geometry_audit.py` → `normalize_pack.py` (resample + root alignment) → composite QC onto the soil tile → playground → PASS/FAIL report per file.
 
-### Generation KHÔNG cần làm đúng (pipeline tự sửa)
+### Generation does NOT have to get these right (the pipeline fixes them)
 
-- Canvas size / tỷ lệ khung — cứ ra square bất kỳ ≥1024 (tree) hoặc ≥512 (crop/tile), pipeline resample.
-- Vị trí cây trong khung, root lệch tâm, sát mép, thiếu padding — pipeline scale + translate.
-- Kích thước tương đối giữa các loài — runtime display scale lo.
+- Canvas size / frame ratio — any square ≥1024 (tree) or ≥512 (crop/tile) is fine, the pipeline resamples.
+- Plant position inside the frame, off-center root, too close to the edge, missing padding — the pipeline scales + translates.
+- Relative size between species — the runtime display scale takes care of that.
 
-### Generation BẮT BUỘC làm đúng (transform không cứu được)
+### Generation MUST get these right (no transform can save them)
 
-- Morphology đúng loài + silhouette đặc trưng (mục tiêu chính của đợt này).
-- Style painterly nhất quán với pack hiện có.
-- Harvest/flower cue đúng stage — không ra hoa/quả sớm.
-- **Nền transparent thật** (không matte trắng/đen, không scene, không bake đất/tile).
-- Một cây/một object duy nhất, không contact sheet, không text/watermark.
-- Với pack nhiều stage: cùng một cá thể cây lớn dần, cấu trúc thay đổi thật (không phải một hình scale to dần).
+- Correct species morphology + a characteristic silhouette (the main goal of this round).
+- A painterly style consistent with the existing packs.
+- The harvest/flower cue on the right stage — no early flowers or fruit.
+- **A genuinely transparent background** (no white/black matte, no scene, no baked-in soil/tile).
+- A single plant/object only, no contact sheet, no text/watermark.
+- For multi-stage packs: the same individual plant growing, with the structure genuinely changing (not one image scaled up).
 
 ---
 
-## 2. Shared Style Block (paste đầu MỌI prompt)
+## 2. Shared Style Block (paste at the top of EVERY prompt)
 
 ```text
 Art style — "Nostalgic Hand-Painted Farm Sprite": a cozy farming-game sprite
@@ -50,29 +50,29 @@ A very small soft contact shadow directly under the base is allowed; no long
 cast shadows, no ground/soil/scene baked in, no text or watermark.
 ```
 
-**Negative nhắc lại khi model bướng:** `no background, no soil tile, no scene, no frame, no border, no watermark, no photorealism, no 3D render, no neon colors, no multiple views, no sprite sheet`.
+**Negatives to repeat when the model gets stubborn:** `no background, no soil tile, no scene, no frame, no border, no watermark, no photorealism, no 3D render, no neon colors, no multiple views, no sprite sheet`.
 
-**Reference:** luôn attach 1–2 asset PASS hiện có làm style anchor — tốt nhất là `coffee_stage-05_berry_v01.png` (chuẩn calibration) + 1 file cùng loài phiên bản cũ (để giữ nhận diện, kèm ghi chú điểm cần đổi).
+**Reference:** always attach 1–2 existing PASS assets as a style anchor — ideally `coffee_stage-05_berry_v01.png` (the calibration standard) + 1 older-version file of the same species (to keep it recognizable, with a note on what needs to change).
 
 ---
 
-## 3. Bảng output
+## 3. Output table
 
-| # | Hạng mục | Số file | Canvas tối thiểu | Đích |
+| # | Item | Files | Minimum canvas | Destination |
 |---|---|---:|---|---|
 | A | soil_tilled | 1 | 512 | `masters/farm/soil/soil_tilled_v02.png` |
 | B | carrot stage-05 | 1 | 512 | `masters/farm/crops/carrot/carrot_stage-05_harvestable_v02.png` |
 | C | tonkin-jasmine pack | 5 | 512 | `masters/farm/crops/tonkin-jasmine/tonkin-jasmine_stage-0N_<semantic>_v02.png` |
 | D | lotus stage-05 | 1 | 1024 | `masters/farm/aquatic-crops/lotus/lotus_stage-05_flowering_v02.png` |
-| E–J | 6 fruit tree pack | 30 | 1024 | `masters/farm/trees/<species>/<species>_stage-0N_<semantic>_v02.png` |
+| E–J | 6 fruit tree packs | 30 | 1024 | `masters/farm/trees/<species>/<species>_stage-0N_<semantic>_v02.png` |
 
-Stage semantics giữ như v01 (tree: sprout/sapling/young/flowering/fruiting; crop: seeded/sprout/young/mature/harvestable; tonkin-jasmine xem mục C).
+Stage semantics stay as in v01 (tree: sprout/sapling/young/flowering/fruiting; crop: seeded/sprout/young/mature/harvestable; for tonkin-jasmine see section C).
 
 ---
 
-## A. soil_tilled (file v01 hỏng dữ liệu)
+## A. soil_tilled (the v01 file is data-corrupt)
 
-Attach reference: `soil_empty_v01.png` + `soil_planted_v01.png`.
+Attach references: `soil_empty_v01.png` + `soil_planted_v01.png`.
 
 ```text
 A farmland soil tile sprite for a farming game, matching the attached soil
@@ -86,13 +86,13 @@ and shallow trenches, slightly darker moist soil in the trenches. No plants,
 no seeds, no grass.
 ```
 
-Nghiệm thu: cùng hình dáng/kích thước plate với 5 tile kia (pipeline sẽ overlay so alpha); rãnh cày theo phối cảnh oval; không cây cỏ.
+Acceptance: the same plate shape/size as the other 5 tiles (the pipeline will overlay and compare alpha); the furrows follow the oval perspective; no plants.
 
 ---
 
-## B. carrot stage-05 (lộ vai củ)
+## B. carrot stage-05 (expose the root shoulders)
 
-Attach reference: `carrot_stage-04_mature_v01.png` + `carrot_stage-05_harvestable_v01.png` (ghi chú: giữ foliage, đổi phần củ).
+Attach references: `carrot_stage-04_mature_v01.png` + `carrot_stage-05_harvestable_v01.png` (note: keep the foliage, change the root part).
 
 ```text
 Harvest-ready carrot plant sprite, same species and foliage style as the
@@ -106,17 +106,17 @@ height, with a hint of root taper. This is the harvest cue: make the orange
 pop against the green foliage.
 ```
 
-Nghiệm thu: vai củ cam đọc rõ ở ~150 px; foliage vẫn cùng loài với s01–s04; cam chỉ xuất hiện ở s05 (s04 giữ nguyên v01).
+Acceptance: the orange root shoulders read clearly at ~150 px; the foliage is still the same species as s01–s04; orange appears only at s05 (s04 stays at v01).
 
 ---
 
-## C. tonkin-jasmine — cả pack 5 stage, dạng leo giàn
+## C. tonkin-jasmine (Vietnamese: thiên lý) — the whole 5-stage pack, trellis-climbing form
 
-Contract mới: **support-structure plant** như thanh long (spec §9.4 Profile C) — giàn gỗ cố định, **giống hệt nhau ở cả 5 ảnh** (kích thước, vị trí, kiểu dáng), chỉ dây leo phát triển. Đo progression bằng plant coverage, không tính giàn.
+New contract: **support-structure plant** like dragon fruit (spec §9.4 Profile C) — a fixed wooden trellis, **identical in all 5 images** (size, position, style), with only the vine growing. Measure the progression by plant coverage, excluding the trellis.
 
-Attach reference: `dragon-fruit_stage-03_young_v01.png` (kiểu trụ đỡ + độ mộc) + 1 ảnh tonkin-jasmine v01 (giữ lá hình tim + hoa vàng-xanh đặc trưng).
+Attach references: `dragon-fruit_stage-03_young_v01.png` (post style + rustic feel) + 1 tonkin-jasmine v01 image (to keep the signature heart-shaped leaves + yellow-green flowers).
 
-Base prompt cho cả pack (thêm dòng stage tương ứng):
+Base prompt for the whole pack (append the matching stage line):
 
 ```text
 A Tonkin jasmine vine (Telosma cordata, Vietnamese: thien ly) growing on a small rustic
@@ -126,7 +126,7 @@ keep its exact size, shape and position identical across all growth stages;
 only the vine changes. Heart-shaped soft green leaves, slender twining stems.
 ```
 
-| Stage | Dòng thêm vào prompt | File |
+| Stage | Line to append to the prompt | File |
 |---|---|---|
 | 01 seeded | `Stage: just planted — the bare empty trellis, freshly disturbed soil spot at its base with a tiny 2-leaf sprout emerging. No vine on the trellis yet.` | `tonkin-jasmine_stage-01_seeded_v02.png` |
 | 02 sprout | `Stage: young sprout — a single thin vine has started twining up one post, reaching the first crossbar, a handful of small heart-shaped leaves.` | `tonkin-jasmine_stage-02_sprout_v02.png` |
@@ -134,13 +134,13 @@ only the vine changes. Heart-shaped soft green leaves, slender twining stems.
 | 04 mature | `Stage: mature — dense foliage covering most of the trellis, layered heart-shaped leaves, a few curling stem tips. No flowers yet.` | `tonkin-jasmine_stage-04_mature_v02.png` |
 | 05 harvestable | `Stage: harvestable — full lush coverage plus several restrained clusters of small pale yellow-green Tonkin jasmine flower buds tucked among the leaves; flowers are the focal cue but must not overload the sprite.` | `tonkin-jasmine_stage-05_harvestable_v02.png` |
 
-Nghiệm thu: giàn đồng nhất 5/5 ảnh (pipeline sẽ diff silhouette giàn); coverage tăng theo Profile C (0.20–0.35 / 0.40–0.55 / 0.65–0.80 / 0.88–0.96 / 1.0); hoa chỉ có ở s05.
+Acceptance: the trellis is identical across 5/5 images (the pipeline will diff the trellis silhouette); coverage increases per Profile C (0.20–0.35 / 0.40–0.55 / 0.65–0.80 / 0.88–0.96 / 1.0); flowers only at s05.
 
 ---
 
-## D. lotus stage-05 (hoa nhỏ lại)
+## D. lotus stage-05 (smaller flower)
 
-Attach reference: `lotus_stage-04_budding_v01.png` + `lotus_stage-05_flowering_v01.png` (ghi chú: giữ toàn bộ lá, chỉ sửa tỷ lệ hoa).
+Attach references: `lotus_stage-04_budding_v01.png` + `lotus_stage-05_flowering_v01.png` (note: keep all the leaves, only fix the flower proportion).
 
 ```text
 Flowering lotus plant sprite, same species, leaf style and radial
@@ -153,15 +153,15 @@ green seed pod and one closed pink bud among the leaves. Leaves unchanged:
 large round pastel green lotus pads on upright stems, radial spread.
 ```
 
-Nghiệm thu: đường kính bông chính < đường kính lá lớn nhất; vẫn đọc là harvest stage nhờ màu; spread ratio không tụt so với s04 (Profile D).
+Acceptance: the diameter of the main bloom < the diameter of the largest leaf; it still reads as the harvest stage thanks to the color; the spread ratio does not drop versus s04 (Profile D).
 
 ---
 
-## E–J. 6 fruit tree — regenerate cả pack, silhouette đặc trưng từng loài
+## E–J. 6 fruit trees — regenerate the whole pack, with a silhouette characteristic of each species
 
-Vấn đề đợt v01: 6 cây cùng công thức "tán tròn + thân nâu", chỉ khác quả. Đợt này **silhouette phải nhận diện được loài ngay cả khi che quả đi**.
+The problem with the v01 round: all 6 trees used the same "round canopy + brown trunk" formula and differed only in their fruit. This round **the silhouette must identify the species even with the fruit covered up**.
 
-### Template stage (dùng chung, thay `<SPECIES BLOCK>`)
+### Stage template (shared, substitute `<SPECIES BLOCK>`)
 
 ```text
 <SHARED STYLE BLOCK>
@@ -177,9 +177,9 @@ Stage 04 — flowering: near-full silhouette with the species' flowers. No fruit
 Stage 05 — fruiting: full mature silhouette, harvest-ready fruit as focal cue.
 ```
 
-Generate **từng ảnh một** (một prompt = shared block + species block + đúng một dòng stage).
+Generate **one image at a time** (one prompt = shared block + species block + exactly one stage line).
 
-### E. Xoài `mango`
+### E. Mango `mango`
 
 ```text
 MANGO TREE. Silhouette: a BROAD SPREADING DOME — the canopy is clearly wider
@@ -190,7 +190,7 @@ canopy edge. Fruit (stage 5): yellow-orange mangoes DANGLING on long string-
 like stalks well below the foliage — the hanging stalks are the signature.
 ```
 
-### F. Bưởi `pomelo`
+### F. Pomelo `pomelo`
 
 ```text
 POMELO TREE. Silhouette: an OPEN, slightly sparse and irregular crown where
@@ -201,7 +201,7 @@ round green-yellow pomelos, visibly heavy, bending their branches downward —
 few-but-huge is the signature.
 ```
 
-### G. Chanh `lemon`
+### G. Lemon `lemon`
 
 ```text
 LEMON TREE. Silhouette: a SMALL LOW BUSHY citrus — clearly the shortest
@@ -212,7 +212,7 @@ yellow lemons scattered evenly through the low canopy. Keep the whole tree
 compact and low — it must NOT look like a tall tree.
 ```
 
-### H. Vú sữa `star-apple`
+### H. Star apple `star-apple`
 
 ```text
 STAR APPLE TREE (vu sua, Chrysophyllum cainito). Silhouette: dense layered
@@ -224,7 +224,7 @@ inconspicuous purplish-white clusters along twigs. Fruit (stage 5): round
 smooth fruits in purple and green-purple, sitting close to the branches.
 ```
 
-### I. Vải `lychee`
+### I. Lychee `lychee`
 
 ```text
 LYCHEE TREE. Silhouette: a DENSE LOW ROUNDED MUSHROOM-shaped canopy, wider
@@ -235,7 +235,7 @@ fruits with a BUMPY knobbly rind, hanging in tight grape-like BUNCHES at
 the canopy edge.
 ```
 
-### J. Chôm chôm `rambutan`
+### J. Rambutan `rambutan`
 
 ```text
 RAMBUTAN TREE. Silhouette: an irregular OPEN spreading crown with a few
@@ -246,18 +246,18 @@ GREEN-TIPPED SPINES, in loose clusters — the hairy texture is the signature
 and must be visible.
 ```
 
-Nghiệm thu nhóm E–J:
+Acceptance for group E–J:
 
-- Che phần quả đi vẫn phân biệt được 6 loài qua silhouette (đặc biệt: xoài rộng-vòm, chanh thấp-bụi, vải nấm-đặc, chôm chôm mở-lởm chởm, vú sữa hai màu lá).
-- Chanh: thấp nhất nhóm (display target đã hạ ~256 px — spec §9.5).
-- Không hoa ở s01–s03, không quả ở s01–s04.
-- Progression Profile A (đã nới s03 ≤ 0.88).
-- Pipeline sẽ tự căn root (512, 970) và margin — không cần canh khi generate.
+- With the fruit covered up, the 6 species are still distinguishable by silhouette (especially: mango broad-domed, lemon low-bushy, lychee dense-mushroom, rambutan open-ragged, star-apple two-tone leaves).
+- Lemon: the shortest of the group (the display target has already been lowered to ~256 px — spec §9.5).
+- No flowers at s01–s03, no fruit at s01–s04.
+- Profile A progression (s03 ≤ 0.88 after the loosening).
+- The pipeline will align the root (512, 970) and the margins itself — no need to frame it at generation time.
 
 ---
 
-## 4. Sau khi generate
+## 4. After generating
 
-- File v02 đặt cạnh v01 (không xóa v01 cho tới khi PASS).
-- Claude chạy: audit → normalize → composite → playground → báo cáo per-file theo format spec §17.
-- File PASS: v02 thành canonical, v01 archive; runtime atlas rebuild ở bước cuối.
+- Put the v02 file next to v01 (do not delete v01 until it PASSes).
+- Claude runs: audit → normalize → composite → playground → per-file report in the format from spec §17.
+- Files that PASS: v02 becomes canonical, v01 is archived; the runtime atlas is rebuilt as the final step.
