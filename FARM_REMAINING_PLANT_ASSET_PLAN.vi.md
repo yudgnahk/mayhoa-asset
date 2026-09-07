@@ -1,5 +1,7 @@
 # Mayhoa — Remaining Plant Asset Generation Plan
 
+**Ngôn ngữ:** Tiếng Việt · [English](FARM_REMAINING_PLANT_ASSET_PLAN.en.md)
+
 **Status:** Ready for parallel execution  
 **Project:** Mayhoa  
 **Art style:** Mayhoa Nostalgic Hand-Painted Farm Sprite  
@@ -29,8 +31,8 @@ Field crops — 6/6 species, mỗi species đủ 5 stage:
 - [x] rice
 - [x] corn
 - [x] carrot
-- [x] thien-ly
-- [x] ngo-gai
+- [x] tonkin-jasmine
+- [x] culantro
 - [x] mint
 
 Fruit trees đã hoàn tất — 6/10 tree/perennial species trong roadmap:

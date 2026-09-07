@@ -1,5 +1,7 @@
 # Mayhoa Art Style Spec — Nostalgic Hand-Painted Farm Sprite
 
+**Ngôn ngữ:** Tiếng Việt · [English](MAYHOA_ART_STYLE_SPEC.en.md)
+
 ## 1. Mục tiêu
 
 Tài liệu này định nghĩa phong cách artwork chuẩn cho game **mayhoa**.

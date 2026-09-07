@@ -11,7 +11,7 @@ Hỗ trợ PNG RGBA8 (colortype 6) và palette+tRNS (colortype 3 — chỉ để
 known-issue pack; master mới bắt buộc RGBA8 theo §6.3).
 
 Lưu ý §7.1: rootX bottom-band chỉ tin cậy cho morphology thân đơn; với
-radial/rosette (lotus, ngo-gai...) chỉ dùng tham khảo, không PASS/FAIL tự động.
+radial/rosette (lotus, culantro...) chỉ dùng tham khảo, không PASS/FAIL tự động.
 
 Usage:
     python3 tools/geometry_audit.py masters/farm/trees/coffee/*.png
@@ -67,25 +67,35 @@ def alpha_rows(path):
     idat = b''
     trns = b''
     w = h = bd = ct = None
-    while pos < len(data):
-        ln = struct.unpack('>I', data[pos:pos + 4])[0]
-        typ = data[pos + 4:pos + 8]
-        chunk = data[pos + 8:pos + 8 + ln]
-        if typ == b'IHDR':
-            w, h, bd, ct = struct.unpack('>IIBB', chunk[:10])
-        elif typ == b'IDAT':
-            idat += chunk
-        elif typ == b'tRNS':
-            trns = chunk
-        pos += 12 + ln
+    try:
+        while pos < len(data):
+            ln = struct.unpack('>I', data[pos:pos + 4])[0]
+            typ = data[pos + 4:pos + 8]
+            chunk = data[pos + 8:pos + 8 + ln]
+            if typ == b'IHDR':
+                w, h, bd, ct = struct.unpack('>IIBB', chunk[:10])
+            elif typ == b'IDAT':
+                idat += chunk
+            elif typ == b'tRNS':
+                trns = chunk
+            pos += 12 + ln
+    except struct.error as err:
+        raise ValueError(f"chunk header hỏng/cụt: {err}") from err
     if bd != 8 or ct not in (3, 6):
         raise ValueError(f"unsupported PNG: colortype={ct} bitdepth={bd} (master phải RGBA8)")
-    raw = zlib.decompress(idat)
+    try:
+        raw = zlib.decompress(idat)
+    except zlib.error as err:
+        raise ValueError(f"IDAT corrupt: {err}") from err
+    stride = w * 4 if ct == 6 else w
+    need = h * (stride + 1)
+    if len(raw) < need:
+        raise ValueError(f"IDAT thiếu scanline: cần {need} byte, giải nén được {len(raw)}")
     if ct == 6:
-        lines = _unfilter(raw, h, w * 4, 4)
+        lines = _unfilter(raw, h, stride, 4)
         return w, h, ct, [bytes(l[3::4]) for l in lines]
     alpha = [trns[i] if i < len(trns) else 255 for i in range(256)]
-    lines = _unfilter(raw, h, w, 1)
+    lines = _unfilter(raw, h, stride, 1)
     return w, h, ct, [bytes(alpha[v] for v in l) for l in lines]
 
 

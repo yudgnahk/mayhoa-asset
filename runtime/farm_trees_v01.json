@@ -1,0 +1,614 @@
+{
+  "format": "mayhoa-farm-trees-atlas-v1",
+  "image": "1x/farm/trees/farm_trees_v01.png",
+  "cellSize": {
+    "w": 256,
+    "h": 256
+  },
+  "masterCanvas": {
+    "w": 1024,
+    "h": 1024
+  },
+  "placementAnchor": {
+    "x": 0.5,
+    "y": 0.947266
+  },
+  "anchorUniform": true,
+  "anchorSpread": {
+    "x": 0.0,
+    "y": 0.0
+  },
+  "trees": [
+    "coconut",
+    "coffee",
+    "dragon-fruit",
+    "lemon",
+    "lychee",
+    "mango",
+    "pomelo",
+    "rambutan",
+    "rubber",
+    "star-apple"
+  ],
+  "stageOrder": [
+    "stage-01",
+    "stage-02",
+    "stage-03",
+    "stage-04",
+    "stage-05"
+  ],
+  "stageNames": {
+    "coconut": [
+      "sprout",
+      "sapling",
+      "young",
+      "mature",
+      "fruiting"
+    ],
+    "coffee": [
+      "sprout",
+      "sapling",
+      "young",
+      "flowering",
+      "berry"
+    ],
+    "dragon-fruit": [
+      "sprout",
+      "sapling",
+      "young",
+      "flowering",
+      "fruiting"
+    ],
+    "lemon": [
+      "sprout",
+      "sapling",
+      "young",
+      "flowering",
+      "fruiting"
+    ],
+    "lychee": [
+      "sprout",
+      "sapling",
+      "young",
+      "flowering",
+      "fruiting"
+    ],
+    "mango": [
+      "sprout",
+      "sapling",
+      "young",
+      "flowering",
+      "fruiting"
+    ],
+    "pomelo": [
+      "sprout",
+      "sapling",
+      "young",
+      "flowering",
+      "fruiting"
+    ],
+    "rambutan": [
+      "sprout",
+      "sapling",
+      "young",
+      "flowering",
+      "fruiting"
+    ],
+    "rubber": [
+      "sprout",
+      "sapling",
+      "young",
+      "mature",
+      "tapping"
+    ],
+    "star-apple": [
+      "sprout",
+      "sapling",
+      "young",
+      "flowering",
+      "fruiting"
+    ]
+  },
+  "frames": {
+    "coconut_stage-01": {
+      "x": 0,
+      "y": 0,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "coconut_stage-02": {
+      "x": 256,
+      "y": 0,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "coconut_stage-03": {
+      "x": 512,
+      "y": 0,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "coconut_stage-04": {
+      "x": 768,
+      "y": 0,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "coconut_stage-05": {
+      "x": 1024,
+      "y": 0,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "coffee_stage-01": {
+      "x": 0,
+      "y": 256,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "coffee_stage-02": {
+      "x": 256,
+      "y": 256,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "coffee_stage-03": {
+      "x": 512,
+      "y": 256,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "coffee_stage-04": {
+      "x": 768,
+      "y": 256,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "coffee_stage-05": {
+      "x": 1024,
+      "y": 256,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "dragon-fruit_stage-01": {
+      "x": 0,
+      "y": 512,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "dragon-fruit_stage-02": {
+      "x": 256,
+      "y": 512,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "dragon-fruit_stage-03": {
+      "x": 512,
+      "y": 512,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "dragon-fruit_stage-04": {
+      "x": 768,
+      "y": 512,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "dragon-fruit_stage-05": {
+      "x": 1024,
+      "y": 512,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "lemon_stage-01": {
+      "x": 0,
+      "y": 768,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "lemon_stage-02": {
+      "x": 256,
+      "y": 768,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "lemon_stage-03": {
+      "x": 512,
+      "y": 768,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "lemon_stage-04": {
+      "x": 768,
+      "y": 768,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "lemon_stage-05": {
+      "x": 1024,
+      "y": 768,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "lychee_stage-01": {
+      "x": 0,
+      "y": 1024,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "lychee_stage-02": {
+      "x": 256,
+      "y": 1024,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "lychee_stage-03": {
+      "x": 512,
+      "y": 1024,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "lychee_stage-04": {
+      "x": 768,
+      "y": 1024,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "lychee_stage-05": {
+      "x": 1024,
+      "y": 1024,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "mango_stage-01": {
+      "x": 0,
+      "y": 1280,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "mango_stage-02": {
+      "x": 256,
+      "y": 1280,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "mango_stage-03": {
+      "x": 512,
+      "y": 1280,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "mango_stage-04": {
+      "x": 768,
+      "y": 1280,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "mango_stage-05": {
+      "x": 1024,
+      "y": 1280,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "pomelo_stage-01": {
+      "x": 0,
+      "y": 1536,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "pomelo_stage-02": {
+      "x": 256,
+      "y": 1536,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "pomelo_stage-03": {
+      "x": 512,
+      "y": 1536,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "pomelo_stage-04": {
+      "x": 768,
+      "y": 1536,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "pomelo_stage-05": {
+      "x": 1024,
+      "y": 1536,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "rambutan_stage-01": {
+      "x": 0,
+      "y": 1792,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "rambutan_stage-02": {
+      "x": 256,
+      "y": 1792,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "rambutan_stage-03": {
+      "x": 512,
+      "y": 1792,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "rambutan_stage-04": {
+      "x": 768,
+      "y": 1792,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "rambutan_stage-05": {
+      "x": 1024,
+      "y": 1792,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "rubber_stage-01": {
+      "x": 0,
+      "y": 2048,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "rubber_stage-02": {
+      "x": 256,
+      "y": 2048,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "rubber_stage-03": {
+      "x": 512,
+      "y": 2048,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "rubber_stage-04": {
+      "x": 768,
+      "y": 2048,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "rubber_stage-05": {
+      "x": 1024,
+      "y": 2048,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "star-apple_stage-01": {
+      "x": 0,
+      "y": 2304,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "star-apple_stage-02": {
+      "x": 256,
+      "y": 2304,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "star-apple_stage-03": {
+      "x": 512,
+      "y": 2304,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "star-apple_stage-04": {
+      "x": 768,
+      "y": 2304,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    },
+    "star-apple_stage-05": {
+      "x": 1024,
+      "y": 2304,
+      "w": 256,
+      "h": 256,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.947266
+      }
+    }
+  }
+}

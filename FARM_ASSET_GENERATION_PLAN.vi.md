@@ -1,9 +1,10 @@
 # Mayhoa Farm Asset Generation Plan
 
+**Ngôn ngữ:** Tiếng Việt · [English](FARM_ASSET_GENERATION_PLAN.en.md)
+
 **Status:** Production roadmap  
 **Project:** Mayhoa  
 **Art style:** Mayhoa Nostalgic Hand-Painted Farm Sprite  
-**Language:** Tiếng Việt  
 
 Tài liệu này định nghĩa kế hoạch generate artwork cho hệ thống farm đầu tiên của Mayhoa. Mọi asset trong kế hoạch này phải tuân theo `MAYHOA_ART_STYLE_SPEC.vi.md`.
 
@@ -15,7 +16,7 @@ Tài liệu này **vẫn active** cho phần roadmap: asset taxonomy (§2–3), 
 
 Phần **canvas/anchor cụ thể ở §5 (Size system) đã bị `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.vi.md` ghi đè** — spec hình học đó là nguồn sự thật cho số đo canvas/anchor thật sự (ví dụ anchor crop đã đổi so với số liệu ngầm định ở đây). Khi hai tài liệu lệch nhau về số hình học, `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.vi.md` thắng.
 
-Lưu ý vận hành: thứ tự Phase ở §17 (pest = Phase 10, tool = Phase 11, xếp sau cả tree/aquatic Phase 4–8) là nguồn của xung đột `C-ART-02` đang OPEN trong repo `mayhoa` — Gate A của demo cần pest + tool sớm hơn thứ tự này quy định. Xem `README.md` ở root repo này để biết chi tiết.
+Lưu ý vận hành: thứ tự Phase ở §17 (pest = Phase 10, tool = Phase 11, xếp sau cả tree/aquatic Phase 4–8) là nguồn của xung đột `C-ART-02` đang OPEN trong repo `mayhoa` — Gate A của demo cần pest + tool sớm hơn thứ tự này quy định. Xem `README.vi.md` ở root repo này để biết chi tiết.
 
 ---
 
@@ -67,8 +68,8 @@ Cây trồng ngắn ngày / cây thấp hoặc trung bình:
 - rice / lúa nước
 - corn / bắp
 - carrot
-- thien-ly / hoa thiên lý
-- ngo-gai / ngò gai
+- tonkin-jasmine / hoa thiên lý
+- culantro / ngò gai
 - mint / bạc hà
 
 ### 2.3 `farm/aquatic-crops`
@@ -122,8 +123,8 @@ Sâu, bọ, infestation overlays.
 rice
 corn
 carrot
-thien-ly
-ngo-gai
+tonkin-jasmine
+culantro
 mint
 ```
 
@@ -431,8 +432,8 @@ masters/
       rice/
       corn/
       carrot/
-      thien-ly/
-      ngo-gai/
+      tonkin-jasmine/
+      culantro/
       mint/
     aquatic-crops/
       lotus/
@@ -550,8 +551,8 @@ Mục tiêu của phase này là khóa growth-stage language cho cả crop syste
 
 Generate full growth stages cho:
 
-1. thien-ly
-2. ngo-gai
+1. tonkin-jasmine
+2. culantro
 3. mint
 
 Mỗi loại 5 stage nếu gameplay không yêu cầu ít hơn.
@@ -686,34 +687,41 @@ PLAN -> GENERATE -> REVIEW -> REVISE -> APPROVE -> SYNC -> VERIFY -> OPTIMIZE ->
 
 ### Asset sync transport
 
-Dùng Google Drive làm staging layer giữa ChatGPT và local Mayhoa workspace.
+Claude-in-Chrome tải thẳng ảnh từ ChatGPT xuống đĩa local. **Không dùng Google Drive, không dùng `gws`.**
 
 Luồng transport chính thức:
 
 ```text
-ChatGPT generated/uploaded image
--> upload vào Google Drive folder `Mayhoa`
--> lấy Drive file ID
--> download về local bằng `gws` đã authenticated
--> verify MIME, dimensions và image readability
--> move/write vào đúng path `masters/...`
+ChatGPT Create image output
+-> mở ảnh ở fullscreen viewer, bấm nút "Save"
+-> file rơi vào ~/Downloads, tên dạng "ChatGPT Image <ngày giờ>.png"
+-> nhận diện file mới theo mốc thời gian
+-> verify MIME, dimensions, alpha thật
+-> move vào `.ai-bridge/<species>/`; chỉ bản approved mới vào `masters/...`
 ```
 
-Với binary file trên Drive, dùng command local:
+Nhận diện file mới an toàn cho cả mẻ nhiều ảnh — đặt mốc **trước** khi bấm Save:
 
 ```bash
-gws drive files get \
-  --params '{"fileId":"<DRIVE_FILE_ID>","alt":"media"}' \
-  --output <WORKSPACE_RELATIVE_DESTINATION>
+MARK=$(mktemp); touch "$MARK"
+# ... bấm Save lần lượt theo đúng thứ tự stage ...
+find ~/Downloads -name 'ChatGPT Image*.png' -newer "$MARK" -print0 | xargs -0 ls -tr
+# thứ tự cũ -> mới = đúng thứ tự đã bấm
 ```
 
 Quy tắc:
 
-- Không cần public Drive link; dùng authenticated local `gws` session.
+- Nút tải tên là **"Save"**, chỉ có trong fullscreen viewer (cùng thanh với Remove BG / Erase). Khung chat KHÔNG có nút Download.
+- Cách này chỉ đúng khi Chrome và repo ở **cùng một máy** — đúng với setup hiện tại. Nếu tách máy thì phải quay lại dùng staging layer.
 - Không dựa vào ChatGPT `openai/fileParams` cho canonical asset transport.
-- Không invoke local Codex, Codex CLI, `codex exec` hoặc bất kỳ Codex-backed executor nào để sync asset. CodexPro chỉ được dùng như filesystem/shell bridge khi cần.
-- Giữ rejected asset hoặc transfer test tạm trong `.ai-bridge/`; chỉ approved asset mới được đưa vào `masters/`.
-- Phải verify downloaded file đúng image type mong đợi trước khi nhận vào canonical asset set.
+- Không invoke local Codex, Codex CLI, `codex exec` hoặc bất kỳ Codex-backed executor nào để sync asset.
+- Giữ raw + prompt trong `.ai-bridge/<species>/`; chỉ approved asset mới được đưa vào `masters/`.
+- Phải verify downloaded file đúng image type và có alpha thật trước khi nhận vào canonical asset set.
+
+> **Lịch sử:** trước 2026-09-05 luồng này đi qua Google Drive + `gws` vì CodexPro2 không nhận binary
+> trực tiếp từ Create image. Chuyển sang Claude-in-Chrome thì bỏ được cả chặng đó: bớt một connector
+> call, bớt một lần click Allow, và bỏ hẳn rủi ro OAuth token hết hạn — `gws` token đã bị revoke đúng
+> lúc cần dùng (2026-09-05).
 
 Không generate phase tiếp theo trước khi phase hiện tại đạt acceptance criteria, trừ khi asset chỉ được tạo thử nghiệm và không merge vào production set.
 

@@ -1,0 +1,382 @@
+{
+  "format": "mayhoa-farm-crops-atlas-v1",
+  "image": "1x/farm/crops/farm_crops_v01.png",
+  "cellSize": {
+    "w": 192,
+    "h": 192
+  },
+  "masterCanvas": {
+    "w": 512,
+    "h": 512
+  },
+  "placementAnchor": {
+    "x": 0.5,
+    "y": 0.894531
+  },
+  "anchorUniform": true,
+  "anchorSpread": {
+    "x": 0.0,
+    "y": 0.0
+  },
+  "crops": [
+    "carrot",
+    "corn",
+    "culantro",
+    "mint",
+    "rice",
+    "tonkin-jasmine"
+  ],
+  "stageOrder": [
+    "stage-01",
+    "stage-02",
+    "stage-03",
+    "stage-04",
+    "stage-05"
+  ],
+  "stageNames": {
+    "carrot": [
+      "seeded",
+      "sprout",
+      "young",
+      "mature",
+      "harvestable"
+    ],
+    "corn": [
+      "seeded",
+      "sprout",
+      "young",
+      "mature",
+      "harvestable"
+    ],
+    "culantro": [
+      "seeded",
+      "sprout",
+      "young",
+      "mature",
+      "harvestable"
+    ],
+    "mint": [
+      "seeded",
+      "sprout",
+      "young",
+      "mature",
+      "harvestable"
+    ],
+    "rice": [
+      "seeded",
+      "sprout",
+      "young",
+      "mature",
+      "harvestable"
+    ],
+    "tonkin-jasmine": [
+      "seeded",
+      "sprout",
+      "young",
+      "mature",
+      "harvestable"
+    ]
+  },
+  "frames": {
+    "carrot_stage-01": {
+      "x": 0,
+      "y": 0,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.894531
+      }
+    },
+    "carrot_stage-02": {
+      "x": 192,
+      "y": 0,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.894531
+      }
+    },
+    "carrot_stage-03": {
+      "x": 384,
+      "y": 0,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.894531
+      }
+    },
+    "carrot_stage-04": {
+      "x": 576,
+      "y": 0,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.894531
+      }
+    },
+    "carrot_stage-05": {
+      "x": 768,
+      "y": 0,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.894531
+      }
+    },
+    "corn_stage-01": {
+      "x": 0,
+      "y": 192,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.894531
+      }
+    },
+    "corn_stage-02": {
+      "x": 192,
+      "y": 192,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.894531
+      }
+    },
+    "corn_stage-03": {
+      "x": 384,
+      "y": 192,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.894531
+      }
+    },
+    "corn_stage-04": {
+      "x": 576,
+      "y": 192,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.894531
+      }
+    },
+    "corn_stage-05": {
+      "x": 768,
+      "y": 192,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.894531
+      }
+    },
+    "culantro_stage-01": {
+      "x": 0,
+      "y": 384,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.894531
+      }
+    },
+    "culantro_stage-02": {
+      "x": 192,
+      "y": 384,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.894531
+      }
+    },
+    "culantro_stage-03": {
+      "x": 384,
+      "y": 384,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.894531
+      }
+    },
+    "culantro_stage-04": {
+      "x": 576,
+      "y": 384,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.894531
+      }
+    },
+    "culantro_stage-05": {
+      "x": 768,
+      "y": 384,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.894531
+      }
+    },
+    "mint_stage-01": {
+      "x": 0,
+      "y": 576,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.894531
+      }
+    },
+    "mint_stage-02": {
+      "x": 192,
+      "y": 576,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.894531
+      }
+    },
+    "mint_stage-03": {
+      "x": 384,
+      "y": 576,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.894531
+      }
+    },
+    "mint_stage-04": {
+      "x": 576,
+      "y": 576,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.894531
+      }
+    },
+    "mint_stage-05": {
+      "x": 768,
+      "y": 576,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.894531
+      }
+    },
+    "rice_stage-01": {
+      "x": 0,
+      "y": 768,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.894531
+      }
+    },
+    "rice_stage-02": {
+      "x": 192,
+      "y": 768,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.894531
+      }
+    },
+    "rice_stage-03": {
+      "x": 384,
+      "y": 768,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.894531
+      }
+    },
+    "rice_stage-04": {
+      "x": 576,
+      "y": 768,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.894531
+      }
+    },
+    "rice_stage-05": {
+      "x": 768,
+      "y": 768,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.894531
+      }
+    },
+    "tonkin-jasmine_stage-01": {
+      "x": 0,
+      "y": 960,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.894531
+      }
+    },
+    "tonkin-jasmine_stage-02": {
+      "x": 192,
+      "y": 960,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.894531
+      }
+    },
+    "tonkin-jasmine_stage-03": {
+      "x": 384,
+      "y": 960,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.894531
+      }
+    },
+    "tonkin-jasmine_stage-04": {
+      "x": 576,
+      "y": 960,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.894531
+      }
+    },
+    "tonkin-jasmine_stage-05": {
+      "x": 768,
+      "y": 960,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.894531
+      }
+    }
+  }
+}

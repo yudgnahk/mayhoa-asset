@@ -1,179 +1,221 @@
 {
-  "format": "mayhoa-core-crops-atlas-v1",
-  "image": "1x/farm/crops/core_crops_v01.png",
+  "format": "mayhoa-farm-aquatic-atlas-v1",
+  "image": "1x/farm/aquatic/farm_aquatic_v01.png",
   "cellSize": {
     "w": 192,
     "h": 192
   },
   "masterCanvas": {
-    "w": 512,
-    "h": 512
+    "w": 768,
+    "h": 768
+  },
+  "masterCanvasBySpecies": {
+    "lotus": {
+      "w": 1024,
+      "h": 1024
+    },
+    "water-mimosa": {
+      "w": 768,
+      "h": 768
+    },
+    "water-spinach": {
+      "w": 768,
+      "h": 768
+    }
   },
   "placementAnchor": {
     "x": 0.5,
-    "y": 0.89453125
+    "y": 0.947917
   },
-  "crops": [
-    "rice",
-    "corn",
-    "carrot"
+  "anchorUniform": false,
+  "anchorSpread": {
+    "x": 0.0,
+    "y": 0.000651
+  },
+  "aquatic": [
+    "lotus",
+    "water-mimosa",
+    "water-spinach"
   ],
   "stageOrder": [
-    "stage-01_seeded",
-    "stage-02_sprout",
-    "stage-03_young",
-    "stage-04_mature",
-    "stage-05_harvestable"
+    "stage-01",
+    "stage-02",
+    "stage-03",
+    "stage-04",
+    "stage-05"
   ],
+  "stageNames": {
+    "lotus": [
+      "planted",
+      "sprout",
+      "young",
+      "budding",
+      "flowering"
+    ],
+    "water-mimosa": [
+      "planted",
+      "sprout",
+      "young",
+      "mature",
+      "harvestable"
+    ],
+    "water-spinach": [
+      "planted",
+      "sprout",
+      "young",
+      "mature",
+      "harvestable"
+    ]
+  },
   "frames": {
-    "rice_stage-01_seeded": {
+    "lotus_stage-01": {
       "x": 0,
       "y": 0,
       "w": 192,
       "h": 192,
       "anchor": {
         "x": 0.5,
-        "y": 0.89453125
+        "y": 0.947266
       }
     },
-    "rice_stage-02_sprout": {
+    "lotus_stage-02": {
       "x": 192,
       "y": 0,
       "w": 192,
       "h": 192,
       "anchor": {
         "x": 0.5,
-        "y": 0.89453125
+        "y": 0.947266
       }
     },
-    "rice_stage-03_young": {
+    "lotus_stage-03": {
       "x": 384,
       "y": 0,
       "w": 192,
       "h": 192,
       "anchor": {
         "x": 0.5,
-        "y": 0.89453125
+        "y": 0.947266
       }
     },
-    "rice_stage-04_mature": {
+    "lotus_stage-04": {
       "x": 576,
       "y": 0,
       "w": 192,
       "h": 192,
       "anchor": {
         "x": 0.5,
-        "y": 0.89453125
+        "y": 0.947266
       }
     },
-    "rice_stage-05_harvestable": {
+    "lotus_stage-05": {
       "x": 768,
       "y": 0,
       "w": 192,
       "h": 192,
       "anchor": {
         "x": 0.5,
-        "y": 0.89453125
+        "y": 0.947266
       }
     },
-    "corn_stage-01_seeded": {
+    "water-mimosa_stage-01": {
       "x": 0,
       "y": 192,
       "w": 192,
       "h": 192,
       "anchor": {
         "x": 0.5,
-        "y": 0.89453125
+        "y": 0.947917
       }
     },
-    "corn_stage-02_sprout": {
+    "water-mimosa_stage-02": {
       "x": 192,
       "y": 192,
       "w": 192,
       "h": 192,
       "anchor": {
         "x": 0.5,
-        "y": 0.89453125
+        "y": 0.947917
       }
     },
-    "corn_stage-03_young": {
+    "water-mimosa_stage-03": {
       "x": 384,
       "y": 192,
       "w": 192,
       "h": 192,
       "anchor": {
         "x": 0.5,
-        "y": 0.89453125
+        "y": 0.947917
       }
     },
-    "corn_stage-04_mature": {
+    "water-mimosa_stage-04": {
       "x": 576,
       "y": 192,
       "w": 192,
       "h": 192,
       "anchor": {
         "x": 0.5,
-        "y": 0.89453125
+        "y": 0.947917
       }
     },
-    "corn_stage-05_harvestable": {
+    "water-mimosa_stage-05": {
       "x": 768,
       "y": 192,
       "w": 192,
       "h": 192,
       "anchor": {
         "x": 0.5,
-        "y": 0.89453125
+        "y": 0.947917
       }
     },
-    "carrot_stage-01_seeded": {
+    "water-spinach_stage-01": {
       "x": 0,
       "y": 384,
       "w": 192,
       "h": 192,
       "anchor": {
         "x": 0.5,
-        "y": 0.89453125
+        "y": 0.947917
       }
     },
-    "carrot_stage-02_sprout": {
+    "water-spinach_stage-02": {
       "x": 192,
       "y": 384,
       "w": 192,
       "h": 192,
       "anchor": {
         "x": 0.5,
-        "y": 0.89453125
+        "y": 0.947917
       }
     },
-    "carrot_stage-03_young": {
+    "water-spinach_stage-03": {
       "x": 384,
       "y": 384,
       "w": 192,
       "h": 192,
       "anchor": {
         "x": 0.5,
-        "y": 0.89453125
+        "y": 0.947917
       }
     },
-    "carrot_stage-04_mature": {
+    "water-spinach_stage-04": {
       "x": 576,
       "y": 384,
       "w": 192,
       "h": 192,
       "anchor": {
         "x": 0.5,
-        "y": 0.89453125
+        "y": 0.947917
       }
     },
-    "carrot_stage-05_harvestable": {
+    "water-spinach_stage-05": {
       "x": 768,
       "y": 384,
       "w": 192,
       "h": 192,
       "anchor": {
         "x": 0.5,
-        "y": 0.89453125
+        "y": 0.947917
       }
     }
   }
