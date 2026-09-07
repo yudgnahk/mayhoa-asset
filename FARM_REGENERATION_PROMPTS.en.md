@@ -264,18 +264,27 @@ and must be visible.
 ```text
 DURIAN TREE (Durio zibethinus). Silhouette: a SLENDER, TALL PYRAMIDAL / CONICAL
 CANOPY — distinctly taller than wide. Central upright straight woody trunk with
-elegant vertical taper, branching outward into distinct, open, horizontal
-scaffold branches arranged in airy TIERED LAYERS (pagoda-like tiered architecture)
-with visible gaps between branch levels. NOT a round dense dome.
+elegant vertical taper, branching outward into 3–4 clearly SEPARATED horizontal
+scaffold tiers (pagoda-like tiered architecture). Between the tiers there must be
+EMPTY TRANSPARENT GAPS you can see straight through — the canopy is a few
+distinct foliage shelves stacked with air between them, NOT one continuous
+conical mass and NOT a round dense dome. Think stacked pagoda roofs, not a
+Christmas tree.
 Foliage: slender elongated lanceolate leaves with sharp pointed tips. Two-tone
 coloring: upper leaf surface is a light, soft warm olive-green and sunny pastel
 sage-green with crisp pale-yellow midrib veins and glossy sunlight highlights;
 underside has a soft shimmering light golden-bronze / dusty gold sheen.
 Flowers (stage 4): clusters of creamy-white and pale golden-butter blossoms
-hanging directly beneath the horizontal woody branches (cauliflory).
-Fruit (stage 5): 5–7 large, spiky DURIAN fruits with sharp pyramidal thorns
-hanging on thick rope-like woody stalks directly underneath the horizontal tiered
-limbs (cauliflory). Fruits are bright golden-olive green.
+hanging directly beneath the horizontal woody branches (cauliflory), dangling
+down into the open gaps between tiers so each cluster is silhouetted against
+empty space instead of being buried in the leaves.
+Fruit (stage 5): 5–7 large, spiky DURIAN fruits with sharp pyramidal thorns,
+bright golden-olive green, hanging on thick rope-like woody stalks directly
+underneath the horizontal tiered limbs (cauliflory). Each fruit is BIG — at
+least as wide as the trunk — and hangs DOWN INTO THE EMPTY GAP below its own
+branch tier, fully silhouetted against the transparent background with clear
+space around it. No fruit may be tucked inside or overlapped by the foliage
+mass. The fruits must be the single loudest read in the image at 150 px.
 ```
 
 Acceptance for group E–K:
@@ -283,6 +292,7 @@ Acceptance for group E–K:
 - With the fruit covered up, the 7 species are still distinguishable by silhouette (especially: mango broad-domed, lemon low-bushy, lychee dense-mushroom, rambutan open-ragged, star-apple two-tone leaves, durian tall-pyramidal-tiered).
 - Lemon: the shortest of the group (the display target has already been lowered to ~256 px — spec §9.5).
 - No flowers at s01–s03, no fruit at s01–s04.
+- **The harvest cue must sit in open space.** Fruit (and flowers) hang out into the gaps, clear of the foliage mass, cleanly silhouetted against the transparent background. Fruit buried inside the canopy is a FAIL even when the painting is beautiful — at 150 px the player cannot tell the plant is ready.
 - Profile A progression (s03 ≤ 0.88 after the loosening).
 - The pipeline will align the root (512, 970) and the margins itself — no need to frame it at generation time.
 

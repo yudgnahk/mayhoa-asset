@@ -263,18 +263,27 @@ and must be visible.
 ```text
 DURIAN TREE (Durio zibethinus). Silhouette: a SLENDER, TALL PYRAMIDAL / CONICAL
 CANOPY — distinctly taller than wide. Central upright straight woody trunk with
-elegant vertical taper, branching outward into distinct, open, horizontal
-scaffold branches arranged in airy TIERED LAYERS (pagoda-like tiered architecture)
-with visible gaps between branch levels. NOT a round dense dome.
+elegant vertical taper, branching outward into 3–4 clearly SEPARATED horizontal
+scaffold tiers (pagoda-like tiered architecture). Between the tiers there must be
+EMPTY TRANSPARENT GAPS you can see straight through — the canopy is a few
+distinct foliage shelves stacked with air between them, NOT one continuous
+conical mass and NOT a round dense dome. Think stacked pagoda roofs, not a
+Christmas tree.
 Foliage: slender elongated lanceolate leaves with sharp pointed tips. Two-tone
 coloring: upper leaf surface is a light, soft warm olive-green and sunny pastel
 sage-green with crisp pale-yellow midrib veins and glossy sunlight highlights;
 underside has a soft shimmering light golden-bronze / dusty gold sheen.
 Flowers (stage 4): clusters of creamy-white and pale golden-butter blossoms
-hanging directly beneath the horizontal woody branches (cauliflory).
-Fruit (stage 5): 5–7 large, spiky DURIAN fruits with sharp pyramidal thorns
-hanging on thick rope-like woody stalks directly underneath the horizontal tiered
-limbs (cauliflory). Fruits are bright golden-olive green.
+hanging directly beneath the horizontal woody branches (cauliflory), dangling
+down into the open gaps between tiers so each cluster is silhouetted against
+empty space instead of being buried in the leaves.
+Fruit (stage 5): 5–7 large, spiky DURIAN fruits with sharp pyramidal thorns,
+bright golden-olive green, hanging on thick rope-like woody stalks directly
+underneath the horizontal tiered limbs (cauliflory). Each fruit is BIG — at
+least as wide as the trunk — and hangs DOWN INTO THE EMPTY GAP below its own
+branch tier, fully silhouetted against the transparent background with clear
+space around it. No fruit may be tucked inside or overlapped by the foliage
+mass. The fruits must be the single loudest read in the image at 150 px.
 ```
 
 Nghiệm thu nhóm E–K:
@@ -282,6 +291,7 @@ Nghiệm thu nhóm E–K:
 - Che phần quả đi vẫn phân biệt được 7 loài qua silhouette (đặc biệt: xoài rộng-vòm, chanh thấp-bụi, vải nấm-đặc, chôm chôm mở-lởm chởm, vú sữa hai màu lá, sầu riêng cao-dáng tháp-phân tầng cành).
 - Chanh: thấp nhất nhóm (display target đã hạ ~256 px — spec §9.5).
 - Không hoa ở s01–s03, không quả ở s01–s04.
+- **Harvest cue phải nằm trong khoảng trống.** Quả (và hoa) treo ra chỗ hở, tách khỏi khối lá, viền rõ trên nền transparent. Quả chìm vào tán là FAIL kể cả khi ảnh vẽ đẹp — ở 150 px người chơi không đọc được là cây đã tới lứa hay chưa.
 - Progression Profile A (đã nới s03 ≤ 0.88).
 - Pipeline sẽ tự căn root (512, 970) và margin — không cần canh khi generate.
 
