@@ -8,6 +8,14 @@
 
 ---
 
+## Trạng thái và quan hệ với tài liệu khác
+
+Đây là **tài liệu geometry active và có quyền ưu tiên cao nhất** trong repo (xem thứ tự precedence do chính file này định nghĩa ở §18: geometry spec này > species-specific lifecycle spec > `FARM_ASSET_GENERATION_PLAN.vi.md` > `MAYHOA_ART_STYLE_SPEC.vi.md` > runtime JSON/README hiện có).
+
+Tài liệu này bổ trợ (không thay thế) `MAYHOA_ART_STYLE_SPEC.vi.md` (chỉ quy định visual style, không quy định hình học) và `FARM_ASSET_GENERATION_PLAN.vi.md` (roadmap/taxonomy/thứ tự phase, không phải nguồn số đo canvas/anchor chính xác). Việc áp dụng thực tế các con số ở đây cho `masters/` hiện có được ghi lại trong `ASSET_GEOMETRY_FIX_CHECKLIST.vi.md` (đã thực thi 2026-08-26); §20 của chính file này chứa baseline đo đạc và kết quả post-normalize.
+
+---
+
 ## 1. Mục đích
 
 Tài liệu này khóa các quy tắc hình học dùng chung cho asset Mayhoa để:

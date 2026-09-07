@@ -6,6 +6,16 @@
 
 ---
 
+## Trạng thái và quan hệ với tài liệu khác
+
+Đây là **execution record**, không phải spec — không định nghĩa quy tắc hình học mới, chỉ ghi lại việc áp dụng `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.vi.md` lên `masters/` hiện có. Đợt normalize chính (mục 0–6) đã **thực thi xong** ngày 2026-08-26.
+
+Còn 3 việc chờ, đều nằm ở mục 7–8: xác nhận phía game code điểm ghim crop trên tile (mục 5, checkbox cuối), quyết định naming cho atlas của 6 pack chưa từng có runtime JSON (mục 7), và verify cuối cùng — playground/so sánh trước-sau/commit (mục 8).
+
+Mục 6 của file này liệt kê thêm một hàng chờ regenerate phát sinh từ visual review sau normalize (soil_tilled hỏng, carrot s05, thien-ly, lotus s05, 6 fruit tree) — phần đó đã được chuyển thành spec/prompt cụ thể trong `FARM_REGENERATION_PROMPTS.vi.md`, là tài liệu active cho công việc regenerate tiếp theo; coi file đó là nguồn hành động, không phải mục 6 ở đây.
+
+---
+
 ## Quy tắc chung
 
 **Công thức normalize mỗi pack** (chỉ dùng transform được phép theo spec §12.1 — scale + translate, KHÔNG redraw):
