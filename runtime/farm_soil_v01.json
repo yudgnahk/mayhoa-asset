@@ -1,0 +1,91 @@
+{
+  "format": "mayhoa-farm-soil-atlas-v1",
+  "image": "1x/farm/soil/farm_soil_v01.png",
+  "cellSize": {
+    "w": 192,
+    "h": 192
+  },
+  "masterCanvas": {
+    "w": 512,
+    "h": 512
+  },
+  "placementAnchor": {
+    "x": 0.5,
+    "y": 0.703125
+  },
+  "anchorUniform": false,
+  "anchorSpread": {
+    "x": 0.0,
+    "y": 0.001953
+  },
+  "tiles": [
+    "soil_dry",
+    "soil_empty",
+    "soil_harvested",
+    "soil_planted",
+    "soil_tilled",
+    "soil_wet"
+  ],
+  "frames": {
+    "soil_dry": {
+      "x": 0,
+      "y": 0,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.703125
+      }
+    },
+    "soil_empty": {
+      "x": 192,
+      "y": 0,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.701172
+      }
+    },
+    "soil_harvested": {
+      "x": 384,
+      "y": 0,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.703125
+      }
+    },
+    "soil_planted": {
+      "x": 0,
+      "y": 192,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.703125
+      }
+    },
+    "soil_tilled": {
+      "x": 192,
+      "y": 192,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.703125
+      }
+    },
+    "soil_wet": {
+      "x": 384,
+      "y": 192,
+      "w": 192,
+      "h": 192,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.703125
+      }
+    }
+  }
+}

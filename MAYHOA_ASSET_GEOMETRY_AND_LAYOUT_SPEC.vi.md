@@ -223,11 +223,13 @@ placement_anchor_norm ≈ (0.5, 0.684)
 placement_anchor_px   ≈ (256, 350)
 ```
 
-Reference này đang tồn tại trong:
+Reference legacy này từng tồn tại trong:
 
-- `masters/farm/crops/README.vi.md`;
-- `runtime/core_crops_v01.json`;
-- `runtime/herb_crops_v01.json`.
+- `masters/farm/crops/README.vi.md` — đã cập nhật;
+- `runtime/core_crops_v01.json` — atlas đã bị xoá (2026-09-07);
+- `runtime/herb_crops_v01.json` — atlas đã bị xoá (2026-09-07).
+
+Cả hai atlas trên đã được gộp thành `runtime/farm_crops_v01.json` (xem §13.2).
 
 **Contract cuối (rev 2, cùng ngày): crop là sprite độc lập bottom-anchor giống tree.**
 
@@ -240,7 +242,7 @@ Quá trình chốt: (1) diễn giải "crop không cần cùng contactY" sai —
 - align X: thân đơn/bụi (rice, corn, carrot) dùng bottom-band centroid; rosette/bush (culantro, tonkin-jasmine, mint) dùng **bbox center** (§7.1);
 - QC bắt buộc composite check lên soil tile: chân cây tại tâm plate, không lòi dưới plate.
 
-`placementAnchor` trong `core_crops_v01.json` / `herb_crops_v01.json` đã đổi `(0.5, 0.684)` → `(0.5, 0.89453125)`. **Code game đọc anchor này cần được kiểm tra lại điểm ghim trên tile (tâm plate).**
+`placementAnchor` đã đổi `(0.5, 0.684)` → `(0.5, 0.89453125)`. Từ 2026-09-07 giá trị này nằm trong `runtime/farm_crops_v01.json` (ghi làm tròn 6 chữ số: `(0.5, 0.894531)`), thay cho `core_crops_v01.json` / `herb_crops_v01.json` đã bị xoá. **Code game đọc anchor này cần được kiểm tra lại điểm ghim trên tile (tâm plate).**
 
 Session audit sau phải xác minh:
 
@@ -710,6 +712,25 @@ masters/<domain>/<asset-class>/<species>/
 
 Không đổi filename chỉ vì normalize canvas/anchor nếu artwork version không thay đổi về semantic/art direction.
 
+### 11.1 Atlas runtime — hợp đồng đặt tên (chốt 2026-09-07)
+
+Một atlas cho mỗi asset class, không gộp theo wave và không per-species:
+
+```text
+<domain>_<class>_v<NN>
+```
+
+Đường dẫn output cố định:
+
+```text
+runtime/<atlas>.json
+runtime/1x/<domain>/<class>/<atlas>.png
+```
+
+Ví dụ: `farm_crops_v01` → `runtime/farm_crops_v01.json` + `runtime/1x/farm/crops/farm_crops_v01.png`.
+
+Danh sách species/tile trong atlas **đọc từ filesystem và sort alphabetical**, không hardcode — thêm một pack master mới là chỉ cần build lại. Với mỗi tile/pack có nhiều version, atlas lấy version **cao nhất đọc được**; version cao hơn nhưng file hỏng thì tụt xuống và ghi rõ lý do.
+
 ---
 
 ## 12. Normalization policy — được phép và không được phép
@@ -771,9 +792,14 @@ Nếu runtime atlas frame đã trim/crop transparent padding, anchor phải đư
 
 Không copy một runtime anchor cũ cho asset mới nếu master geometry khác.
 
-### 13.1 Legacy runtime metadata cần audit
+### 13.1 Legacy runtime metadata cần audit — GIẢI QUYẾT XONG (giữ làm lịch sử)
 
-`runtime/core_fruit_trees_v01.json` hiện có metadata legacy như:
+> **Trạng thái 2026-09-07:** toàn bộ atlas nhắc trong mục này (`core_fruit_trees_v01/v02`,
+> `core_crops_v01`, `herb_crops_v01`, `soil_states_v01`) **đã bị xoá khỏi repo** và thay bằng
+> 4 atlas sinh bằng `tools/build_atlas.py` — xem §13.2. Phần dưới giữ nguyên làm ghi chép
+> lịch sử của đợt audit 2026-08-26, không mô tả trạng thái hiện tại.
+
+`runtime/core_fruit_trees_v01.json` khi đó có metadata legacy như:
 
 ```text
 masterCanvas = 1122×1402
@@ -784,12 +810,60 @@ Trong khi generation plan hiện tại dùng tree master target `1024×1024`.
 
 Do đó metadata này **không được coi là canonical geometry mới** trước khi session audit xác minh lại toàn pipeline.
 
-Hiện trạng runtime metadata (2026-08-26):
+Hiện trạng runtime metadata **tại thời điểm 2026-08-26** (snapshot lịch sử, đã bị §13.2 thay thế):
 
 - `core_fruit_trees_v01.json` — legacy `1122×1402` / anchor `(0.5, 0.88)`, cover mango/pomelo/lemon/star-apple; phải rebuild `v02` sau khi masters normalize về `1024×1024` với anchor `(0.5, 0.947265625)`.
 - `lychee`, `rambutan` — master `1254×1254`, **chưa có runtime JSON**.
 - `coffee`, `dragon-fruit`, `coconut`, `lotus` — **chưa có runtime JSON**.
 - `core_crops_v01.json`, `herb_crops_v01.json` — khớp master 512 hiện tại, giữ anchor `(0.5, 0.684)`.
+
+### 13.2 Atlas runtime hiện hành — LOCKED (2026-09-07)
+
+Atlas không còn dựng tay. `tools/build_atlas.py` sinh toàn bộ từ `masters/`, có test
+(`tools/test_build_atlas.py`), idempotent (chạy 2 lần ra byte y hệt), build fail thì không ghi gì.
+
+```bash
+python3 tools/build_atlas.py                        # dựng lại cả 4 atlas
+python3 tools/build_atlas.py --atlas farm_soil_v01  # chỉ 1 atlas
+python3 tools/build_atlas.py --dry-run              # xem trước, không ghi file
+```
+
+**Atlas là sản phẩm sinh ra từ masters — không sửa tay.** Sai số liệu thì sửa master hoặc sửa
+script rồi build lại, không patch JSON.
+
+| Atlas | Nguồn master | Kích thước | Cell | Nội dung | Thay cho |
+|---|---|---|---|---|---|
+| `farm_crops_v01` | `masters/farm/crops/*/` | 960×1152 | 192 | 6 species × 5 stage | `core_crops_v01` + `herb_crops_v01` |
+| `farm_trees_v01` | `masters/farm/trees/*/` | 1280×2560 | 256 | 10 species × 5 stage | `core_fruit_trees_v01` + `v02` |
+| `farm_aquatic_v01` | `masters/farm/aquatic-crops/*/` | 960×576 | 192 | 3 species × 5 stage | *(chưa từng có atlas)* |
+| `farm_soil_v01` | `masters/farm/soil/*.png` | 576×384 | 192 | 6 tile | `soil_states_v01` |
+
+Đường dẫn: `runtime/<atlas>.json` + `runtime/1x/farm/<class>/<atlas>.png` (§11.1).
+
+**Schema (khác bản legacy, code game phải đọc lại):**
+
+- **Frame key là slot id** `<species>_stage-0N` — ví dụ `coffee_stage-05`, `rubber_stage-05`. Key
+  **không** mang nhãn semantic, vì nhãn stage lệch nhau giữa species (`coffee` → `berry`,
+  `rubber` → `tapping`, còn lại → `fruiting`); nếu key mang nhãn thì game phải tra bảng mới dựng
+  được key. Soil là ngoại lệ: key là full stem (`soil_dry`, `soil_tilled`...).
+- **`stageOrder`** luôn là `["stage-01","stage-02","stage-03","stage-04","stage-05"]`.
+- **`stageNames`**: map `<species> -> ["seeded","sprout",...]` giữ phần semantic, **chỉ để hiển thị**.
+- **`anchor.x` luôn = 0.5**, cố định theo cách các pack được normalize: nhóm thân đơn căn bottom-band
+  về tâm canvas, nhóm rosette căn bbox center về tâm canvas (§7.1). **Không đo bottom-band centroid
+  để làm anchorX** — heuristic đó sai với morphology rosette và từng làm culantro trượt ngang tới
+  37 px giữa các stage. Centroid vẫn được đo và báo ở dòng `NOTE` như tín hiệu QC master, không làm
+  fail build.
+- **`anchor.y` đo từng file** = `contactY / canvasH`, ghi cho **từng frame**; `placementAnchor` chỉ
+  là giá trị đại diện, kèm `anchorUniform` / `anchorSpread`:
+  - crops: `0.894531` đồng nhất (458/512, `anchorUniform: true`);
+  - trees: `0.947266` đồng nhất (970/1024, `anchorUniform: true`);
+  - aquatic: per-frame `0.947266`–`0.947917` (lotus canvas 1024, water-* canvas 768);
+  - soil: per-frame `0.701172`–`0.703125`.
+- **`masterCanvasBySpecies`** có mặt khi atlas trộn nhiều canvas — hiện chỉ `farm_aquatic_v01`
+  (lotus 1024×1024, water-mimosa / water-spinach 768×768). Cell giữ đồng nhất; game bù display
+  scale theo §9.5, atlas không tự scale.
+- `farm_soil_v01` lấy ô tilled từ `soil_tilled_v02.png` — `v01` hỏng IDAT vĩnh viễn, script chọn
+  version cao nhất đọc được (§11.1).
 
 ---
 
@@ -858,6 +932,8 @@ Geometry normalization không được phá các đặc điểm này.
 - [ ] Runtime anchor được derive từ canonical master anchor.
 - [ ] Atlas trim/remap không làm đổi gameplay pivot.
 - [ ] Playground không dùng per-stage auto-anchor để che lỗi master.
+- [ ] Atlas được build lại bằng `python3 tools/build_atlas.py` sau khi master đổi — không sửa tay JSON/PNG atlas (§13.2).
+- [ ] `git status` sạch sau khi build lại atlas (script idempotent; có diff nghĩa là master đã đổi thật).
 
 ---
 
@@ -904,7 +980,7 @@ Chỉ normalize pack có rule đã khóa:
 Sau khi master pass:
 
 - audit runtime JSON anchor;
-- rebuild/remap atlas nếu cần;
+- rebuild atlas bằng `python3 tools/build_atlas.py` (dùng `--dry-run` để xem trước) — không remap tay;
 - không sửa runtime trước master.
 
 ### Pass E — visual playground
@@ -992,7 +1068,12 @@ Crop contract:      512×512, root (256,458) = (0.5,0.89453125), contactY=458 Δ
 Tile plant point:   tâm soil plate (256,260) ≈ (0.5,0.508) — điểm engine ghim mọi plant root
 Aquatic anchor:     lotus LOCKED 1024×1024 root (512,970); mimosa/spinach pack-specific, pending
 Coconut canvas:     1024×1024 LOCKED — không dùng 1024×1280
-Runtime legacy:     must be revalidated after master audit
+Runtime legacy:     removed 2026-09-07 — thay bằng 4 atlas sinh từ script (§13.2)
+Atlas naming:       <domain>_<class>_v<NN>, một atlas cho mỗi class (§11.1)
+Atlas build:        python3 tools/build_atlas.py — atlas là build product, không sửa tay
+Atlas frame key:    slot id <species>_stage-0N; soil dùng full stem (soil_dry...)
+Atlas anchorX:      hằng số 0.5, không đo bottom-band centroid
+Atlas anchorY:      contactY/canvasH, đo và ghi cho từng frame
 ```
 
 Remaining-plan support is explicitly defined for:
@@ -1054,5 +1135,5 @@ Normalize pass đã chạy xong bằng `tools/normalize_pack.py`. Kết quả đ
 - **coconut**: per-stage rescale theo Profile B, ratio mới 0.332 / 0.506 / 0.725 / 0.916 / 1.0 — trong band.
 - **crops (rev 2 cuối, cùng ngày)**: hai bước — (a) composite QC phát hiện chân crop lòi dưới soil plate; (b) calibration sheet xác nhận cây phải đứng **tâm plate**, dẫn tới chuyển crop sang **bottom-anchor sprite** root `(256, 458)`. Transform từ bản gốc (single resample): rice / tonkin-jasmine / culantro / mint scale 1.0 (chỉ translate), corn 0.8855, carrot 0.904. Herb rosette align X theo bbox center. Runtime `placementAnchor` cả 2 JSON đổi → `(0.5, 0.89453125)`, texture rebuild. Cả 3 pack palette thành RGBA8. Composite 30 frame + playground verify PASS. **Chờ xác nhận phía game code: điểm ghim trên tile = tâm plate.**
 - **Visual QC**: 6/6 case trong regenerate queue PASS — không file nào phải generate lại.
-- **Runtime**: `core_fruit_trees_v02.json` + atlas đã rebuild (cell 256×256, anchor `(0.5, 0.947265625)`); atlas cho các pack mới chờ quyết định naming; crops atlas texture nên re-render vì corn/carrot đã scale.
+- **Runtime**: `core_fruit_trees_v02.json` + atlas đã rebuild (cell 256×256, anchor `(0.5, 0.947265625)`); atlas cho các pack mới chờ quyết định naming; crops atlas texture nên re-render vì corn/carrot đã scale. *(Cập nhật 2026-09-07: naming đã chốt là một atlas cho mỗi class — `core_fruit_trees_v02` bị thay bằng `farm_trees_v01`, và toàn bộ atlas nay sinh bằng `tools/build_atlas.py`; xem §11.1 + §13.2.)*
 - **Còn chờ**: playground verify (Pass E) + user compare diff + commit.

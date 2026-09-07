@@ -38,9 +38,20 @@ Thư mục này chứa master của 5 giai đoạn phát triển cho lúa, bắp
 
 ## Runtime atlas
 
-`runtime/1x/farm/crops/core_crops_v01.png` là shared-texture atlas 960x576 với cell 192x192. `runtime/core_crops_v01.json` chứa frame coordinates và placement anchor chung. Các hàng lần lượt là rice, corn, carrot; các cột theo thứ tự 5 stage ở trên.
+`runtime/1x/farm/crops/farm_crops_v01.png` là shared-texture atlas 960x1152 với cell 192x192, gộp cả 6 crop pack (Phase 2 + Phase 3) vào một texture: 6 species x 5 stage = 30 frame. `runtime/farm_crops_v01.json` chứa frame coordinates, anchor từng frame và `stageNames`.
 
-`runtime/1x/farm/crops/herb_crops_v01.png` là atlas Phase 3 tương ứng, kích thước 960x576. `runtime/herb_crops_v01.json` chứa frame coordinates và placement anchor chung. Các hàng lần lượt là tonkin-jasmine, culantro, mint; các cột theo cùng thứ tự 5 stage.
+- Hàng theo thứ tự alphabet: carrot, corn, culantro, mint, rice, tonkin-jasmine. Cột theo `stageOrder` = `stage-01`..`stage-05`.
+- Frame key là **slot id** `<species>_stage-0N` (ví dụ `culantro_stage-04`), không mang nhãn semantic — game dựng key thẳng từ species + stage index, không phải tra bảng. Nhãn semantic nằm trong `stageNames` (`<species> -> ["seeded","sprout",...]`) và chỉ dùng để hiển thị.
+- Anchor đồng nhất `(0.5, 0.894531)` cho cả 30 frame (`anchorUniform: true`), khớp root master `(256, 458)`. `anchor.x` luôn = 0.5 vì mọi master đã được căn tâm canvas — **không** đo bottom-band centroid để suy ra anchorX (heuristic đó sai với morphology rosette, xem spec §7.1).
+- `masterCanvas` = 512x512 cho toàn atlas.
+
+Atlas này thay cho `core_crops_v01` + `herb_crops_v01` (đã xoá khỏi repo). Atlas là **sản phẩm sinh ra từ masters, không sửa tay** — build lại bằng:
+
+```bash
+python3 tools/build_atlas.py --atlas farm_crops_v01   # thêm --dry-run để xem trước
+```
+
+Chạy `python3 tools/build_atlas.py` không tham số để dựng lại cả 4 atlas (`farm_crops_v01`, `farm_trees_v01`, `farm_aquatic_v01`, `farm_soil_v01`). Script idempotent: chạy 2 lần ra byte y hệt nhau.
 
 ## Artwork và production pipeline
 

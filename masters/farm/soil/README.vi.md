@@ -9,7 +9,7 @@ Thư mục này chứa bộ trạng thái đất chuẩn dùng làm nền tảng
 ## Các master state chuẩn
 
 - `soil_empty_v01.png`
-- `soil_tilled_v01.png`
+- `soil_tilled_v01.png` (IDAT hỏng vĩnh viễn — giữ lại chỉ để đối chiếu lịch sử) và `soil_tilled_v02.png` (canonical, 2026-09-05)
 - `soil_wet_v01.png`
 - `soil_planted_v01.png`
 - `soil_dry_v01.png`
@@ -37,13 +37,25 @@ Cả sáu master dùng canvas trong suốt 512x512, cùng góc camera, footprint
 
 ## Runtime atlas
 
-Với PixiJS, Phase 1 gồm shared-texture atlas 1x:
+Với PixiJS, soil dùng shared-texture atlas 1x:
 
-- `runtime/1x/farm/soil/soil_states_v01.png` - 576x384, sáu cell 192x192.
-- `runtime/soil_states_v01.json` - tọa độ frame.
+- `runtime/1x/farm/soil/farm_soil_v01.png` - 576x384, sáu cell 192x192.
+- `runtime/farm_soil_v01.json` - tọa độ frame + anchor từng frame.
 
-Thứ tự frame: hàng trên `empty`, `tilled`, `wet`; hàng dưới `planted`, `dry`, `harvested`. Master 512x512 tiếp tục là nguồn để xuất 2x/high-DPI về sau, thay vì ship master quá lớn trực tiếp vào gameplay.
+Thứ tự frame theo alphabet: hàng trên `soil_dry`, `soil_empty`, `soil_harvested`; hàng dưới `soil_planted`, `soil_tilled`, `soil_wet`. Frame key ở đây là **full stem** của tile (`soil_dry`, `soil_tilled`...) — soil là ngoại lệ duy nhất, các atlas có stage đều dùng slot id `<species>_stage-0N`.
+
+Anchor `x` luôn = 0.5; anchor `y` đo từng file nên không đồng nhất tuyệt đối: 0.701172 (`soil_empty`) đến 0.703125 (5 tile còn lại), `placementAnchor` đại diện là `(0.5, 0.703125)` kèm `anchorUniform: false`. `masterCanvas` = 512x512, tiếp tục là nguồn để xuất 2x/high-DPI về sau thay vì ship master quá lớn trực tiếp vào gameplay.
+
+Ô `soil_tilled` lấy từ `soil_tilled_v02.png`: script luôn chọn version cao nhất **đọc được**, và `v01` thì hỏng IDAT vĩnh viễn.
+
+Atlas này thay cho `soil_states_v01` (đã xoá khỏi repo). Atlas là **sản phẩm sinh ra từ masters, không sửa tay** — build lại bằng:
+
+```bash
+python3 tools/build_atlas.py --atlas farm_soil_v01   # thêm --dry-run để xem trước
+```
+
+Chạy `python3 tools/build_atlas.py` không tham số để dựng lại cả 4 atlas (`farm_crops_v01`, `farm_trees_v01`, `farm_aquatic_v01`, `farm_soil_v01`). Script idempotent: chạy 2 lần ra byte y hệt nhau.
 
 ## Điều kiện kết thúc Phase 1
 
-Phase 1 được khóa khi cả sáu state vẫn phân biệt rõ ở runtime size nhưng giữ nguyên footprint và perspective. Phase 2 phải composite/review growth stage của crop trước hết trên `soil_tilled_v01.png`, sau đó spot-check thêm trên wet, dry và planted.
+Phase 1 được khóa khi cả sáu state vẫn phân biệt rõ ở runtime size nhưng giữ nguyên footprint và perspective. Phase 2 phải composite/review growth stage của crop trước hết trên `soil_tilled_v02.png`, sau đó spot-check thêm trên wet, dry và planted.

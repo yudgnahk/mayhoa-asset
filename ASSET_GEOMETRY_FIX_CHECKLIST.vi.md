@@ -107,11 +107,27 @@ Calibration display scale đã chốt (không đụng master): corn → class L 
 
 **→ Specs + prompts cho toàn bộ queue trên: `FARM_REGENERATION_PROMPTS.vi.md`** (38 file: soil_tilled, carrot s05, tonkin-jasmine ×5, lotus s05, 6 fruit tree ×5). Generate xong bỏ file `_v02` vào masters rồi gọi Claude chạy pipeline QC/normalize.
 
-## 7. Runtime metadata — MỘT PHẦN
+## 7. Runtime metadata — DONE (2026-09-07)
 
-- [x] `runtime/core_fruit_trees_v02.json` + `runtime/1x/farm/trees/core_fruit_trees_v02.png` — rebuild xong từ masters mới: atlas 1280×1024, cell 256×256, masterCanvas 1024×1024, anchor `(0.5, 0.947265625)`. File v01 giữ nguyên để so sánh/rollback.
-- [ ] **CHỜ QUYẾT ĐỊNH NAMING**: atlas cho các pack chưa từng có runtime JSON — lychee, rambutan, coffee, dragon-fruit, coconut, lotus. Plan docs không định nghĩa cách gộp pack (1 atlas chung? theo wave? per-species?) và tên file ảnh hưởng code load của game → cần chốt trước khi build. Build bằng cùng script pattern như v02.
-- [x] `core_crops_v01.png` / `herb_crops_v01.png` — **đã rebuild texture** từ masters bottom-anchored (960×576, cell 192, layout không đổi) và **đã sửa JSON**: `placementAnchor` + per-frame anchor đổi `(0.5, 0.684)` → `(0.5, 0.89453125)`. Game code load 2 atlas này cần dùng anchor mới + ghim vào tâm plate.
+Ghi chép 2026-08-26 (giữ làm lịch sử — cả 3 atlas dưới đây **đã bị xoá khỏi repo** ở đợt 2026-09-07):
+
+- [x] `runtime/core_fruit_trees_v02.json` + `runtime/1x/farm/trees/core_fruit_trees_v02.png` — rebuild xong từ masters mới: atlas 1280×1024, cell 256×256, masterCanvas 1024×1024, anchor `(0.5, 0.947265625)`. File v01 giữ nguyên để so sánh/rollback. **→ nay thay bằng `farm_trees_v01`.**
+- [x] `core_crops_v01.png` / `herb_crops_v01.png` — **đã rebuild texture** từ masters bottom-anchored (960×576, cell 192, layout không đổi) và **đã sửa JSON**: `placementAnchor` + per-frame anchor đổi `(0.5, 0.684)` → `(0.5, 0.89453125)`. Game code load 2 atlas này cần dùng anchor mới + ghim vào tâm plate. **→ nay gộp thành `farm_crops_v01`.**
+
+Chốt 2026-09-07:
+
+- [x] **QUYẾT ĐỊNH NAMING — ĐÃ CHỐT**: một atlas cho mỗi asset class, tên `<domain>_<class>_v<NN>`; output `runtime/<atlas>.json` + `runtime/1x/<domain>/<class>/<atlas>.png`. Không gộp theo wave, không per-species. Danh sách species đọc từ filesystem, sort alphabetical → thêm pack mới chỉ cần build lại. Xem spec §11.1.
+- [x] **Atlas đã dựng lại bằng `tools/build_atlas.py`** (có test, idempotent, `--dry-run`) — atlas cũ dựng tay đã bị xoá:
+
+  | Atlas | Kích thước | Cell | Nội dung | Thay cho |
+  |---|---|---|---|---|
+  | `farm_crops_v01` | 960×1152 | 192 | 6 species × 5 stage | `core_crops_v01` + `herb_crops_v01` |
+  | `farm_trees_v01` | 1280×2560 | 256 | 10 species × 5 stage | `core_fruit_trees_v01` + `v02` |
+  | `farm_aquatic_v01` | 960×576 | 192 | 3 species × 5 stage | *(chưa từng có)* |
+  | `farm_soil_v01` | 576×384 | 192 | 6 tile | `soil_states_v01` |
+
+- [x] Schema mới, **game code phải đọc lại**: frame key là slot id `<species>_stage-0N` (soil dùng full stem); `stageOrder` cố định `stage-01`..`stage-05`; nhãn semantic chuyển sang `stageNames` (chỉ để hiển thị); `anchor.x` hằng số 0.5; `anchor.y` = `contactY/canvasH` ghi cho từng frame; `masterCanvasBySpecies` xuất hiện khi atlas trộn nhiều canvas (hiện chỉ aquatic). Chi tiết + số đo: spec §13.2.
+- [x] Build lại bất cứ lúc nào bằng `python3 tools/build_atlas.py [--atlas NAME] [--dry-run]`. **Atlas là sản phẩm sinh ra từ masters — không sửa tay.**
 
 ## 8. Verify cuối — CHỜ
 
@@ -220,7 +236,7 @@ Hai nhóm dưới đây **không sửa được bằng code**, đã cố ý đ�
       nhóm `dry/harvested/planted/wet` `(82,157)-(430,360)` — mép trái/phải lệch 1px, contactY
       khớp chính xác, sâu hơn 10px phía sau plate (chênh aspect còn lại, uniform scale không
       khử được). RGBA8. `v01` giữ nguyên trong repo dù hỏng, để đối chiếu lịch sử.
-- [ ] Rebuild `runtime/soil_states_v01` từ `soil_tilled_v02` — atlas hiện dựng từ bản v01 hỏng.
+- [x] Rebuild atlas soil từ `soil_tilled_v02` — xong 2026-09-07: atlas mới là **`farm_soil_v01`** (576×384, 6 cell 192, thay `soil_states_v01` đã xoá), dựng bằng `tools/build_atlas.py`; script tự chọn version cao nhất đọc được nên lấy `v02` thay vì `v01` hỏng. Xem mục 7.
 
 ### Cần quyết định visual (đã xử lý xong 2026-09-05, trừ lotus)
 - [x] `water-mimosa` vs `water-spinach` — **PASS, báo động nhầm** (visual check 2026-09-05).

@@ -38,9 +38,20 @@ This folder contains the Phase 2 growth-stage masters for rice, corn, and carrot
 
 ## Runtime atlases
 
-`runtime/1x/farm/crops/core_crops_v01.png` is a 960x576 shared-texture atlas with 192x192 cells. `runtime/core_crops_v01.json` stores frame coordinates and the shared placement anchor. Rows are rice, corn, carrot. Columns follow the five-stage order above.
+`runtime/1x/farm/crops/farm_crops_v01.png` is a 960x1152 shared-texture atlas with 192x192 cells that merges all six crop packs (Phase 2 + Phase 3) into one texture: 6 species x 5 stages = 30 frames. `runtime/farm_crops_v01.json` stores frame coordinates, per-frame anchors, and `stageNames`.
 
-`runtime/1x/farm/crops/herb_crops_v01.png` is the equivalent Phase 3 960x576 atlas. `runtime/herb_crops_v01.json` stores its frame coordinates and shared placement anchor. Rows are tonkin-jasmine, culantro, mint; columns follow the same five-stage order.
+- Rows follow alphabetical order: carrot, corn, culantro, mint, rice, tonkin-jasmine. Columns follow `stageOrder` = `stage-01`..`stage-05`.
+- The frame key is a **slot id**, `<species>_stage-0N` (for example `culantro_stage-04`); it carries no semantic label, so the game builds keys directly from species + stage index without a lookup table. Semantic labels live in `stageNames` (`<species> -> ["seeded","sprout",...]`) and are display-only.
+- A uniform `(0.5, 0.894531)` anchor applies to all 30 frames (`anchorUniform: true`), matching the `(256, 458)` master root. `anchor.x` is always 0.5 because every master is already centered on its canvas — **do not** derive anchorX from a bottom-band centroid (that heuristic breaks on rosette morphology, see spec §7.1).
+- `masterCanvas` is 512x512 for the whole atlas.
+
+This atlas replaces `core_crops_v01` + `herb_crops_v01`, which were deleted from the repo. An atlas is a **build product of the masters, never hand-edited** — rebuild it with:
+
+```bash
+python3 tools/build_atlas.py --atlas farm_crops_v01   # add --dry-run to preview
+```
+
+Run `python3 tools/build_atlas.py` with no arguments to rebuild all four atlases (`farm_crops_v01`, `farm_trees_v01`, `farm_aquatic_v01`, `farm_soil_v01`). The script is idempotent: two runs produce byte-identical output.
 
 ## Artwork and production pipeline
 
