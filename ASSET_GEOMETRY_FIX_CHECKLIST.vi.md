@@ -80,7 +80,7 @@ Hai vòng chỉnh: (a) composite lên `soil_planted` (plate y 157–360) phát h
 
 - [x] Composite QC 30 frame + playground: chân cây tại tâm plate, không lòi dưới plate.
 - [x] Visual checks giữ nguyên kết luận cũ: carrot s05 củ cam rõ, tonkin-jasmine s05 hoa vàng rõ, culantro cân đối — không regenerate.
-- [ ] **Xác nhận phía game code**: engine ghim crop anchor vào tâm plate của tile (không phải mép/điểm khác), khớp anchor mới `(0.5, 0.89453125)`.
+- [ ] **Chờ game code ra đời** (2026-09-07: game code chưa tồn tại nên chưa xác nhận được). Khi có, engine phải ghim crop anchor vào tâm plate của tile (không phải mép/điểm khác), khớp anchor mới `(0.5, 0.89453125)`.
 
 ## 6. Regenerate queue — RỖNG 🎉
 
@@ -94,7 +94,7 @@ Toàn bộ 6 case ứng viên đều PASS visual check, không file nào phải 
 
 Ghi chú art-style (không blocking, ngoài scope geometry): tonkin-jasmine s05 và culantro có bóng đổ nhẹ bake dưới gốc; carrot hơi vector-clean so với các pack painterly — cân nhắc khi có đợt regenerate style sau.
 
-- [ ] **PHÁT HIỆN MỚI (khi dựng playground)**: `masters/farm/soil/soil_tilled_v01.png` **hỏng dữ liệu** — IDAT stream corrupt, PIL/zlib không decode được, bản trong git HEAD cũng hỏng y hệt (được commit trong tình trạng corrupt); sips decode ra toàn nhiễu trắng đen. Không cứu được → **phải regenerate tile tilled**. 5 soil state còn lại bình thường.
+- [x] **PHÁT HIỆN MỚI (khi dựng playground)** — ĐÃ XỬ LÝ 2026-09-05, xem mục 9.7: `masters/farm/soil/soil_tilled_v01.png` **hỏng dữ liệu** — IDAT stream corrupt, PIL/zlib không decode được, bản trong git HEAD cũng hỏng y hệt (được commit trong tình trạng corrupt); sips decode ra toàn nhiễu trắng đen. Không cứu được → **phải regenerate tile tilled**. 5 soil state còn lại bình thường.
 
 Bổ sung từ visual review của user (2026-08-26) — đợt regenerate kế tiếp:
 
@@ -132,8 +132,8 @@ Chốt 2026-09-07:
 ## 8. Verify cuối — CHỜ
 
 - [ ] Playground: stage transition từng species — root không nhảy, không clip khi sway (cần môi trường game).
-- [ ] User compare artwork trước/sau bằng `git diff` với bản đã staged.
-- [ ] Commit theo pack sau khi duyệt (`fix: normalize <species> pack geometry to canonical anchor`).
+- [x] ~~User compare artwork trước/sau bằng `git diff`~~ — thay bằng review trên PR (branch `fix/geometry-qc-2026-09-05`).
+- [x] ~~Commit theo pack sau khi duyệt~~ — thay bằng commit theo loại thay đổi trên PR.
 
 ---
 
@@ -166,14 +166,16 @@ Chốt 2026-09-07:
 
 ### 9.3 Soil — mở rộng phạm vi mục 6
 
-- [ ] `soil_tilled_v01.png` — **xác nhận lại: hỏng vĩnh viễn.** IHDR/PLTE/tRNS/IEND CRC hợp lệ, riêng IDAT (5634 B) **CRC FAIL**; zlib `Error -3: incorrect data check`, giải nén ra 0/262656 byte. md5 working tree **trùng git HEAD** → không có bản lành trong lịch sử để restore. Phải regenerate.
+- [x] `soil_tilled_v01.png` — **xác nhận hỏng vĩnh viễn, đã generate lại thành `soil_tilled_v02.png`.** IHDR/PLTE/tRNS/IEND CRC hợp lệ, riêng IDAT (5634 B) **CRC FAIL**; zlib `Error -3: incorrect data check`, giải nén ra 0/262656 byte. md5 working tree **trùng git HEAD** → không có bản lành trong lịch sử để restore. Phải regenerate.
 - [x] **5 soil tile còn lại đều là palette PNG (colortype 3)** — vi phạm §6.3 (master bắt buộc RGBA8), giống các crop pack cũ trước khi normalize. Chưa từng được ghi nhận. Gộp vào cùng đợt regenerate `soil_tilled`.
 
 ### 9.4 Cần visual review của user (máy không kết luận được)
 
-- [ ] **`water-mimosa` vs `water-spinach` giống nhau đáng ngờ.** X-extent gần trùng từng pixel ở cả 5 stage: visW `213/368/509/636/707` vs `213/369/509/636/708`; bbox s03 `(130,466)-(638,728)` vs `(129,466)-(637,728)`. Spec dòng ~628 yêu cầu water-spinach có *"distinct silhouette from water-mimosa"*. Geometry PASS, nhưng cần xem cạnh nhau để xác nhận không đọc ra cùng một cây.
-- [ ] **`mango` s05 thấp hơn s04 80 px** (visH 921 → 841; top bbox 50 → 130) và **`rambutan` s05 co lại cả hai chiều** (visW −39, visH −44). Cả hai đã được duyệt visual ở mục 6 với lý do tán rủ khi đậu quả / trưởng thành đọc qua mật độ quả, nhưng vẫn lệch contract global "size tăng rõ s01<s02<s03<s04<s05". **Cần anh chốt: chấp nhận như species-specific reason, hay đưa vào regenerate queue.**
-- [ ] `lotus` s05 visH 907 < s04 928 — art issue, normalize không sửa được. Đã nằm sẵn trong regenerate queue mục 6 (bông sen quá to).
+- [x] **`water-mimosa` vs `water-spinach` — ĐÃ KIỂM, PASS (báo động nhầm).** Xem kết luận ở 9.7.
+      Nghi ngờ ban đầu: X-extent gần trùng từng pixel ở cả 5 stage: visW `213/368/509/636/707` vs `213/369/509/636/708`; bbox s03 `(130,466)-(638,728)` vs `(129,466)-(637,728)`. Spec dòng ~628 yêu cầu water-spinach có *"distinct silhouette from water-mimosa"*. Geometry PASS, nhưng cần xem cạnh nhau để xác nhận không đọc ra cùng một cây.
+- [x] **`mango` / `rambutan` s05 — ĐÃ CHỐT: chấp nhận species-specific reason.** Xem 9.7.
+      Số đo: **`mango` s05 thấp hơn s04 80 px** (visH 921 → 841; top bbox 50 → 130) và **`rambutan` s05 co lại cả hai chiều** (visW −39, visH −44). Cả hai đã được duyệt visual ở mục 6 với lý do tán rủ khi đậu quả / trưởng thành đọc qua mật độ quả, nhưng vẫn lệch contract global "size tăng rõ s01<s02<s03<s04<s05". **Cần anh chốt: chấp nhận như species-specific reason, hay đưa vào regenerate queue.**
+- [x] `lotus` s05 visH 907 < s04 928 — art issue, normalize không sửa được. Đã nằm sẵn trong regenerate queue mục 6 (bông sen quá to).
 
 > **Đã thực thi 2026-09-05** (branch `fix/geometry-qc-2026-09-05`): 9.1 và 9.2 xong; 9.3 mới xong phần convert RGBA8.
 > `soil_tilled` và toàn bộ 9.4 vẫn treo — xem mục 9.7.
