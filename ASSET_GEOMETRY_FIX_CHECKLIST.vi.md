@@ -74,12 +74,12 @@ Hai vòng chỉnh: (a) composite lên `soil_planted` (plate y 157–360) phát h
 | [x] rice | 1.0 (chỉ translate) | bottom-band | contactY 458 Δ0, rootX ~256, RGBA8 |
 | [x] corn | 0.8855 | bottom-band | contactY 458 Δ0, rootX ~256, RGBA8 |
 | [x] carrot | 0.9040 | bottom-band | contactY 458 Δ0, rootX ~256, RGBA8 |
-| [x] thien-ly | 1.0 (chỉ translate) | bbox center | contactY 458 Δ0, margin L/R đối xứng |
-| [x] ngo-gai | 1.0 (chỉ translate) | bbox center | contactY 458 Δ0, margin L/R đối xứng |
+| [x] tonkin-jasmine | 1.0 (chỉ translate) | bbox center | contactY 458 Δ0, margin L/R đối xứng |
+| [x] culantro | 1.0 (chỉ translate) | bbox center | contactY 458 Δ0, margin L/R đối xứng |
 | [x] mint | 1.0 (chỉ translate) | bbox center | contactY 458 Δ0 |
 
 - [x] Composite QC 30 frame + playground: chân cây tại tâm plate, không lòi dưới plate.
-- [x] Visual checks giữ nguyên kết luận cũ: carrot s05 củ cam rõ, thien-ly s05 hoa vàng rõ, ngo-gai cân đối — không regenerate.
+- [x] Visual checks giữ nguyên kết luận cũ: carrot s05 củ cam rõ, tonkin-jasmine s05 hoa vàng rõ, culantro cân đối — không regenerate.
 - [ ] **Xác nhận phía game code**: engine ghim crop anchor vào tâm plate của tile (không phải mép/điểm khác), khớp anchor mới `(0.5, 0.89453125)`.
 
 ## 6. Regenerate queue — RỖNG 🎉
@@ -90,22 +90,22 @@ Toàn bộ 6 case ứng viên đều PASS visual check, không file nào phải 
 - [x] mango s05: quả xoài vàng cam nổi bật.
 - [x] dragon-fruit s05: quả thanh long hồng đậm, phân biệt tốt với s04 (hoa trắng).
 - [x] coconut s01–s03: style giữ tốt sau downscale.
-- [x] thien-ly s05, carrot s05: harvest cue đủ mạnh.
+- [x] tonkin-jasmine s05, carrot s05: harvest cue đủ mạnh.
 
-Ghi chú art-style (không blocking, ngoài scope geometry): thien-ly s05 và ngo-gai có bóng đổ nhẹ bake dưới gốc; carrot hơi vector-clean so với các pack painterly — cân nhắc khi có đợt regenerate style sau.
+Ghi chú art-style (không blocking, ngoài scope geometry): tonkin-jasmine s05 và culantro có bóng đổ nhẹ bake dưới gốc; carrot hơi vector-clean so với các pack painterly — cân nhắc khi có đợt regenerate style sau.
 
 - [ ] **PHÁT HIỆN MỚI (khi dựng playground)**: `masters/farm/soil/soil_tilled_v01.png` **hỏng dữ liệu** — IDAT stream corrupt, PIL/zlib không decode được, bản trong git HEAD cũng hỏng y hệt (được commit trong tình trạng corrupt); sips decode ra toàn nhiễu trắng đen. Không cứu được → **phải regenerate tile tilled**. 5 soil state còn lại bình thường.
 
 Bổ sung từ visual review của user (2026-08-26) — đợt regenerate kế tiếp:
 
 - [ ] **carrot s05** — lộ vai củ cam nhiều hơn (harvest cue hiện chỉ ~10 px ở display size, quá yếu).
-- [ ] **thien-ly (cả pack)** — chuyển sang dạng dây leo giàn với giàn cố định xuyên 5 stage, theo contract support-structure như dragon-fruit (Profile C).
+- [ ] **tonkin-jasmine (cả pack)** — chuyển sang dạng dây leo giàn với giàn cố định xuyên 5 stage, theo contract support-structure như dragon-fruit (Profile C).
 - [ ] **lotus s05** — bông sen chính nhỏ lại ~60–70% hiện tại (đang to hơn cả lá lớn nhất — overload focal cue).
 - [ ] **6 fruit tree** — regenerate với silhouette đặc trưng từng loài: xoài tán vòm rộng, vú sữa lá hai màu xanh/đồng, bưởi tán thưa quả to, vải/chôm chôm tán tròn dày thấp, chanh dạng citrus bụi thấp; hiện chỉ khác nhau ở quả.
 
 Calibration display scale đã chốt (không đụng master): corn → class L (~224 px, cao vượt rice); lemon → fruit tree thấp nhất (~256 px, biên L/XL). Đã ghi vào spec §9.5.
 
-**→ Specs + prompts cho toàn bộ queue trên: `FARM_REGENERATION_PROMPTS.vi.md`** (38 file: soil_tilled, carrot s05, thien-ly ×5, lotus s05, 6 fruit tree ×5). Generate xong bỏ file `_v02` vào masters rồi gọi Claude chạy pipeline QC/normalize.
+**→ Specs + prompts cho toàn bộ queue trên: `FARM_REGENERATION_PROMPTS.vi.md`** (38 file: soil_tilled, carrot s05, tonkin-jasmine ×5, lotus s05, 6 fruit tree ×5). Generate xong bỏ file `_v02` vào masters rồi gọi Claude chạy pipeline QC/normalize.
 
 ## 7. Runtime metadata — MỘT PHẦN
 
@@ -131,7 +131,7 @@ Calibration display scale đã chốt (không đụng master): corn → class L 
 |---|---|---|---|
 | trees (10) | coconut, coffee, rubber, pomelo, lychee, star-apple | dragon-fruit, mango, lemon, rambutan | — |
 | aquatic (3) | water-mimosa, water-spinach | lotus | — |
-| crops (6) | rice | corn, thien-ly, ngo-gai, mint | carrot |
+| crops (6) | rice | corn, tonkin-jasmine, culantro, mint | carrot |
 | soil (6) | — | 5 tile (palette ct=3) | soil_tilled |
 
 ### 9.1 Blocking — phải sửa
@@ -167,13 +167,13 @@ Calibration display scale đã chốt (không đụng master): corn → class L 
 - `corn` visW thu hẹp khi lên cao — thân đơn, visH đơn điệu → §9.3 dominant metric PASS.
 - `dragon-fruit` visH bão hòa ~942–945 px — Profile C support-structure, trụ giàn cố định chi phối; metric thật là visW (0.328/0.787/0.874/1.001/1.000).
 - `lemon` s05 visH −3 px, `mint` s02 visW −6 px — dưới ngưỡng nhiễu đo.
-- `ngo-gai` / `mint` / `thien-ly` rootX bottom-band trải rộng — rosette/bbox-center theo §7.1, margin L/R đối xứng Δ≤2 px xác nhận align đúng.
+- `culantro` / `mint` / `tonkin-jasmine` rootX bottom-band trải rộng — rosette/bbox-center theo §7.1, margin L/R đối xứng Δ≤2 px xác nhận align đúng.
 
 ### 9.6 Cảnh báo cho đợt regenerate sắp tới
 
 **Margin stage-05 đang sát trần 24 px, cushion chỉ 1–2 px:** rubber s05 top 25, mango s05 left 25, pomelo s05 top 25, carrot s04 top 22 (đã FAIL), coconut s05 top 26, dragon-fruit s03 top 26.
 
-→ Queue regenerate ở mục 6 (soil_tilled, carrot s05, thien-ly ×5, lotus s05, 6 fruit tree) khi chạy normalize **phải xuất phát từ artwork gốc**, không transform chồng lên master hiện tại — jitter LANCZOS một lần resample nữa là tụt dưới ngưỡng.
+→ Queue regenerate ở mục 6 (soil_tilled, carrot s05, tonkin-jasmine ×5, lotus s05, 6 fruit tree) khi chạy normalize **phải xuất phát từ artwork gốc**, không transform chồng lên master hiện tại — jitter LANCZOS một lần resample nữa là tụt dưới ngưỡng.
 
 ---
 

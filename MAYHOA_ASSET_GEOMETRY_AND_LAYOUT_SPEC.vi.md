@@ -237,7 +237,7 @@ Quá trình chốt: (1) diễn giải "crop không cần cùng contactY" sai —
 - canvas `512×512`, root `(256, 458)` = `(0.5, 0.89453125)` — 54 px bottom padding, cùng convention tree;
 - contactY = 458, Δ0 xuyên 5 stage; max visible height = `458 − 24 = 434 px`;
 - engine ghim crop root vào **tile plant point = tâm soil plate `(256, 260)` ≈ `(0.5, 0.508)`** trong hệ tọa độ soil tile 512;
-- align X: thân đơn/bụi (rice, corn, carrot) dùng bottom-band centroid; rosette/bush (ngo-gai, thien-ly, mint) dùng **bbox center** (§7.1);
+- align X: thân đơn/bụi (rice, corn, carrot) dùng bottom-band centroid; rosette/bush (culantro, tonkin-jasmine, mint) dùng **bbox center** (§7.1);
 - QC bắt buộc composite check lên soil tile: chân cây tại tâm plate, không lòi dưới plate.
 
 `placementAnchor` trong `core_crops_v01.json` / `herb_crops_v01.json` đã đổi `(0.5, 0.684)` → `(0.5, 0.89453125)`. **Code game đọc anchor này cần được kiểm tra lại điểm ghim trên tile (tâm plate).**
@@ -386,7 +386,7 @@ Ví dụ lỗi cần tránh:
 
 ### 7.1 Giới hạn của bottom-band heuristic
 
-Bottom-band centroid chỉ tin cậy cho morphology thân đơn (tree / palm / trụ). Với morphology radial / rosette / multi-stem (lotus, ngo-gai, water-mimosa...), centroid của bottom band dao động mạnh theo tán lá — đo được Δ 62–125 px dù artwork không hẳn sai vị trí. Với các species này:
+Bottom-band centroid chỉ tin cậy cho morphology thân đơn (tree / palm / trụ). Với morphology radial / rosette / multi-stem (lotus, culantro, water-mimosa...), centroid của bottom band dao động mạnh theo tán lá — đo được Δ 62–125 px dù artwork không hẳn sai vị trí. Với các species này:
 
 - không dùng bottom-band centroid làm số PASS/FAIL tự động;
 - đánh anchor thủ công (visual) hoặc dùng band cao hơn quanh cụm gốc;
@@ -1040,8 +1040,8 @@ Remaining-plan support is explicitly defined for:
 | rice | 512² ✓ (palette ✗) | 252–258 (Δ6) | 33 px ✓ | tăng dần ✓ | Hình học OK; format palette |
 | corn | 512² ✓ (palette ✗) | 255–260 (Δ4) | top 4 px, đáy 19 px (s05) ✗ | tăng dần ✓ | FAIL margin s05 |
 | carrot | 512² ✓ (palette ✗) | 256–265 (Δ9) | top 12 px (s04) ✗ | s05 < s04 (443 < 479) | FAIL margin s04; check s05 |
-| thien-ly | 512² ✓ | 250–276 (Δ26) | 20 px (s03) | s05 < s04 cả 2 chiều ✗ | Visual check s05 |
-| ngo-gai | 512² ✓ | 228–352 (Δ125)* | 26 px | tăng dần ✓ | *Rosette — anchor thủ công (§7.1) |
+| tonkin-jasmine | 512² ✓ | 250–276 (Δ26) | 20 px (s03) | s05 < s04 cả 2 chiều ✗ | Visual check s05 |
+| culantro | 512² ✓ | 228–352 (Δ125)* | 26 px | tăng dần ✓ | *Rosette — anchor thủ công (§7.1) |
 | mint | 512² ✓ | 257–270 (Δ13) | 28 px | tăng dần ✓ | Gần PASS |
 
 Kế hoạch xử lý chi tiết + scale factors: xem `ASSET_GEOMETRY_FIX_CHECKLIST.vi.md`.
@@ -1052,7 +1052,7 @@ Normalize pass đã chạy xong bằng `tools/normalize_pack.py`. Kết quả đ
 
 - **Tất cả 10 tree pack + lotus**: canvas `1024×1024`, contactY = 970 (Δ0), rootX 511.6–512.5 (Δ ≤ 1 px), mọi margin ≥ 25 px — **PASS toàn bộ**.
 - **coconut**: per-stage rescale theo Profile B, ratio mới 0.332 / 0.506 / 0.725 / 0.916 / 1.0 — trong band.
-- **crops (rev 2 cuối, cùng ngày)**: hai bước — (a) composite QC phát hiện chân crop lòi dưới soil plate; (b) calibration sheet xác nhận cây phải đứng **tâm plate**, dẫn tới chuyển crop sang **bottom-anchor sprite** root `(256, 458)`. Transform từ bản gốc (single resample): rice / thien-ly / ngo-gai / mint scale 1.0 (chỉ translate), corn 0.8855, carrot 0.904. Herb rosette align X theo bbox center. Runtime `placementAnchor` cả 2 JSON đổi → `(0.5, 0.89453125)`, texture rebuild. Cả 3 pack palette thành RGBA8. Composite 30 frame + playground verify PASS. **Chờ xác nhận phía game code: điểm ghim trên tile = tâm plate.**
+- **crops (rev 2 cuối, cùng ngày)**: hai bước — (a) composite QC phát hiện chân crop lòi dưới soil plate; (b) calibration sheet xác nhận cây phải đứng **tâm plate**, dẫn tới chuyển crop sang **bottom-anchor sprite** root `(256, 458)`. Transform từ bản gốc (single resample): rice / tonkin-jasmine / culantro / mint scale 1.0 (chỉ translate), corn 0.8855, carrot 0.904. Herb rosette align X theo bbox center. Runtime `placementAnchor` cả 2 JSON đổi → `(0.5, 0.89453125)`, texture rebuild. Cả 3 pack palette thành RGBA8. Composite 30 frame + playground verify PASS. **Chờ xác nhận phía game code: điểm ghim trên tile = tâm plate.**
 - **Visual QC**: 6/6 case trong regenerate queue PASS — không file nào phải generate lại.
 - **Runtime**: `core_fruit_trees_v02.json` + atlas đã rebuild (cell 256×256, anchor `(0.5, 0.947265625)`); atlas cho các pack mới chờ quyết định naming; crops atlas texture nên re-render vì corn/carrot đã scale.
 - **Còn chờ**: playground verify (Pass E) + user compare diff + commit.

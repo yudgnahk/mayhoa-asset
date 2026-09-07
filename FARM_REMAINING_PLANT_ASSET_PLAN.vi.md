@@ -19,8 +19,8 @@ Field crops — 6/6 species, mỗi species đủ 5 stage:
 - [x] rice
 - [x] corn
 - [x] carrot
-- [x] thien-ly
-- [x] ngo-gai
+- [x] tonkin-jasmine
+- [x] culantro
 - [x] mint
 
 Fruit trees đã hoàn tất — 6/10 tree/perennial species trong roadmap:

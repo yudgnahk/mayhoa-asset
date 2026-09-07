@@ -22,8 +22,8 @@ Thư mục này chứa master của 5 giai đoạn phát triển cho lúa, bắp
 
 ## Herb / low crop Phase 3
 
-- `thien-ly/` — thiên lý / Telosma cordata; dấu hiệu gieo hạt -> mầm dây nhỏ -> dây non nhiều lá -> dây trưởng thành với lá hình tim/bầu dục -> chùm hoa vàng-xanh nhạt tiết chế ở harvest.
-- `ngo-gai/` — ngò gai / Eryngium foetidum; mầm -> rosette gốc nhỏ -> rosette non mở rộng -> rosette trưởng thành dày -> rosette harvest xanh tốt với lá dài, hẹp và mép răng cưa gợi rõ. Không dùng dạng lá tơi của ngò rí.
+- `tonkin-jasmine/` — thiên lý / Telosma cordata; dấu hiệu gieo hạt -> mầm dây nhỏ -> dây non nhiều lá -> dây trưởng thành với lá hình tim/bầu dục -> chùm hoa vàng-xanh nhạt tiết chế ở harvest.
+- `culantro/` — ngò gai / Eryngium foetidum; mầm -> rosette gốc nhỏ -> rosette non mở rộng -> rosette trưởng thành dày -> rosette harvest xanh tốt với lá dài, hẹp và mép răng cưa gợi rõ. Không dùng dạng lá tơi của ngò rí.
 - `mint/` — bạc hà; lá có texture hình bầu dục đến mũi mác mọc theo cặp -> thân phân nhánh -> bụi bạc hà ngày càng dày và xanh tốt, giữ cue mép lá/texture rõ ở gameplay scale.
 
 ## Quy tắc production đã khóa
@@ -40,7 +40,7 @@ Thư mục này chứa master của 5 giai đoạn phát triển cho lúa, bắp
 
 `runtime/1x/farm/crops/core_crops_v01.png` là shared-texture atlas 960x576 với cell 192x192. `runtime/core_crops_v01.json` chứa frame coordinates và placement anchor chung. Các hàng lần lượt là rice, corn, carrot; các cột theo thứ tự 5 stage ở trên.
 
-`runtime/1x/farm/crops/herb_crops_v01.png` là atlas Phase 3 tương ứng, kích thước 960x576. `runtime/herb_crops_v01.json` chứa frame coordinates và placement anchor chung. Các hàng lần lượt là thien-ly, ngo-gai, mint; các cột theo cùng thứ tự 5 stage.
+`runtime/1x/farm/crops/herb_crops_v01.png` là atlas Phase 3 tương ứng, kích thước 960x576. `runtime/herb_crops_v01.json` chứa frame coordinates và placement anchor chung. Các hàng lần lượt là tonkin-jasmine, culantro, mint; các cột theo cùng thứ tự 5 stage.
 
 ## Artwork và production pipeline
 

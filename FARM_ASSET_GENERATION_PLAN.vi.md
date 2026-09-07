@@ -57,8 +57,8 @@ Cây trồng ngắn ngày / cây thấp hoặc trung bình:
 - rice / lúa nước
 - corn / bắp
 - carrot
-- thien-ly / hoa thiên lý
-- ngo-gai / ngò gai
+- tonkin-jasmine / hoa thiên lý
+- culantro / ngò gai
 - mint / bạc hà
 
 ### 2.3 `farm/aquatic-crops`
@@ -112,8 +112,8 @@ Sâu, bọ, infestation overlays.
 rice
 corn
 carrot
-thien-ly
-ngo-gai
+tonkin-jasmine
+culantro
 mint
 ```
 
@@ -421,8 +421,8 @@ masters/
       rice/
       corn/
       carrot/
-      thien-ly/
-      ngo-gai/
+      tonkin-jasmine/
+      culantro/
       mint/
     aquatic-crops/
       lotus/
@@ -540,8 +540,8 @@ Mục tiêu của phase này là khóa growth-stage language cho cả crop syste
 
 Generate full growth stages cho:
 
-1. thien-ly
-2. ngo-gai
+1. tonkin-jasmine
+2. culantro
 3. mint
 
 Mỗi loại 5 stage nếu gameplay không yêu cầu ít hơn.

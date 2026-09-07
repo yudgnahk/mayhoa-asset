@@ -4,7 +4,7 @@
 **Project:** Mayhoa<br>
 **Art style:** Mayhoa Nostalgic Hand-Painted Farm Sprite
 
-This folder contains the Phase 2 growth-stage masters for rice, corn, and carrot, plus the Phase 3 herb / low crop masters for thien-ly, ngo-gai, and mint. Each crop uses five structurally distinct growth silhouettes rather than scaling one drawing.
+This folder contains the Phase 2 growth-stage masters for rice, corn, and carrot, plus the Phase 3 herb / low crop masters for tonkin-jasmine, culantro, and mint. Each crop uses five structurally distinct growth silhouettes rather than scaling one drawing.
 
 ## Growth stages
 
@@ -22,8 +22,8 @@ This folder contains the Phase 2 growth-stage masters for rice, corn, and carrot
 
 ## Phase 3 herb / low crops
 
-- `thien-ly/` — Telosma cordata; seeded emergence -> tiny vine sprout -> young leafy vine -> fuller heart/ovate-leaf vine -> restrained pale yellow-green flower clusters at harvest.
-- `ngo-gai/` — Eryngium foetidum (culantro); emergence -> tiny basal rosette -> widening young rosette -> dense mature rosette -> lush harvestable rosette with long, narrow, serrated-looking leaves. It is not coriander/cilantro foliage.
+- `tonkin-jasmine/` — Telosma cordata (Vietnamese: thiên lý); seeded emergence -> tiny vine sprout -> young leafy vine -> fuller heart/ovate-leaf vine -> restrained pale yellow-green flower clusters at harvest.
+- `culantro/` — Eryngium foetidum (Vietnamese: ngò gai); emergence -> tiny basal rosette -> widening young rosette -> dense mature rosette -> lush harvestable rosette with long, narrow, serrated-looking leaves. It is not coriander/cilantro foliage.
 - `mint/` — paired oval-to-lanceolate textured leaves -> branching stems -> increasingly dense, lush mint clump, with characteristic leaf-edge and texture cues kept readable at gameplay scale.
 
 ## Locked production rules
@@ -40,7 +40,7 @@ This folder contains the Phase 2 growth-stage masters for rice, corn, and carrot
 
 `runtime/1x/farm/crops/core_crops_v01.png` is a 960x576 shared-texture atlas with 192x192 cells. `runtime/core_crops_v01.json` stores frame coordinates and the shared placement anchor. Rows are rice, corn, carrot. Columns follow the five-stage order above.
 
-`runtime/1x/farm/crops/herb_crops_v01.png` is the equivalent Phase 3 960x576 atlas. `runtime/herb_crops_v01.json` stores its frame coordinates and shared placement anchor. Rows are thien-ly, ngo-gai, mint; columns follow the same five-stage order.
+`runtime/1x/farm/crops/herb_crops_v01.png` is the equivalent Phase 3 960x576 atlas. `runtime/herb_crops_v01.json` stores its frame coordinates and shared placement anchor. Rows are tonkin-jasmine, culantro, mint; columns follow the same five-stage order.
 
 ## Artwork and production pipeline
 

@@ -60,11 +60,11 @@ cast shadows, no ground/soil/scene baked in, no text or watermark.
 |---|---|---:|---|---|
 | A | soil_tilled | 1 | 512 | `masters/farm/soil/soil_tilled_v02.png` |
 | B | carrot stage-05 | 1 | 512 | `masters/farm/crops/carrot/carrot_stage-05_harvestable_v02.png` |
-| C | thien-ly pack | 5 | 512 | `masters/farm/crops/thien-ly/thien-ly_stage-0N_<semantic>_v02.png` |
+| C | tonkin-jasmine pack | 5 | 512 | `masters/farm/crops/tonkin-jasmine/tonkin-jasmine_stage-0N_<semantic>_v02.png` |
 | D | lotus stage-05 | 1 | 1024 | `masters/farm/aquatic-crops/lotus/lotus_stage-05_flowering_v02.png` |
 | E–J | 6 fruit tree pack | 30 | 1024 | `masters/farm/trees/<species>/<species>_stage-0N_<semantic>_v02.png` |
 
-Stage semantics giữ như v01 (tree: sprout/sapling/young/flowering/fruiting; crop: seeded/sprout/young/mature/harvestable; thien-ly xem mục C).
+Stage semantics giữ như v01 (tree: sprout/sapling/young/flowering/fruiting; crop: seeded/sprout/young/mature/harvestable; tonkin-jasmine xem mục C).
 
 ---
 
@@ -108,16 +108,16 @@ Nghiệm thu: vai củ cam đọc rõ ở ~150 px; foliage vẫn cùng loài v�
 
 ---
 
-## C. thien-ly — cả pack 5 stage, dạng leo giàn
+## C. tonkin-jasmine — cả pack 5 stage, dạng leo giàn
 
 Contract mới: **support-structure plant** như thanh long (spec §9.4 Profile C) — giàn gỗ cố định, **giống hệt nhau ở cả 5 ảnh** (kích thước, vị trí, kiểu dáng), chỉ dây leo phát triển. Đo progression bằng plant coverage, không tính giàn.
 
-Attach reference: `dragon-fruit_stage-03_young_v01.png` (kiểu trụ đỡ + độ mộc) + 1 ảnh thien-ly v01 (giữ lá hình tim + hoa vàng-xanh đặc trưng).
+Attach reference: `dragon-fruit_stage-03_young_v01.png` (kiểu trụ đỡ + độ mộc) + 1 ảnh tonkin-jasmine v01 (giữ lá hình tim + hoa vàng-xanh đặc trưng).
 
 Base prompt cho cả pack (thêm dòng stage tương ứng):
 
 ```text
-A thien ly vine (Telosma cordata, Tonkin jasmine) growing on a small rustic
+A Tonkin jasmine vine (Telosma cordata, Vietnamese: thien ly) growing on a small rustic
 wooden trellis — two upright weathered wooden posts with 2–3 horizontal
 crossbars, simple and hand-made looking. The trellis is a FIXED structure:
 keep its exact size, shape and position identical across all growth stages;
@@ -126,11 +126,11 @@ only the vine changes. Heart-shaped soft green leaves, slender twining stems.
 
 | Stage | Dòng thêm vào prompt | File |
 |---|---|---|
-| 01 seeded | `Stage: just planted — the bare empty trellis, freshly disturbed soil spot at its base with a tiny 2-leaf sprout emerging. No vine on the trellis yet.` | `thien-ly_stage-01_seeded_v02.png` |
-| 02 sprout | `Stage: young sprout — a single thin vine has started twining up one post, reaching the first crossbar, a handful of small heart-shaped leaves.` | `thien-ly_stage-02_sprout_v02.png` |
-| 03 young | `Stage: young vine — the vine now covers about half the trellis with fresh green heart-shaped leaves, a few stems dangling. No flowers.` | `thien-ly_stage-03_young_v02.png` |
-| 04 mature | `Stage: mature — dense foliage covering most of the trellis, layered heart-shaped leaves, a few curling stem tips. No flowers yet.` | `thien-ly_stage-04_mature_v02.png` |
-| 05 harvestable | `Stage: harvestable — full lush coverage plus several restrained clusters of small pale yellow-green thien ly flower buds tucked among the leaves; flowers are the focal cue but must not overload the sprite.` | `thien-ly_stage-05_harvestable_v02.png` |
+| 01 seeded | `Stage: just planted — the bare empty trellis, freshly disturbed soil spot at its base with a tiny 2-leaf sprout emerging. No vine on the trellis yet.` | `tonkin-jasmine_stage-01_seeded_v02.png` |
+| 02 sprout | `Stage: young sprout — a single thin vine has started twining up one post, reaching the first crossbar, a handful of small heart-shaped leaves.` | `tonkin-jasmine_stage-02_sprout_v02.png` |
+| 03 young | `Stage: young vine — the vine now covers about half the trellis with fresh green heart-shaped leaves, a few stems dangling. No flowers.` | `tonkin-jasmine_stage-03_young_v02.png` |
+| 04 mature | `Stage: mature — dense foliage covering most of the trellis, layered heart-shaped leaves, a few curling stem tips. No flowers yet.` | `tonkin-jasmine_stage-04_mature_v02.png` |
+| 05 harvestable | `Stage: harvestable — full lush coverage plus several restrained clusters of small pale yellow-green Tonkin jasmine flower buds tucked among the leaves; flowers are the focal cue but must not overload the sprite.` | `tonkin-jasmine_stage-05_harvestable_v02.png` |
 
 Nghiệm thu: giàn đồng nhất 5/5 ảnh (pipeline sẽ diff silhouette giàn); coverage tăng theo Profile C (0.20–0.35 / 0.40–0.55 / 0.65–0.80 / 0.88–0.96 / 1.0); hoa chỉ có ở s05.
 

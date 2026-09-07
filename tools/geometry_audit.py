@@ -11,7 +11,7 @@ Hỗ trợ PNG RGBA8 (colortype 6) và palette+tRNS (colortype 3 — chỉ để
 known-issue pack; master mới bắt buộc RGBA8 theo §6.3).
 
 Lưu ý §7.1: rootX bottom-band chỉ tin cậy cho morphology thân đơn; với
-radial/rosette (lotus, ngo-gai...) chỉ dùng tham khảo, không PASS/FAIL tự động.
+radial/rosette (lotus, culantro...) chỉ dùng tham khảo, không PASS/FAIL tự động.
 
 Usage:
     python3 tools/geometry_audit.py masters/farm/trees/coffee/*.png

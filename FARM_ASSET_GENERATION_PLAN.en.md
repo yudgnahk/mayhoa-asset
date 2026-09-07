@@ -57,8 +57,8 @@ Short-cycle, low, or medium-height crops:
 - rice
 - corn
 - carrot
-- thien-ly / Telosma cordata flower vine
-- ngo-gai / culantro
+- tonkin-jasmine / Telosma cordata flower vine
+- culantro / Eryngium foetidum
 - mint
 
 ### 2.3 `farm/aquatic-crops`
@@ -112,8 +112,8 @@ Pests, bugs, and infestation overlays.
 rice
 corn
 carrot
-thien-ly
-ngo-gai
+tonkin-jasmine
+culantro
 mint
 ```
 
@@ -421,8 +421,8 @@ masters/
       rice/
       corn/
       carrot/
-      thien-ly/
-      ngo-gai/
+      tonkin-jasmine/
+      culantro/
       mint/
     aquatic-crops/
       lotus/
@@ -540,8 +540,8 @@ This phase locks the growth-stage visual language for the crop system.
 
 Generate full growth stages for:
 
-1. thien-ly
-2. ngo-gai
+1. tonkin-jasmine
+2. culantro
 3. mint
 
 Use five stages each unless gameplay later requires fewer.
