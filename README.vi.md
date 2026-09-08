@@ -19,6 +19,7 @@ Repo này là nơi sản xuất artwork (master art + runtime atlas) cho game Ma
 | `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.vi.md` | Nguồn sự thật duy nhất cho canvas size, anchor, scale progression, alpha/QC hình học | **Canonical, ưu tiên cao nhất** khi có mâu thuẫn hình học với bất kỳ tài liệu nào khác (kể cả plan/style spec) |
 | `ASSET_GEOMETRY_FIX_CHECKLIST.vi.md` | Nhật ký thực thi normalize hình học `masters/` (2026-08-26) + đợt QC lại toàn bộ 19 pack (2026-09-05, mục 9) | Runtime metadata đã xong; còn 7 mục chờ, chủ yếu là queue regenerate và 2 mục cần game code — xem mục 9.7 |
 | `FARM_REGENERATION_PROMPTS.vi.md` | Prompt cụ thể cho đợt regenerate: carrot stage-05, cả pack tonkin-jasmine, lotus stage-05, 6 fruit tree | Active. `soil_tilled` đã generate xong (`v02`, 2026-09-05); 4 mục còn lại chờ |
+| `FARM_MISSING_ASSET_PLAN.vi.md` | Kiểm kê asset còn thiếu để chạy được Gate A / Gate B, kèm spec sẵn sàng generate cho pest, tool, farm scene, plot overlay, FX và icon | **Active — đọc trước khi generate batch tiếp theo.** Thay thế thứ tự Phase §17 cho tới khi Gate A qua |
 | `TASK_STATE.vi.md` | Bàn giao trạng thái giữa các session: đang ở đâu, còn gì, bẫy đã trả giá | Active — đọc trước khi bắt tay làm |
 | `FARM_REMAINING_PLANT_ASSET_PLAN.vi.md` | Phân task generate 7 species cây/thủy sinh còn thiếu (coconut, dragon-fruit, coffee, rubber, lotus, water-mimosa, water-spinach) cho nhiều sub-agent song song | Sản xuất đã xong trên thực tế (`masters/` đủ 5/5 file mỗi species) — checklist chi tiết trong file chưa được tick hết, xem header trong file |
 
