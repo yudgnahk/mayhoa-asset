@@ -10,9 +10,21 @@
 
 ## 1. Workflow
 
-1. For each item below: paste the **Shared Style Block + the item's own prompt** into ChatGPT (together with the noted reference images).
-2. Download the PNG, name it exactly per the convention in the table, and put it into the correct `masters/` folder.
-3. Tell Claude → the pipeline runs by itself: `geometry_audit.py` → `normalize_pack.py` (resample + root alignment) → composite QC onto the soil tile → playground → PASS/FAIL report per file.
+For a **new species, always split this into two phases — write the prompt first, generate the assets
+second.** Never merge them: the species block is the source of truth, and editing a paragraph of prompt
+is far cheaper than regenerating five images.
+
+**Phase A — write the prompt (generate nothing yet):**
+
+1. Add the species block for the species to section E–K below: characteristic silhouette, leaf type, stage-04 flowers, stage-05 fruit.
+2. Check it against the group's acceptance criteria — with the fruit covered up, the silhouette must still be distinguishable from every existing species.
+3. Commit the prompt **before** moving on to phase B.
+
+**Phase B — generate the assets:**
+
+4. For each image: paste the **Shared Style Block + species block + exactly ONE stage line** into ChatGPT (together with the noted reference images). One prompt = one image.
+5. Download the PNG, name it exactly per the convention in the table, and put it into the correct `masters/` folder.
+6. Tell Claude → the pipeline runs by itself: `geometry_audit.py` → `normalize_pack.py` (resample + root alignment) → composite QC onto the soil tile → playground → PASS/FAIL report per file.
 
 ### Generation does NOT have to get these right (the pipeline fixes them)
 
@@ -65,6 +77,7 @@ cast shadows, no ground/soil/scene baked in, no text or watermark.
 | C | tonkin-jasmine pack | 5 | 512 | `masters/farm/crops/tonkin-jasmine/tonkin-jasmine_stage-0N_<semantic>_v02.png` |
 | D | lotus stage-05 | 1 | 1024 | `masters/farm/aquatic-crops/lotus/lotus_stage-05_flowering_v02.png` |
 | E–J | 6 fruit tree packs | 30 | 1024 | `masters/farm/trees/<species>/<species>_stage-0N_<semantic>_v02.png` |
+| K | durian pack (new species) | 5 | 1024 | `masters/farm/trees/durian/durian_stage-0N_<semantic>_v01.png` — **generated 2026-09-08** |
 
 Stage semantics stay as in v01 (tree: sprout/sapling/young/flowering/fruiting; crop: seeded/sprout/young/mature/harvestable; for tonkin-jasmine see section C).
 
@@ -246,11 +259,40 @@ GREEN-TIPPED SPINES, in loose clusters — the hairy texture is the signature
 and must be visible.
 ```
 
-Acceptance for group E–J:
+### K. Durian `durian`
 
-- With the fruit covered up, the 6 species are still distinguishable by silhouette (especially: mango broad-domed, lemon low-bushy, lychee dense-mushroom, rambutan open-ragged, star-apple two-tone leaves).
+```text
+DURIAN TREE (Durio zibethinus). Silhouette: a SLENDER, TALL PYRAMIDAL / CONICAL
+CANOPY — distinctly taller than wide. Central upright straight woody trunk with
+elegant vertical taper, branching outward into 3–4 clearly SEPARATED horizontal
+scaffold tiers (pagoda-like tiered architecture). Between the tiers there must be
+EMPTY TRANSPARENT GAPS you can see straight through — the canopy is a few
+distinct foliage shelves stacked with air between them, NOT one continuous
+conical mass and NOT a round dense dome. Think stacked pagoda roofs, not a
+Christmas tree.
+Foliage: slender elongated lanceolate leaves with sharp pointed tips. Two-tone
+coloring: upper leaf surface is a light, soft warm olive-green and sunny pastel
+sage-green with crisp pale-yellow midrib veins and glossy sunlight highlights;
+underside has a soft shimmering light golden-bronze / dusty gold sheen.
+Flowers (stage 4): clusters of creamy-white and pale golden-butter blossoms
+hanging directly beneath the horizontal woody branches (cauliflory), dangling
+down into the open gaps between tiers so each cluster is silhouetted against
+empty space instead of being buried in the leaves.
+Fruit (stage 5): 5–7 large, spiky DURIAN fruits with sharp pyramidal thorns,
+bright golden-olive green, hanging on thick rope-like woody stalks directly
+underneath the horizontal tiered limbs (cauliflory). Each fruit is BIG — at
+least as wide as the trunk — and hangs DOWN INTO THE EMPTY GAP below its own
+branch tier, fully silhouetted against the transparent background with clear
+space around it. No fruit may be tucked inside or overlapped by the foliage
+mass. The fruits must be the single loudest read in the image at 150 px.
+```
+
+Acceptance for group E–K:
+
+- With the fruit covered up, the 7 species are still distinguishable by silhouette (especially: mango broad-domed, lemon low-bushy, lychee dense-mushroom, rambutan open-ragged, star-apple two-tone leaves, durian tall-pyramidal-tiered).
 - Lemon: the shortest of the group (the display target has already been lowered to ~256 px — spec §9.5).
 - No flowers at s01–s03, no fruit at s01–s04.
+- **The harvest cue must sit in open space.** Fruit (and flowers) hang out into the gaps, clear of the foliage mass, cleanly silhouetted against the transparent background. Fruit buried inside the canopy is a FAIL even when the painting is beautiful — at 150 px the player cannot tell the plant is ready.
 - Profile A progression (s03 ≤ 0.88 after the loosening).
 - The pipeline will align the root (512, 970) and the margins itself — no need to frame it at generation time.
 

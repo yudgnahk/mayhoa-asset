@@ -10,9 +10,20 @@
 
 ## 1. Workflow
 
-1. Với mỗi hạng mục bên dưới: paste **Shared Style Block + prompt riêng** vào ChatGPT (kèm ảnh reference được ghi chú).
-2. Tải PNG về, đặt tên đúng convention trong bảng, bỏ vào đúng thư mục `masters/`.
-3. Báo Claude → pipeline tự chạy: `geometry_audit.py` → `normalize_pack.py` (resample + căn root) → composite QC lên soil tile → playground → báo PASS/FAIL từng file.
+Với **một loài mới, luôn tách làm hai pha — viết prompt trước, generate assets sau.** Không gộp hai pha:
+species block là source of truth, và sửa một đoạn prompt rẻ hơn nhiều so với gen lại 5 ảnh.
+
+**Pha A — viết prompt (chưa generate ảnh nào):**
+
+1. Thêm species block cho loài vào mục E–K bên dưới: silhouette đặc trưng, kiểu lá, hoa ở stage-04, quả ở stage-05.
+2. Đối chiếu acceptance của nhóm — che quả đi thì silhouette vẫn phải phân biệt được với mọi loài đã có.
+3. Commit phần prompt này **trước khi** chạy sang pha B.
+
+**Pha B — generate assets:**
+
+4. Với mỗi ảnh: paste **Shared Style Block + species block + đúng MỘT stage line** vào ChatGPT (kèm ảnh reference được ghi chú). Một prompt = một ảnh.
+5. Tải PNG về, đặt tên đúng convention trong bảng, bỏ vào đúng thư mục `masters/`.
+6. Báo Claude → pipeline tự chạy: `geometry_audit.py` → `normalize_pack.py` (resample + căn root) → composite QC lên soil tile → playground → báo PASS/FAIL từng file.
 
 ### Generation KHÔNG cần làm đúng (pipeline tự sửa)
 
@@ -65,6 +76,7 @@ cast shadows, no ground/soil/scene baked in, no text or watermark.
 | C | tonkin-jasmine pack | 5 | 512 | `masters/farm/crops/tonkin-jasmine/tonkin-jasmine_stage-0N_<semantic>_v02.png` |
 | D | lotus stage-05 | 1 | 1024 | `masters/farm/aquatic-crops/lotus/lotus_stage-05_flowering_v02.png` |
 | E–J | 6 fruit tree pack | 30 | 1024 | `masters/farm/trees/<species>/<species>_stage-0N_<semantic>_v02.png` |
+| K | durian pack (loài mới) | 5 | 1024 | `masters/farm/trees/durian/durian_stage-0N_<semantic>_v01.png` — **đã generate 2026-09-08** |
 
 Stage semantics giữ như v01 (tree: sprout/sapling/young/flowering/fruiting; crop: seeded/sprout/young/mature/harvestable; tonkin-jasmine xem mục C).
 
@@ -246,11 +258,40 @@ GREEN-TIPPED SPINES, in loose clusters — the hairy texture is the signature
 and must be visible.
 ```
 
-Nghiệm thu nhóm E–J:
+### K. Sầu riêng `durian`
 
-- Che phần quả đi vẫn phân biệt được 6 loài qua silhouette (đặc biệt: xoài rộng-vòm, chanh thấp-bụi, vải nấm-đặc, chôm chôm mở-lởm chởm, vú sữa hai màu lá).
+```text
+DURIAN TREE (Durio zibethinus). Silhouette: a SLENDER, TALL PYRAMIDAL / CONICAL
+CANOPY — distinctly taller than wide. Central upright straight woody trunk with
+elegant vertical taper, branching outward into 3–4 clearly SEPARATED horizontal
+scaffold tiers (pagoda-like tiered architecture). Between the tiers there must be
+EMPTY TRANSPARENT GAPS you can see straight through — the canopy is a few
+distinct foliage shelves stacked with air between them, NOT one continuous
+conical mass and NOT a round dense dome. Think stacked pagoda roofs, not a
+Christmas tree.
+Foliage: slender elongated lanceolate leaves with sharp pointed tips. Two-tone
+coloring: upper leaf surface is a light, soft warm olive-green and sunny pastel
+sage-green with crisp pale-yellow midrib veins and glossy sunlight highlights;
+underside has a soft shimmering light golden-bronze / dusty gold sheen.
+Flowers (stage 4): clusters of creamy-white and pale golden-butter blossoms
+hanging directly beneath the horizontal woody branches (cauliflory), dangling
+down into the open gaps between tiers so each cluster is silhouetted against
+empty space instead of being buried in the leaves.
+Fruit (stage 5): 5–7 large, spiky DURIAN fruits with sharp pyramidal thorns,
+bright golden-olive green, hanging on thick rope-like woody stalks directly
+underneath the horizontal tiered limbs (cauliflory). Each fruit is BIG — at
+least as wide as the trunk — and hangs DOWN INTO THE EMPTY GAP below its own
+branch tier, fully silhouetted against the transparent background with clear
+space around it. No fruit may be tucked inside or overlapped by the foliage
+mass. The fruits must be the single loudest read in the image at 150 px.
+```
+
+Nghiệm thu nhóm E–K:
+
+- Che phần quả đi vẫn phân biệt được 7 loài qua silhouette (đặc biệt: xoài rộng-vòm, chanh thấp-bụi, vải nấm-đặc, chôm chôm mở-lởm chởm, vú sữa hai màu lá, sầu riêng cao-dáng tháp-phân tầng cành).
 - Chanh: thấp nhất nhóm (display target đã hạ ~256 px — spec §9.5).
 - Không hoa ở s01–s03, không quả ở s01–s04.
+- **Harvest cue phải nằm trong khoảng trống.** Quả (và hoa) treo ra chỗ hở, tách khỏi khối lá, viền rõ trên nền transparent. Quả chìm vào tán là FAIL kể cả khi ảnh vẽ đẹp — ở 150 px người chơi không đọc được là cây đã tới lứa hay chưa.
 - Progression Profile A (đã nới s03 ≤ 0.88).
 - Pipeline sẽ tự căn root (512, 970) và margin — không cần canh khi generate.
 
