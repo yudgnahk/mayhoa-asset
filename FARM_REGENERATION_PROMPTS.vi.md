@@ -29,7 +29,7 @@ species block là source of truth, và sửa một đoạn prompt rẻ hơn nhi�
 
 - Canvas size / tỷ lệ khung — cứ ra square bất kỳ ≥1024 (tree) hoặc ≥512 (crop/tile), pipeline resample.
 - Vị trí cây trong khung, root lệch tâm, sát mép, thiếu padding — pipeline scale + translate.
-- Kích thước tương đối giữa các loài — runtime display scale lo.
+- Kích thước tương đối **giữa các loài khác nhau** — runtime display scale lo. (Không áp dụng cho tỷ lệ **giữa các stage trong cùng một pack** — cái đó bắt buộc, xem dưới.)
 
 ### Generation BẮT BUỘC làm đúng (transform không cứu được)
 
@@ -39,6 +39,7 @@ species block là source of truth, và sửa một đoạn prompt rẻ hơn nhi�
 - **Nền transparent thật** (không matte trắng/đen, không scene, không bake đất/tile).
 - Một cây/một object duy nhất, không contact sheet, không text/watermark.
 - Với pack nhiều stage: cùng một cá thể cây lớn dần, cấu trúc thay đổi thật (không phải một hình scale to dần).
+- **Tỷ lệ chiều cao giữa các stage trong cùng pack** phải nằm trong band của profile loài đó (Profile A/B/C, `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.vi.md` §523–560). Pipeline áp một hệ số scale chung cho cả pack nên **không sửa được** đường cong tăng trưởng sai.
 
 ---
 
@@ -182,12 +183,31 @@ Vấn đề đợt v01: 6 cây cùng công thức "tán tròn + thân nâu", ch�
 
 Same individual tree across all 5 stages, structure genuinely changing:
 Stage 01 — sprout: small seedling, 2–4 leaves showing the species' leaf character.
+  HEIGHT: 0.35–0.45 of the mature stage-05 tree.
 Stage 02 — sapling: young tree, thin trunk, first branches, species leaf shape clear.
+  HEIGHT: 0.55–0.65 of the mature stage-05 tree.
 Stage 03 — young: distinctly smaller and simpler than mature, but the species
 silhouette is already recognizable. No flowers, no fruit.
+  HEIGHT: 0.75–0.88 of the mature stage-05 tree.
 Stage 04 — flowering: near-full silhouette with the species' flowers. No fruit.
+  HEIGHT: 0.90–0.98 of the mature stage-05 tree.
 Stage 05 — fruiting: full mature silhouette, harvest-ready fruit as focal cue.
+  HEIGHT: this is the reference — 1.0.
 ```
+
+> **Dòng `HEIGHT:` là bắt buộc, phải nằm trong prompt của từng stage.** Vì mỗi
+> prompt chỉ mang **một** dòng stage, ràng buộc kích thước không đặt ngay trên
+> dòng đó thì model không bao giờ thấy. Bỏ dòng này là lý do `coconut` vỡ
+> Profile B (`0.65/0.84/0.95/0.99`) và `durian` vỡ Profile A
+> (`0.66/0.95/0.99/1.00`) — cây gần như không lớn nữa từ stage 02.
+>
+> `normalize_pack.py` áp **một** hệ số scale cho cả pack nên **không cứu được**
+> đường cong tăng trưởng bẹt: sai là phải generate lại.
+>
+> Số trên là **Profile A** (cây thân gỗ đứng — E–J, `durian`, `coffee`,
+> `rubber`). Loài khác profile phải thay số: **Profile B** cọ/dừa
+> (`0.25–0.35 / 0.40–0.55`), **Profile C** cây leo giàn
+> (`0.20–0.35 / 0.40–0.55`). Bảng đầy đủ: `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.vi.md` §523–560.
 
 Generate **từng ảnh một** (một prompt = shared block + species block + đúng một dòng stage).
 
