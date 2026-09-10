@@ -69,17 +69,17 @@ def measure(img):
     }
 
 
-def scale_constraint(m, mode, canvas, target, root_x):
+def scale_constraint(m, mode, canvas, target, root_x, margin=MARGIN):
     """Scale tối đa để mọi extent quanh điểm cố định nằm trong margin."""
     cw, ch = canvas
     tx, ty = target
-    lim_l = tx - MARGIN - SAFETY
-    lim_r = (cw - 1 - MARGIN - SAFETY) - tx
-    lim_t = ty - MARGIN - SAFETY
-    lim_b = (ch - 1 - MARGIN - SAFETY) - ty
+    lim_l = tx - margin - SAFETY
+    lim_r = (cw - 1 - margin - SAFETY) - tx
+    lim_t = ty - margin - SAFETY
+    lim_b = (ch - 1 - margin - SAFETY) - ty
     if mode == 'center':
-        avail_w = cw - 2 * (MARGIN + SAFETY)
-        avail_h = ch - 2 * (MARGIN + SAFETY)
+        avail_w = cw - 2 * (margin + SAFETY)
+        avail_h = ch - 2 * (margin + SAFETY)
         return min(1.0, avail_w / m['vis_w'], avail_h / m['vis_h'])
     if mode == 'root':
         # root nằm ở lowest pixel: toàn bộ content ở trên root
@@ -158,6 +158,9 @@ def main(argv=None):
     ap.add_argument('--scale', type=float, help='scale cố định cho cả pack (bỏ qua auto)')
     ap.add_argument('--file-scale', nargs='*', help='override per-file: basename=scale')
     ap.add_argument('--rootx', nargs='*', help='override rootX nguồn per-file: basename=x')
+    ap.add_argument('--margin', type=int, default=MARGIN,
+                    help='margin tối thiểu quanh content (tool icon cần rộng hơn '
+                         'để chừa chỗ cho glow của state selected)')
     ap.add_argument('files', nargs='+')
     args = ap.parse_args(argv)
 
@@ -175,7 +178,7 @@ def main(argv=None):
         rx = rootx_over.get(os.path.basename(path), m['root_x'])
         metas.append((path, m, rx))
         if not args.scale:
-            pack_s = min(pack_s, scale_constraint(m, args.mode, canvas, target, rx))
+            pack_s = min(pack_s, scale_constraint(m, args.mode, canvas, target, rx, args.margin))
     if not args.scale:
         print(f"auto pack scale = {pack_s:.4f}")
 

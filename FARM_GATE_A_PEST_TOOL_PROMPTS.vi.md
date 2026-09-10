@@ -35,11 +35,18 @@ Tên theo pattern `<asset>_<state>_v<nn>.png` của generation plan §11 (`tool_
 brief cho phép map tạm nhưng không cần — lưỡi bẹt vuông góc cán là silhouette
 riêng, phân biệt được với xẻng ở UI size. Phase 11 nên bổ sung `hoe` vào danh sách.
 
-**`selected` = cùng object, cùng pose, cùng silhouette — chỉ đổi rendering.**
-Rim light vàng ấm + glow nhẹ + saturation cao hơn. Không đổi góc, không đổi tư thế,
-không thêm hiệu ứng nước/đất. Lý do: `FARM-INTERACTION.md` §4 cần hiển thị *công cụ
-đang chọn* trong thanh công cụ; nếu silhouette đổi theo state thì icon nhảy khi
-người chơi bấm. Đây cũng là lý do không dùng pose "đang tưới" cho `watering_can_selected`.
+**`selected` KHÔNG generate — dẫn xuất bằng `tools/make_selected.py`.**
+*(sửa 2026-09-11, sau khi thử generate)* Yêu cầu là cùng object, cùng pose, cùng
+silhouette, chỉ đổi rendering: `FARM-INTERACTION.md` §4 cần hiển thị *công cụ đang
+chọn* trong thanh công cụ, silhouette đổi theo state thì icon nhảy khi người chơi bấm.
+Model không giữ được điều đó — bản `selected` của `hoe` gen ra lệch cả pose lẫn scale
+so với `idle`. Nên `selected` nay là transform xác định trên chính master idle:
+rim light vàng ấm mép trên-trái + glow ấm + tăng nhẹ sáng/bão hoà. Trùng pixel
+silhouette, và bớt một nửa số lần generate.
+
+Hệ quả geometry: glow tràn vài px ra ngoài silhouette, nên **tool idle normalize với
+`--margin 34`** (không phải 24) để `selected` vẫn còn margin ≥24. Không normalize lại
+`selected` — làm thế sẽ scale nó nhỏ hơn `idle` và icon lại nhảy.
 
 **`cleared` không phải sprite rỗng.** Vẽ một puff bụi mềm + con sâu cuộn tròn bị
 hất ra, nhỏ hơn ~55%. `FARM-INTERACTION.md` §3 quy định phản hồi pest là *"sâu rời
@@ -234,9 +241,17 @@ Nghiệm thu: là găng tay (không phải bàn tay trần), không có tay/cán
 
 ## 6. Pipeline sau khi Save
 
+**Raw ChatGPT không còn có alpha.** *(2026-09-11)* Create image nay trả PNG
+colortype 2 và **vẽ lưới caro trắng/xám vào pixel** thay cho nền trong suốt. Nút
+`Save` ở fullscreen viewer chỉ bake tiếp cái caro đó ra file. Phải chạy
+`tools/dechecker.py` để dựng lại alpha trước mọi bước khác.
+
 1. Raw về `.ai-bridge/pests/` hoặc `.ai-bridge/tools/`.
-2. `python3 tools/geometry_audit.py` — kiểm canvas, RGBA8, margin.
-3. `python3 tools/normalize_pack.py --mode anchor --canvas 512 512 --target 256 256 <file>` — scale quanh pivot giữa.
-4. Composite QC: pest chồng lên rice/carrot/corn ở 192px; tool render ở UI size.
-5. PASS mới promote sang `masters/farm/pests/` và `masters/farm/tools/`.
-6. Cập nhật `TASK_STATE.vi.md` và §5.5 của geometry spec (canonical anchor cho 2 class mới).
+2. `python3 tools/dechecker.py raw.png out.png` — khôi phục alpha từ nền caro.
+3. `python3 tools/normalize_pack.py --mode center --canvas 512 512 --target 256 256 <file>`
+   (tool: thêm `--margin 34`).
+4. Tool: `python3 tools/make_selected.py idle.png selected.png`.
+5. `python3 tools/geometry_audit.py` — kiểm canvas, RGBA8, margin.
+6. Composite QC: pest chồng lên rice/carrot/corn ở 192px; tool render ở UI size.
+7. PASS mới promote sang `masters/farm/pests/` và `masters/farm/tools/`.
+8. Cập nhật `TASK_STATE.vi.md` và §5.5 của geometry spec (canonical anchor cho 2 class mới).
