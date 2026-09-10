@@ -20,9 +20,9 @@ This is a temporary document: delete it once every P0 and P1 item is done.
 
 ## 1. Inventory conclusion
 
-102 master PNGs have been produced, and **all of them are plants or soil tiles**. There is not one asset for environment, UI, effects, pests, or tools.
+107 master PNGs have been produced, and **all of them are plants or soil tiles**. There is not one asset for environment, UI, effects, pests, or tools.
 
-Gate A needs roughly 21 of those 102 files. **79% of production so far sits outside what is blocking the path.** This is the numeric expression of the `C-ART-02` conflict.
+Gate A needs roughly 21 of those 107 files. **80% of production so far sits outside what is blocking the path.** This ratio has got **worse** since the 2026-09-08 inventory (79% of 102 files) because the `durian` pack merged on 2026-09-09 is another tree. This is the numeric expression of the `C-ART-02` conflict.
 
 | Group | State | Gate that needs it | Spec exists? |
 |---|---|---|---|
@@ -159,7 +159,8 @@ This order **supersedes** §17 of the generation plan until Gate A passes. Adopt
 Recorded so nobody redoes it:
 
 - 6 field crops × 5 stages, packed, anchor `(0.5, 0.89453125)`;
-- 10 trees × 5 stages, atlas cell `256×256`;
+- 10 trees × 5 stages, atlas cell `256×256`, **packed into the atlas**;
+- `durian` (the 11th tree) has 5 masters but is **NOT packed into the atlas and FAILS geometry** — see `ASSET_GEOMETRY_FIX_CHECKLIST.en.md` section 10;
 - 3 aquatic crops × 5 stages;
 - 6 soil states, RGBA8, with `soil_tilled` served by `v02`;
 - a reproducible atlas pipeline in `tools/build_atlas.py`, 33 tests, idempotent;

@@ -639,6 +639,7 @@ Every species in `FARM_REMAINING_PLANT_ASSET_PLAN.en.md` must be audited against
 | `coconut` | tall/special palm | `1024×1024` — LOCKED (measured 2026-08-26, no tall canvas needed) | fixed ground root `(512,970)` | XL | B | height + crown spread | tallest member of the remaining tree pack; stage-05 visH ≈ 946 px after `×0.768` resample |
 | `dragon-fruit` | support-structure perennial | `1024×1024` preferred | fixed plant base + support anchor → `(512,970)`; the current pack is off, fix with `×0.98` + translate | L | C | plant envelope/coverage excluding fixed post | shorter than major fruit trees; do not normalize by post height |
 | `coffee` | compact tree/shrub | `1024×1024` | fixed root `(512,970)` | L | A | visible height + canopy complexity | compact; must be shorter than major fruit trees/coconut/rubber at world scale |
+| `durian` | tall fruit tree | `1024×1024` — **the current pack is `1254×1254`, PENDING a `×0.774` resample** | fixed ground root `(512,970)`; the current pack has contactY Δ218 px — FAIL, see checklist section 10 | XL | A | height + tiered branch structure | tall; the pagoda branch tiers must stay open, fruit hangs in the gap below a tier |
 | `rubber` | tall industrial tree | `1024×1024` if it fits; `1024×1280` if needed | fixed ground root; the corresponding square/tall root contract | XL | A | height + trunk thickness | tall; larger than coffee, exact relation to coconut/major trees locked after the audit |
 | `lotus` | aquatic upright/radial | `1024×1024` — LOCKED | fixed root `(512,970)`; manual align (radial morphology, §7.1) | L | D | radial spread + stem/leaf structure + final flower envelope | do not compare raw height directly with land trees |
 | `water-mimosa` | aquatic horizontal | `768×768` — LOCKED | fixed waterline/root anchor `(384, 728)`; X align by bbox center (§5.4) | M | E | horizontal spread + density | low/wide; width progression matters more than height |
@@ -843,7 +844,7 @@ the script and rebuild; do not patch the JSON.
 | Atlas | Master source | Size | Cell | Contents | Replaces |
 |---|---|---|---|---|---|
 | `farm_crops_v01` | `masters/farm/crops/*/` | 960×1152 | 192 | 6 species × 5 stages | `core_crops_v01` + `herb_crops_v01` |
-| `farm_trees_v01` | `masters/farm/trees/*/` | 1280×2560 | 256 | 10 species × 5 stages | `core_fruit_trees_v01` + `v02` |
+| `farm_trees_v01` | `masters/farm/trees/*/` | 1280×2560 | 256 | 10 species × 5 stages (**`durian` not included**, see checklist section 10) | `core_fruit_trees_v01` + `v02` |
 | `farm_aquatic_v01` | `masters/farm/aquatic-crops/*/` | 960×576 | 192 | 3 species × 5 stages | *(never had an atlas)* |
 | `farm_soil_v01` | `masters/farm/soil/*.png` | 576×384 | 192 | 6 tiles | `soil_states_v01` |
 
@@ -1140,7 +1141,7 @@ Detailed handling plan + scale factors: see `ASSET_GEOMETRY_FIX_CHECKLIST.en.md`
 
 The normalize pass has been completed with `tools/normalize_pack.py`. Re-measured results:
 
-- **All 10 tree packs + lotus**: canvas `1024×1024`, contactY = 970 (Δ0), rootX 511.6–512.5 (Δ ≤ 1 px), every margin ≥ 25 px — **all PASS**.
+- **All 10 tree packs + lotus**: canvas `1024×1024`, contactY = 970 (Δ0), rootX 511.6–512.5 (Δ ≤ 1 px), every margin ≥ 25 px — **all PASS**. (`durian` is the 11th pack, added after this round, and **FAILS** — see `ASSET_GEOMETRY_FIX_CHECKLIST.en.md` section 10.)
 - **coconut**: per-stage rescale following Profile B, new ratios 0.332 / 0.506 / 0.725 / 0.916 / 1.0 — within band.
 - **crops (final rev 2, same day)**: two steps — (a) the composite QC found crop bases sticking out below the soil plate; (b) the calibration sheet confirmed the plant must stand at the **plate center**, leading to crops being switched to **bottom-anchor sprites** with root `(256, 458)`. Transform from the originals (single resample): rice / tonkin-jasmine / culantro / mint scale 1.0 (translate only), corn 0.8855, carrot 0.904. Herb rosettes align X by bbox center. The runtime `placementAnchor` in both JSONs changed → `(0.5, 0.89453125)`, textures rebuilt. All 3 palette packs became RGBA8. Composite of 30 frames + playground verify PASS. **Awaiting confirmation from the game-code side: the pin point on the tile = the plate center.**
 - **Visual QC**: 6/6 cases in the regenerate queue PASS — no file had to be regenerated.
