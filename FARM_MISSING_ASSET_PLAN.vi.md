@@ -20,9 +20,9 @@ Khác với các tài liệu sẵn có ở đây:
 
 ## 1. Kết luận kiểm kê
 
-102 master PNG đã sản xuất, **toàn bộ là cây và ô đất**. Không có một asset nào thuộc nhóm môi trường, UI, hiệu ứng, sinh vật gây hại hay công cụ.
+107 master PNG đã sản xuất, **toàn bộ là cây và ô đất**. Không có một asset nào thuộc nhóm môi trường, UI, hiệu ứng, sinh vật gây hại hay công cụ.
 
-Gate A cần khoảng 21 file trong số 102 file đã làm. **79% công sản xuất tới nay nằm ngoài thứ đang chặn đường.** Đây là biểu hiện bằng số của xung đột `C-ART-02`.
+Gate A cần khoảng 21 file trong số 107 file đã làm. **80% công sản xuất tới nay nằm ngoài thứ đang chặn đường.** Tỷ lệ này **xấu đi** so với lần kiểm kê 08/09 (79%/102 file) vì pack `durian` merge ngày 09/09 lại là cây. Đây là biểu hiện bằng số của xung đột `C-ART-02`.
 
 | Nhóm | Trạng thái | Gate cần | Đã có spec? |
 |---|---|---|---|
@@ -159,7 +159,8 @@ Thứ tự này **thay thế** §17 của generation plan cho tới khi Gate A q
 Ghi lại để không ai làm lại:
 
 - 6 field crop × 5 stage, đã đóng atlas, anchor `(0.5, 0.89453125)`;
-- 10 tree × 5 stage, atlas cell `256×256`;
+- 10 tree × 5 stage, atlas cell `256×256`, **đã đóng atlas**;
+- `durian` (tree thứ 11) đã có 5 master nhưng **CHƯA đóng atlas và FAIL geometry** — xem `ASSET_GEOMETRY_FIX_CHECKLIST.vi.md` mục 10;
 - 3 aquatic × 5 stage;
 - 6 soil state, RGBA8, `soil_tilled` dùng bản `v02`;
 - pipeline atlas tái tạo được bằng `tools/build_atlas.py`, 33 test, idempotent;

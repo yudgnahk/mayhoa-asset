@@ -29,11 +29,12 @@ The repo keeps a **fully bilingual** doc set: every document has both a `.vi.md`
 
 ## 2. Current production status
 
-**Complete** — 102 master PNGs, all 5 growth stages per species (except soil, which has no stages):
+**Complete** — 107 master PNGs, all 5 growth stages per species (except soil, which has no stages):
 
 - **Soil** — 6 states (`empty`, `tilled`, `wet`, `planted`, `dry`, `harvested`), all RGBA8. `soil_tilled_v01.png` has permanently corrupted IDAT data and **has been replaced by `soil_tilled_v02.png`** (2026-09-05); the `v01` file is still in the repo for historical comparison, do not use it.
 - **Field crops** (6 species × 5 stages) — rice, corn, carrot, tonkin-jasmine (Vietnamese: thiên lý), culantro (Vietnamese: ngò gai), mint.
-- **Fruit/perennial trees** (10 species × 5 stages) — mango, pomelo, lemon, star-apple, rambutan, lychee, coconut, dragon-fruit, coffee, rubber.
+- **Fruit/perennial trees** (11 species × 5 stages) — mango, pomelo, lemon, star-apple, rambutan, lychee, coconut, dragon-fruit, coffee, rubber, durian.
+  `durian` (2026-09-09) is the exception: it has masters but is **not normalized, FAILS geometry, and is not in the atlas** — see `ASSET_GEOMETRY_FIX_CHECKLIST.en.md` section 10.
 - **Aquatic crops** (3 species × 5 stages) — lotus, water-mimosa, water-spinach.
 
 **Not done yet:**
@@ -42,7 +43,8 @@ The repo keeps a **fully bilingual** doc set: every document has both a `.vi.md`
 - **Pests** — not generated (Phase 10).
 - **Tools** — not generated (Phase 11).
 
-**Waiting on regeneration** (all polish, nothing is broken — see `FARM_REGENERATION_PROMPTS.en.md`): `carrot` stage-05, the entire `tonkin-jasmine` pack (switching to a trellis-climbing form), `lotus` stage-05, and all 6 fruit tree packs (their silhouettes do not yet tell the species apart clearly).
+**Waiting on regeneration** (see `FARM_REGENERATION_PROMPTS.en.md`). Polish items: `carrot` stage-05, the entire `tonkin-jasmine` pack (switching to a trellis-climbing form), `lotus` stage-05, and all 6 fruit tree packs (their silhouettes do not yet tell the species apart clearly).
+Genuinely **broken, not polish**: `durian` stages 01/02/03 fall outside the Profile A band, and its stage-05 fruit is buried in the canopy.
 
 > ### ⚠️ Important note — `C-ART-02`
 >
@@ -80,7 +82,7 @@ python3 tools/build_atlas.py             # rebuild all 4 atlases
 | Atlas | Contents | Size | Cell |
 |---|---|---|---|
 | `farm_crops_v01` | 6 species × 5 stages | 960×1152 | 192 |
-| `farm_trees_v01` | 10 species × 5 stages | 1280×2560 | 256 |
+| `farm_trees_v01` | 10 species × 5 stages (**excludes `durian`**) | 1280×2560 | 256 |
 | `farm_aquatic_v01` | 3 species × 5 stages | 960×576 | 192 |
 | `farm_soil_v01` | 6 tiles | 576×384 | 192 |
 

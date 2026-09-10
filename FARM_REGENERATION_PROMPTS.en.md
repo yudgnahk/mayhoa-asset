@@ -30,7 +30,7 @@ is far cheaper than regenerating five images.
 
 - Canvas size / frame ratio — any square ≥1024 (tree) or ≥512 (crop/tile) is fine, the pipeline resamples.
 - Plant position inside the frame, off-center root, too close to the edge, missing padding — the pipeline scales + translates.
-- Relative size between species — the runtime display scale takes care of that.
+- Relative size **between different species** — the runtime display scale takes care of that. (This does NOT cover the ratio **between stages within one pack** — that one is mandatory, see below.)
 
 ### Generation MUST get these right (no transform can save them)
 
@@ -40,6 +40,7 @@ is far cheaper than regenerating five images.
 - **A genuinely transparent background** (no white/black matte, no scene, no baked-in soil/tile).
 - A single plant/object only, no contact sheet, no text/watermark.
 - For multi-stage packs: the same individual plant growing, with the structure genuinely changing (not one image scaled up).
+- **The height ratio between stages inside one pack** must land inside that species' profile band (Profile A/B/C, `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.en.md` §523–560). The pipeline applies one shared scale factor per pack, so it **cannot** repair a wrong growth curve.
 
 ---
 
@@ -183,12 +184,31 @@ The problem with the v01 round: all 6 trees used the same "round canopy + brown 
 
 Same individual tree across all 5 stages, structure genuinely changing:
 Stage 01 — sprout: small seedling, 2–4 leaves showing the species' leaf character.
+  HEIGHT: 0.35–0.45 of the mature stage-05 tree.
 Stage 02 — sapling: young tree, thin trunk, first branches, species leaf shape clear.
+  HEIGHT: 0.55–0.65 of the mature stage-05 tree.
 Stage 03 — young: distinctly smaller and simpler than mature, but the species
 silhouette is already recognizable. No flowers, no fruit.
+  HEIGHT: 0.75–0.88 of the mature stage-05 tree.
 Stage 04 — flowering: near-full silhouette with the species' flowers. No fruit.
+  HEIGHT: 0.90–0.98 of the mature stage-05 tree.
 Stage 05 — fruiting: full mature silhouette, harvest-ready fruit as focal cue.
+  HEIGHT: this is the reference — 1.0.
 ```
+
+> **The `HEIGHT:` line is mandatory and must sit in each stage's own prompt.**
+> Because one prompt carries only **one** stage line, a size constraint that is
+> not on that line is never seen by the model. Omitting it is why `coconut`
+> broke Profile B (`0.65/0.84/0.95/0.99`) and `durian` broke Profile A
+> (`0.66/0.95/0.99/1.00`) — the tree stops growing after stage 02.
+>
+> `normalize_pack.py` applies **one** scale factor to the whole pack, so it
+> **cannot** repair a flat growth curve: getting this wrong means regenerating.
+>
+> The numbers above are **Profile A** (upright woody trees — E–J, `durian`,
+> `coffee`, `rubber`). Species on another profile need different numbers:
+> **Profile B** palms (`0.25–0.35 / 0.40–0.55`), **Profile C** trellis climbers
+> (`0.20–0.35 / 0.40–0.55`). Full table: `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.en.md` §523–560.
 
 Generate **one image at a time** (one prompt = shared block + species block + exactly one stage line).
 

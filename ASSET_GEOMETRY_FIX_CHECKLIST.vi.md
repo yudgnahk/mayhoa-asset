@@ -2,7 +2,7 @@
 
 **Ngôn ngữ:** Tiếng Việt · [English](ASSET_GEOMETRY_FIX_CHECKLIST.en.md)
 
-**Status:** normalize 2026-08-26 xong; **QC lại 2026-09-05** — 95/95 file plant PASS geometry core, phát sinh 2 việc blocking + 3 lỗ hổng tài liệu (xem mục 9)
+**Status:** normalize 2026-08-26 xong; **QC lại 2026-09-05** — 95/95 file plant PASS geometry core, phát sinh 2 việc blocking + 3 lỗ hổng tài liệu (xem mục 9). **2026-09-10: pack `durian` FAIL 5/5 — xem mục 10.** Hồ sơ QC nay phủ 19/20 pack.
 **Baseline:** đo 2026-08-26 bằng `tools/geometry_audit.py` (alpha ≥ 24/255, bottom band 3%) — chi tiết ở §20 của spec
 **Spec:** `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.vi.md` (source of truth cho mọi con số)
 
@@ -134,7 +134,7 @@ Chốt 2026-09-07:
   | Atlas | Kích thước | Cell | Nội dung | Thay cho |
   |---|---|---|---|---|
   | `farm_crops_v01` | 960×1152 | 192 | 6 species × 5 stage | `core_crops_v01` + `herb_crops_v01` |
-  | `farm_trees_v01` | 1280×2560 | 256 | 10 species × 5 stage | `core_fruit_trees_v01` + `v02` |
+  | `farm_trees_v01` | 1280×2560 | 256 | 10 species × 5 stage (**chưa gồm `durian`**, xem mục 10) | `core_fruit_trees_v01` + `v02` |
   | `farm_aquatic_v01` | 960×576 | 192 | 3 species × 5 stage | *(chưa từng có)* |
   | `farm_soil_v01` | 576×384 | 192 | 6 tile | `soil_states_v01` |
 
@@ -276,3 +276,75 @@ Session Claude Code chỉ có browser tool khi được khởi động với c�
 "Enabled by default" qua `/chrome`) — không tự bật được giữa session. Theo docs
 `code.claude.com/docs/en/chrome`: dùng `/chrome` để xem trạng thái và "Reconnect extension";
 chỉ cần restart Chrome khi file cấu hình native messaging host mới được tạo lần đầu.
+
+---
+
+## 10. QC pack `durian` — 2026-09-10 — **FAIL 5/5**
+
+`durian` là tree pack thứ 11, merge qua PR #3 (`795e0b0`, 2026-09-09). Commit gốc
+đã ghi rõ là **chưa chạy `geometry_audit` / `normalize`**; đây là kết quả audit.
+
+Vì pack này chưa được phủ, hồ sơ QC của repo nay là **19/20 pack** — mục 9 ở trên
+(PASS 95/95 file plant) **không bao gồm `durian`**.
+
+| Stage | Canvas | contactY | rootX | Top margin | visH |
+|---|---|---|---|---|---|
+| 01 sprout | 1254×1254 | 1015 | 636.4 | 214 | 802 |
+| 02 sapling | 1254×1254 | 1212 | 650.7 | 52 | 1161 |
+| 03 young | 1254×1254 | 1227 | 638.1 | 16 | 1212 |
+| 04 flowering | 1254×1254 | 1231 | 634.2 | 15 | 1217 |
+| 05 fruiting | 1254×1254 | 1233 | 635.2 | 12 | 1222 |
+
+| Tiêu chí | Ngưỡng | Kết quả |
+|---|---|---|
+| Canvas `1024×1024` | — | **FAIL 5/5** (đang `1254×1254`) |
+| contactY Δ0 trong pack | Δ = 0 | **FAIL** — Δ = 218 px, vi phạm §2.2 |
+| rootX = tâm canvas ±2 | 626.5 ở canvas 1254 | **FAIL** — lệch +7.7…+24.2 px, spread 16.5 px |
+| Margin ≥ 24 px (≥ 29.4 px quy đổi ở canvas 1254) | — | **FAIL 3/5** — top s03=16, s04=15, s05=12 |
+| RGBA8 (§6.3) | colortype 6 | ✅ PASS |
+
+### Lỗi nặng nhất: vỡ Profile A — không phải lỗi normalize
+
+| Stage | durian | Profile A | |
+|---|---|---|---|
+| 01 | **0.656** | 0.35–0.45 | ✗ |
+| 02 | **0.950** | 0.55–0.65 | ✗ |
+| 03 | **0.992** | 0.75–0.88 | ✗ |
+| 04 | 0.996 | 0.90–0.98 | ✗ sát trần |
+
+So chuẩn calibration `coffee`: 0.378 / 0.644 / 0.867 / 0.967. Từ stage-02 trở đi
+cây gần như không lớn nữa — 4 stage cuối chênh nhau 5%.
+
+`normalize_pack.py` áp **một** hệ số scale cho cả pack nên **không cứu được**:
+phải **generate lại s01/s02/s03**. Đây là lần thứ hai lỗi này xảy ra — `coconut`
+từng vỡ Profile B đúng kiểu này (`0.65/0.84/0.95/0.99`, xem §5.2 của spec).
+
+**Nguyên nhân gốc đã vá 2026-09-10**: template stage §E–J trong
+`FARM_REGENERATION_PROMPTS.vi.md` không có ràng buộc kích thước tương đối, mà mỗi
+prompt chỉ mang một dòng stage nên model không bao giờ thấy yêu cầu này. Nay mỗi
+dòng stage có kèm dòng `HEIGHT:`.
+
+### Rủi ro đang mở — ĐỪNG chạy `build_atlas.py`
+
+`durian` chưa vào `farm_trees_v01`. `--dry-run` cho thấy nếu build lại bây giờ:
+
+```
+farm_trees_v01: 11 trees x 5 stage -> 1280x2816 (55 frame, cell 256)
+  master canvas: 1024x1024, 1254x1254
+  anchor: x=0.5 (pin), y PER-FRAME 0.80941..0.983254 (spread 0.173844)
+```
+
+→ `anchorUniform` lật `true → false`, spread nhảy `0 → 0.1738`, và durian nhảy gốc
+giữa các stage trong game. Tool hiện chỉ in `NOTE QC` rồi vẫn ghi đè file.
+**Không build atlas cho tới khi `durian` được normalize hoặc tách khỏi atlas.**
+
+### Việc phải làm
+
+- [ ] Generate lại `durian` s01/s02/s03 theo band Profile A (dùng template đã vá).
+- [ ] Sửa s05: quả phải nằm ở khoảng hở dưới tầng cành, không chìm trong tán —
+      prompt sẵn ở `.ai-bridge/durian/PROMPT_s05_fix_round.txt`.
+- [ ] `normalize_pack.py` mode `root`, target `(512, 970)`, `s ≈ 0.774`
+      (constraint chặt nhất: chiều cao s05 → `946/1222`). Không cần tall canvas.
+- [ ] Chạy lại `geometry_audit.py`, rồi mới `build_atlas.py`.
+- [ ] Cân nhắc guard trong `build_atlas.py`: fail nếu master canvas trong cùng
+      atlas không đồng nhất, hoặc `anchorSpread.y` vượt ngưỡng.

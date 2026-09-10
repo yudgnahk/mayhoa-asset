@@ -2,7 +2,9 @@
 
 **Ngôn ngữ:** Tiếng Việt · [English](TASK_STATE.en.md)
 
-> Đọc file này trước khi làm gì. Cập nhật nó khi trạng thái đổi, hoặc xoá khi PR #2 đã merge và queue đã hết.
+> Đọc file này trước khi làm gì. Cập nhật nó khi trạng thái đổi, hoặc xoá khi queue regenerate đã hết.
+>
+> **Cập nhật 2026-09-10:** PR #2 và PR #3 đều đã merge, `master` ở `795e0b0`. Mục "Đang ở đâu" bên dưới là ảnh chụp phiên 09-05/07, giữ lại làm lịch sử.
 
 ## Mục tiêu đang theo đuổi
 
@@ -13,8 +15,8 @@ Trạng thái việc: `ASSET_GEOMETRY_FIX_CHECKLIST.vi.md` — **mục 9 là đ�
 ## Đang ở đâu
 
 - Branch `fix/geometry-qc-2026-09-05`, **12 commit**, đã push.
-- **PR #2**: https://github.com/yudgnahk/mayhoa-asset/pull/2 — chưa merge.
-- `master` vẫn ở `dd224e1`, không bị đụng.
+- **PR #2**: https://github.com/yudgnahk/mayhoa-asset/pull/2 — ~~chưa merge~~ **đã merge 2026-09-05**.
+- ~~`master` vẫn ở `dd224e1`~~ → `master` nay ở `795e0b0` (sau PR #3 `assets/durian-pack`, merge 2026-09-09).
 - Working tree sạch.
 
 Kết quả QC: geometry core (canvas / contactY Δ0 / rootX / RGBA8) **PASS 95/95 file plant**, không regression so với đợt normalize 26-08.

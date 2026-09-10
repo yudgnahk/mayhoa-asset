@@ -2,7 +2,9 @@
 
 **Language:** [Tiếng Việt](TASK_STATE.vi.md) · English
 
-> Read this file before doing anything. Update it when the state changes, or delete it once PR #2 has been merged and the queue is empty.
+> Read this file before doing anything. Update it when the state changes, or delete it once the regeneration queue is empty.
+>
+> **Update 2026-09-10:** PR #2 and PR #3 are both merged, `master` is at `795e0b0`. The "Where we are" section below is a snapshot of the 09-05/07 session, kept as history.
 
 ## Current goal
 
@@ -13,8 +15,8 @@ Work status: `ASSET_GEOMETRY_FIX_CHECKLIST.en.md` — **section 9 is the most re
 ## Where we are
 
 - Branch `fix/geometry-qc-2026-09-05`, **12 commits**, pushed.
-- **PR #2**: https://github.com/yudgnahk/mayhoa-asset/pull/2 — not merged.
-- `master` is still at `dd224e1`, untouched.
+- **PR #2**: https://github.com/yudgnahk/mayhoa-asset/pull/2 — ~~not merged~~ **merged 2026-09-05**.
+- ~~`master` is still at `dd224e1`~~ → `master` is now at `795e0b0` (after PR #3 `assets/durian-pack`, merged 2026-09-09).
 - Working tree clean.
 
 QC result: geometry core (canvas / contactY Δ0 / rootX / RGBA8) **PASS on 95/95 plant files**, no regression against the 26-08 normalize pass.
