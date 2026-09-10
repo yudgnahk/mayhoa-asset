@@ -639,7 +639,7 @@ Tất cả species trong `FARM_REMAINING_PLANT_ASSET_PLAN.vi.md` phải được
 | `coconut` | tall/special palm | `1024×1024` — LOCKED (đo 2026-08-26, không cần tall canvas) | fixed ground root `(512,970)` | XL | B | height + crown spread | tallest member trong remaining tree pack; stage-05 visH ≈ 946 px sau resample `×0.768` |
 | `dragon-fruit` | support-structure perennial | `1024×1024` preferred | fixed plant base + support anchor → `(512,970)`; pack hiện tại lệch, fix `×0.98` + translate | L | C | plant envelope/coverage excluding fixed post | thấp hơn major fruit tree; không normalize theo post height |
 | `coffee` | compact tree/shrub | `1024×1024` | fixed root `(512,970)` | L | A | visible height + canopy complexity | compact; phải thấp hơn major fruit trees/coconut/rubber ở world scale |
-| `durian` | tall fruit tree | `1024×1024` — **pack hiện tại `1254×1254`, PENDING resample `×0.774`** | fixed ground root `(512,970)`; pack hiện tại contactY Δ218 px — FAIL, xem checklist mục 10 | XL | A | height + tiered branch structure | tall; tầng cành pagoda phải hở, quả treo ở khoảng hở dưới tầng cành |
+| `durian` | tall fruit tree | `1024×1024` ✓ (per-stage rescale 2026-09-10, s01–s05 = 0.4713/0.4884/0.6394/0.7291/0.7733 từ canvas `1254×1254`) | fixed ground root `(512,970)`, contactY Δ0 ✓ | XL | A | height + tiered branch structure | tall; tầng cành pagoda phải hở, quả treo ở khoảng hở dưới tầng cành — **s05 hiện vẫn chìm trong tán, chờ generate lại** |
 | `rubber` | tall industrial tree | `1024×1024` nếu fit; `1024×1280` nếu cần | fixed ground root; square/tall root contract tương ứng | XL | A | height + trunk thickness | tall; lớn hơn coffee, exact relation với coconut/major tree khóa sau audit |
 | `lotus` | aquatic upright/radial | `1024×1024` — LOCKED | fixed root `(512,970)`; align thủ công (radial morphology, §7.1) | L | D | radial spread + stem/leaf structure + final flower envelope | không so raw height trực tiếp với land tree |
 | `water-mimosa` | aquatic horizontal | `768×768` — LOCKED | fixed waterline/root anchor `(384, 728)`; align X theo bbox center (§5.4) | M | E | horizontal spread + density | low/wide; width progression quan trọng hơn height |
@@ -836,7 +836,14 @@ Atlas không còn dựng tay. `tools/build_atlas.py` sinh toàn bộ từ `maste
 python3 tools/build_atlas.py                        # dựng lại cả 4 atlas
 python3 tools/build_atlas.py --atlas farm_soil_v01  # chỉ 1 atlas
 python3 tools/build_atlas.py --dry-run              # xem trước, không ghi file
+python3 tools/build_atlas.py --allow-mixed-canvas    # chỉ khi trộn canvas là chủ ý
 ```
+
+**Guard (2026-09-10).** Build fail và không ghi gì — kể cả ở `--dry-run` — khi master
+canvas trong cùng một atlas không đồng nhất, hoặc `anchorSpread.y` quy ra pixel trong cell
+vượt 2.0 px. Trộn canvas hợp lệ khai bằng `mixed_canvas_ok` trong `ATLAS_SPECS`
+(`farm_aquatic_v01`: lotus 1024 vs water-* 768) hoặc `--allow-mixed-canvas`; anchor lệch thì
+không có override, vì đó luôn là lỗi master. Xem `ASSET_GEOMETRY_FIX_CHECKLIST.vi.md` mục 10.4.
 
 **Atlas là sản phẩm sinh ra từ masters — không sửa tay.** Sai số liệu thì sửa master hoặc sửa
 script rồi build lại, không patch JSON.
@@ -844,7 +851,7 @@ script rồi build lại, không patch JSON.
 | Atlas | Nguồn master | Kích thước | Cell | Nội dung | Thay cho |
 |---|---|---|---|---|---|
 | `farm_crops_v01` | `masters/farm/crops/*/` | 960×1152 | 192 | 6 species × 5 stage | `core_crops_v01` + `herb_crops_v01` |
-| `farm_trees_v01` | `masters/farm/trees/*/` | 1280×2560 | 256 | 10 species × 5 stage (**`durian` chưa vào**, xem checklist mục 10) | `core_fruit_trees_v01` + `v02` |
+| `farm_trees_v01` | `masters/farm/trees/*/` | 1280×2816 | 256 | 11 species × 5 stage (`durian` vào atlas 2026-09-10, xem checklist mục 10) | `core_fruit_trees_v01` + `v02` |
 | `farm_aquatic_v01` | `masters/farm/aquatic-crops/*/` | 960×576 | 192 | 3 species × 5 stage | *(chưa từng có atlas)* |
 | `farm_soil_v01` | `masters/farm/soil/*.png` | 576×384 | 192 | 6 tile | `soil_states_v01` |
 
@@ -1141,7 +1148,8 @@ Kế hoạch xử lý chi tiết + scale factors: xem `ASSET_GEOMETRY_FIX_CHECKL
 
 Normalize pass đã chạy xong bằng `tools/normalize_pack.py`. Kết quả đo lại:
 
-- **Tất cả 10 tree pack + lotus**: canvas `1024×1024`, contactY = 970 (Δ0), rootX 511.6–512.5 (Δ ≤ 1 px), mọi margin ≥ 25 px — **PASS toàn bộ**. (`durian` là pack thứ 11, thêm sau đợt này và **FAIL** — xem `ASSET_GEOMETRY_FIX_CHECKLIST.vi.md` mục 10.)
+- **Tất cả 10 tree pack + lotus**: canvas `1024×1024`, contactY = 970 (Δ0), rootX 511.6–512.5 (Δ ≤ 1 px), mọi margin ≥ 25 px — **PASS toàn bộ**.
+- **durian** (pack thứ 11, thêm sau đợt này): audit 2026-09-10 FAIL 5/5, sửa cùng ngày bằng per-stage rescale — canvas `1024×1024`, contactY = 970 (Δ0), rootX 511.6–512.3, margin nhỏ nhất 26 px, ratio 0.400 / 0.600 / 0.821 / 0.939 / 1.0 trong band Profile A — **PASS**. Chi tiết ở `ASSET_GEOMETRY_FIX_CHECKLIST.vi.md` mục 10.
 - **coconut**: per-stage rescale theo Profile B, ratio mới 0.332 / 0.506 / 0.725 / 0.916 / 1.0 — trong band.
 - **crops (rev 2 cuối, cùng ngày)**: hai bước — (a) composite QC phát hiện chân crop lòi dưới soil plate; (b) calibration sheet xác nhận cây phải đứng **tâm plate**, dẫn tới chuyển crop sang **bottom-anchor sprite** root `(256, 458)`. Transform từ bản gốc (single resample): rice / tonkin-jasmine / culantro / mint scale 1.0 (chỉ translate), corn 0.8855, carrot 0.904. Herb rosette align X theo bbox center. Runtime `placementAnchor` cả 2 JSON đổi → `(0.5, 0.89453125)`, texture rebuild. Cả 3 pack palette thành RGBA8. Composite 30 frame + playground verify PASS. **Chờ xác nhận phía game code: điểm ghim trên tile = tâm plate.**
 - **Visual QC**: 6/6 case trong regenerate queue PASS — không file nào phải generate lại.

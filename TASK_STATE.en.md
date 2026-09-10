@@ -31,7 +31,7 @@ QC result: geometry core (canvas / contactY Δ0 / rootX / RGBA8) **PASS on 95/95
 | `soil_tilled` | regenerated as `v02` (v01 has permanently corrupted IDAT data) |
 | 3 doc gaps | `rubber` / `water-mimosa` / `water-spinach` had been normalized but were never recorded |
 | Vietnamese species names | `thien-ly` → `tonkin-jasmine`, `ngo-gai` → `culantro` |
-| `tools/build_atlas.py` | new, 33 tests, idempotent — atlases are reproducible now |
+| `tools/build_atlas.py` | new, 33 tests, idempotent — atlases are reproducible now *(2026-09-10: canvas/anchor guards added, 42 tests)* |
 | 4 runtime atlases | grouped by class, replacing the 5 old atlases |
 | Asset transport | dropped the Google Drive + `gws` leg entirely |
 
@@ -86,7 +86,7 @@ Full details: the "Asset sync transport" section in `FARM_ASSET_GENERATION_PLAN.
 python3 tools/geometry_audit.py masters/farm/<class>/<species>/*.png
 python3 tools/build_atlas.py --dry-run          # show the plan
 python3 tools/build_atlas.py                    # rebuild the 4 atlases
-python3 -m unittest discover -s tools -p 'test_*.py'   # 33 tests
+python3 -m unittest discover -s tools -p 'test_*.py'   # 42 tests
 ```
 
 Atlases are a **build product** — edit the masters and re-run the script, do not hand-edit an atlas.

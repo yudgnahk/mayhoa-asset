@@ -31,7 +31,7 @@ Kết quả QC: geometry core (canvas / contactY Δ0 / rootX / RGBA8) **PASS 95/
 | `soil_tilled` | generate lại thành `v02` (v01 hỏng IDAT vĩnh viễn) |
 | 3 doc gap | `rubber` / `water-mimosa` / `water-spinach` đã normalize nhưng không được ghi |
 | Species tiếng Việt | `thien-ly` → `tonkin-jasmine`, `ngo-gai` → `culantro` |
-| `tools/build_atlas.py` | mới, 33 test, idempotent — atlas giờ tái tạo được |
+| `tools/build_atlas.py` | mới, 33 test, idempotent — atlas giờ tái tạo được *(2026-09-10: thêm guard canvas/anchor, 42 test)* |
 | 4 atlas runtime | gom theo class, thay 5 atlas cũ |
 | Asset transport | bỏ hẳn chặng Google Drive + `gws` |
 
@@ -86,7 +86,7 @@ Chi tiết đầy đủ: mục "Asset sync transport" trong `FARM_ASSET_GENERATI
 python3 tools/geometry_audit.py masters/farm/<class>/<species>/*.png
 python3 tools/build_atlas.py --dry-run          # xem kế hoạch
 python3 tools/build_atlas.py                    # build lại 4 atlas
-python3 -m unittest discover -s tools -p 'test_*.py'   # 33 test
+python3 -m unittest discover -s tools -p 'test_*.py'   # 42 test
 ```
 
 Atlas là **build product** — sửa master rồi chạy lại script, đừng sửa tay atlas.
