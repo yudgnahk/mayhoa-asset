@@ -39,7 +39,7 @@ species block là source of truth, và sửa một đoạn prompt rẻ hơn nhi�
 - **Nền transparent thật** (không matte trắng/đen, không scene, không bake đất/tile).
 - Một cây/một object duy nhất, không contact sheet, không text/watermark.
 - Với pack nhiều stage: cùng một cá thể cây lớn dần, cấu trúc thay đổi thật (không phải một hình scale to dần).
-- **Tỷ lệ chiều cao giữa các stage trong cùng pack** phải nằm trong band của profile loài đó (Profile A/B/C, `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.vi.md` §523–560). Pipeline áp một hệ số scale chung cho cả pack nên **không sửa được** đường cong tăng trưởng sai.
+- **Tỷ lệ chiều cao giữa các stage trong cùng pack** phải nằm trong band của profile loài đó (Profile A/B/C, `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.vi.md` §523–560). Sai band thì `--file-scale` per-stage vẫn vá được (coconut, durian), nhưng chỉ một lần và chỉ khi master chưa qua transform nào — đừng coi đó là mạng dự phòng.
 
 ---
 
@@ -201,8 +201,12 @@ Stage 05 — fruiting: full mature silhouette, harvest-ready fruit as focal cue.
 > Profile B (`0.65/0.84/0.95/0.99`) và `durian` vỡ Profile A
 > (`0.66/0.95/0.99/1.00`) — cây gần như không lớn nữa từ stage 02.
 >
-> `normalize_pack.py` áp **một** hệ số scale cho cả pack nên **không cứu được**
-> đường cong tăng trưởng bẹt: sai là phải generate lại.
+> Đường cong bẹt vẫn **cứu được** bằng `normalize_pack.py --file-scale` (scale
+> riêng từng stage, resample đúng một lần) — `coconut` và `durian` đều đã được
+> cứu như vậy, xem `ASSET_GEOMETRY_FIX_CHECKLIST.vi.md` mục 3 và 10. Nhưng đó là
+> chữa cháy: rescale thu nhỏ cả stage nên chi tiết và harvest cue nhỏ theo, và
+> chỉ áp được khi master còn là artwork gốc chưa qua transform nào. Cứ viết
+> `HEIGHT:` cho đúng ngay từ đầu.
 >
 > Số trên là **Profile A** (cây thân gỗ đứng — E–J, `durian`, `coffee`,
 > `rubber`). Loài khác profile phải thay số: **Profile B** cọ/dừa

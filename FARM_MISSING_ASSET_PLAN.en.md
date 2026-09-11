@@ -159,9 +159,8 @@ This order **supersedes** §17 of the generation plan until Gate A passes. Adopt
 Recorded so nobody redoes it:
 
 - 6 field crops × 5 stages, packed, anchor `(0.5, 0.89453125)`;
-- 10 trees × 5 stages, atlas cell `256×256`, **packed into the atlas**;
-- `durian` (the 11th tree) has 5 masters but is **NOT packed into the atlas and FAILS geometry** — see `ASSET_GEOMETRY_FIX_CHECKLIST.en.md` section 10;
+- **11 trees × 5 stages**, atlas cell `256×256`, **packed into the atlas** — `durian` (the 11th tree) was normalized and packed on 2026-09-10 (see `ASSET_GEOMETRY_FIX_CHECKLIST.en.md` section 10); one content item is still open: its stage-05 fruit is buried in the canopy and needs a regenerate;
 - 3 aquatic crops × 5 stages;
 - 6 soil states, RGBA8, with `soil_tilled` served by `v02`;
-- a reproducible atlas pipeline in `tools/build_atlas.py`, 33 tests, idempotent;
+- a reproducible atlas pipeline in `tools/build_atlas.py`, 42 tests, idempotent, with fail-loud guards for off-spec masters;
 - the geometry contract, locked and mirrored in both repos.

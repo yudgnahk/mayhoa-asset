@@ -159,9 +159,8 @@ Thứ tự này **thay thế** §17 của generation plan cho tới khi Gate A q
 Ghi lại để không ai làm lại:
 
 - 6 field crop × 5 stage, đã đóng atlas, anchor `(0.5, 0.89453125)`;
-- 10 tree × 5 stage, atlas cell `256×256`, **đã đóng atlas**;
-- `durian` (tree thứ 11) đã có 5 master nhưng **CHƯA đóng atlas và FAIL geometry** — xem `ASSET_GEOMETRY_FIX_CHECKLIST.vi.md` mục 10;
+- **11 tree × 5 stage**, atlas cell `256×256`, **đã đóng atlas** — `durian` (tree thứ 11) đã normalize và vào atlas ngày 2026-09-10 (xem `ASSET_GEOMETRY_FIX_CHECKLIST.vi.md` mục 10); còn treo duy nhất một việc nội dung: quả stage-05 chìm trong tán, phải generate lại;
 - 3 aquatic × 5 stage;
 - 6 soil state, RGBA8, `soil_tilled` dùng bản `v02`;
-- pipeline atlas tái tạo được bằng `tools/build_atlas.py`, 33 test, idempotent;
+- pipeline atlas tái tạo được bằng `tools/build_atlas.py`, 42 test, idempotent, có guard fail-loud khi master lệch chuẩn;
 - geometry contract đã khoá và đã đồng bộ hai repo.

@@ -2,7 +2,7 @@
 
 **Language:** [Tiếng Việt](ASSET_GEOMETRY_FIX_CHECKLIST.vi.md) · English
 
-**Status:** normalize 2026-08-26 done; **re-QC 2026-09-05** — 95/95 plant files PASS geometry core, produced 2 blocking items + 3 documentation gaps (see section 9). **2026-09-10: the `durian` pack FAILS 5/5 — see section 10.** The QC record now covers 19/20 packs.
+**Status:** normalize 2026-08-26 done; **re-QC 2026-09-05** — 95/95 plant files PASS geometry core, produced 2 blocking items + 3 documentation gaps (see section 9). **2026-09-10: the `durian` pack FAILED 5/5 and was rescued by a per-stage rescale — see section 10.** The QC record now covers **20/20 packs (100/100 plant files)**.
 **Baseline:** measured 2026-08-26 with `tools/geometry_audit.py` (alpha ≥ 24/255, bottom band 3%) — details in §20 of the spec
 **Spec:** `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.en.md` (source of truth for every number)
 
@@ -279,14 +279,13 @@ Chrome only needs a restart when the native messaging host config file is create
 
 ---
 
-## 10. QC of the `durian` pack — 2026-09-10 — **FAIL 5/5**
+## 10. `durian` — audited 2026-09-10 FAIL 5/5 → per-stage rescale, DONE the same day
 
 `durian` is the 11th tree pack, merged via PR #3 (`795e0b0`, 2026-09-09). The
 original commit stated plainly that **`geometry_audit` / `normalize` had not been
-run**; this is the audit result.
+run**. Below is the audit record and how it was resolved.
 
-Because this pack was never covered, the repo's QC record is now **19/20 packs** —
-section 9 above (PASS on 95/95 plant files) **does not include `durian`**.
+### 10.1 Measurements BEFORE the fix
 
 | Stage | Canvas | contactY | rootX | Top margin | visH |
 |---|---|---|---|---|---|
@@ -298,13 +297,13 @@ section 9 above (PASS on 95/95 plant files) **does not include `durian`**.
 
 | Criterion | Threshold | Result |
 |---|---|---|
-| Canvas `1024×1024` | — | **FAIL 5/5** (currently `1254×1254`) |
+| Canvas `1024×1024` | — | **FAIL 5/5** (was `1254×1254`) |
 | contactY Δ0 within the pack | Δ = 0 | **FAIL** — Δ = 218 px, violates §2.2 |
 | rootX = canvas center ±2 | 626.5 on a 1254 canvas | **FAIL** — off by +7.7…+24.2 px, spread 16.5 px |
 | Margin ≥ 24 px (≥ 29.4 px scaled to a 1254 canvas) | — | **FAIL 3/5** — top s03=16, s04=15, s05=12 |
 | RGBA8 (§6.3) | colortype 6 | ✅ PASS |
 
-### The worst defect: Profile A is broken — this is not a normalize problem
+### 10.2 The worst defect: Profile A broken
 
 | Stage | durian | Profile A | |
 |---|---|---|---|
@@ -314,40 +313,92 @@ section 9 above (PASS on 95/95 plant files) **does not include `durian`**.
 | 04 | 0.996 | 0.90–0.98 | ✗ at the ceiling |
 
 Against the `coffee` calibration reference: 0.378 / 0.644 / 0.867 / 0.967. From
-stage-02 onwards the tree barely grows — the last 4 stages differ by 5%.
-
-`normalize_pack.py` applies **one** scale factor to the whole pack, so it
-**cannot** fix this: s01/s02/s03 must be **regenerated**. This is the second time
-this failure has happened — `coconut` broke Profile B in exactly the same way
-(`0.65/0.84/0.95/0.99`, see §5.2 of the spec).
+stage-02 onwards the tree barely grows — the last 4 stages differ by 5%. This is
+the second time this failure has happened: `coconut` broke Profile B in exactly
+the same way (`0.65/0.84/0.95/0.99`, see §5.2 of the spec).
 
 **Root cause, patched 2026-09-10**: the stage template in §E–J of
 `FARM_REGENERATION_PROMPTS.en.md` carried no relative-size constraint, and since
 each prompt carries only one stage line, the model never saw the requirement. Each
 stage line now ships with a `HEIGHT:` line.
 
-### Open risk — do NOT run `build_atlas.py`
+### 10.3 Fixed by per-stage rescale — NO regenerate (DONE 2026-09-10)
 
-`durian` is not in `farm_trees_v01`. `--dry-run` shows that rebuilding now would give:
+> **Correction.** An earlier version of this section claimed that
+> *"`normalize_pack.py` applies one scale factor to the whole pack, so it cannot
+> fix this: s01/s02/s03 must be regenerated"*. **That was wrong.** The tool has a
+> per-file `--file-scale <basename>=<scale>`, and `coconut` already set the
+> precedent for exactly this in section 3. That wrong call nearly pushed the pack
+> into an unnecessary generate round.
 
+- [x] Per-stage scales applied: s01 `0.4713`, s02 `0.4884`, s03 `0.6394`, s04 `0.7291`, s05 `0.7733` (= base 0.7733 = 945/1222 × the Profile A factors aimed at `rubber` 0.400/0.600/0.820/0.939/1.0, resampled exactly once).
+- [x] New ratios: **0.400 / 0.600 / 0.821 / 0.939 / 1.0** — sitting neatly inside the Profile A band (0.35–0.45 / 0.55–0.65 / 0.75–0.88 / 0.90–0.98).
+- [x] Visual check s01–s03: leaf veins, bark texture and rim highlights are still crisp after a ×0.47–0.64 downscale → NO regenerate needed.
+- [x] Satisfies the "normalize must start from the original artwork" rule: the durian masters had never been transformed, so this is still a single resample.
+- [x] rootX left to the bottom-band centroid, no `--rootx` needed: durian is a single-trunk morphology, the bottom band is 103–217 px wide and its centroid matches the band midpoint within 0.5 px, so the §7.1 heuristic is trustworthy for this pack.
+
+Command used:
+
+```bash
+python3 tools/normalize_pack.py --mode root --canvas 1024 1024 --target 512 970 \
+  --file-scale durian_stage-01_sprout_v01.png=0.4713 \
+               durian_stage-02_sapling_v01.png=0.4884 \
+               durian_stage-03_young_v01.png=0.6394 \
+               durian_stage-04_flowering_v01.png=0.7291 \
+               durian_stage-05_fruiting_v01.png=0.7733 \
+  -- masters/farm/trees/durian/*.png
 ```
-farm_trees_v01: 11 trees x 5 stage -> 1280x2816 (55 frames, cell 256)
-  master canvas: 1024x1024, 1254x1254
-  anchor: x=0.5 (pin), y PER-FRAME 0.80941..0.983254 (spread 0.173844)
-```
 
-→ `anchorUniform` flips `true → false`, spread jumps `0 → 0.1738`, and durian's
-root jumps between stages in-game. The tool currently only prints a `NOTE QC` and
-still overwrites the file. **Do not build the atlas until `durian` is normalized
-or split out of it.**
+The `--` is mandatory: `--file-scale` is declared `nargs='*'`, so without it
+argparse swallows the file list and then reports the positional as missing.
 
-### To do
+Measurements AFTER the fix:
 
-- [ ] Regenerate `durian` s01/s02/s03 inside the Profile A band (use the patched template).
-- [ ] Fix s05: the fruit must hang in the gap below the branch tier, not sit buried
-      in the canopy — prompt ready at `.ai-bridge/durian/PROMPT_s05_fix_round.txt`.
-- [ ] `normalize_pack.py` in `root` mode, target `(512, 970)`, `s ≈ 0.774`
-      (tightest constraint: s05 height → `946/1222`). No tall canvas needed.
-- [ ] Re-run `geometry_audit.py`, and only then `build_atlas.py`.
-- [ ] Consider a guard in `build_atlas.py`: fail when master canvases inside one
-      atlas are not uniform, or when `anchorSpread.y` exceeds a threshold.
+| Stage | Canvas | contactY | rootX | Top margin | visH | ratio |
+|---|---|---|---|---|---|---|
+| 01 sprout | 1024×1024 | 970 | 511.6 | 593 | 378 | 0.400 |
+| 02 sapling | 1024×1024 | 970 | 512.3 | 404 | 567 | 0.600 |
+| 03 young | 1024×1024 | 970 | 511.9 | 195 | 776 | 0.821 |
+| 04 flowering | 1024×1024 | 970 | 512.0 | 84 | 887 | 0.939 |
+| 05 fruiting | 1024×1024 | 970 | 512.2 | 26 | 945 | 1.000 |
+
+The tightest margin is top 26 px (s05); the bottom is 53 px on all 5 stages — all
+≥ 24 px. RGBA8 preserved. The repo's QC record is now **20/20 packs**.
+
+### 10.4 Guards in `build_atlas.py` — DONE 2026-09-10
+
+The old risk: rebuilding while durian was un-normalized would flip
+`anchorUniform` `true → false` and jump `anchorSpread.y` `0 → 0.173844`, while the
+tool only printed a `NOTE QC` and still overwrote `runtime/`. A `NOTE` is not a
+guard — it sat among 5 other NOTE lines that are entirely legitimate.
+
+Two guards were added; they run before even `--dry-run`, and nothing is written
+when either fires:
+
+| Guard | Threshold | Override |
+|---|---|---|
+| Master canvases not uniform inside one atlas | any difference | `mixed_canvas_ok` declared in `ATLAS_SPECS` (enabled for `farm_aquatic_v01`: lotus 1024 vs water-* 768), or `--allow-mixed-canvas` for a single run |
+| `anchorSpread.y` converted to pixels inside the cell | `> 2.0 px` | none — a drifting anchorY is always a master defect |
+
+The 2.0 px threshold is measured in cell pixels rather than as a ratio, because
+the same spread drifts half again as far in a 256 cell as in a 192 cell; the
+number is the same order of tolerance as `CENTROID_QC_PX`. For reference, the 4
+conforming atlases sit at 0.0–0.4 px (the 1 px rounding difference between
+728/768 and 970/1024), while un-normalized durian sat at 44.5 px.
+
+`tools/test_build_atlas.py`: 33 → **42 tests**.
+
+### 10.5 The atlas after the rebuild
+
+`farm_trees_v01`: **11 species × 5 stages = 55 frames**, texture `1280×2816`, cell
+256, uniform masterCanvas `1024×1024`, `anchorUniform: true`, `anchorSpread`
+`{x: 0, y: 0}`, anchor `(0.5, 0.947266)`, and no more `masterCanvasBySpecies`.
+The other three atlases rebuild byte-for-byte identical — `farm_aquatic_v01` was
+not touched.
+
+### 10.6 Still open — NOT part of this round
+
+- [ ] **`durian` s05: the fruit is buried in the canopy.** This is an artwork
+      content defect that a rescale cannot reach — it needs a regenerate. The
+      fruit must hang in the gap below a branch tier rather than blend into the
+      canopy. Prompt ready at `.ai-bridge/durian/PROMPT_s05_fix_round.txt`.

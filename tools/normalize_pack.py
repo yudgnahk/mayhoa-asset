@@ -9,6 +9,10 @@ Mode `root` (tree/perennial/aquatic):
     3%/min 8px, threshold alpha >= 24 — hoặc override bằng --rootx cho morphology
     radial §7.1), scale đồng nhất cả pack, translate để root về đúng target.
 
+Mode `center` (pest overlay / tool icon):
+    Scale để bbox vừa canvas với margin, rồi căn tâm bbox vào tâm canvas. Dùng
+    cho class lấy visual pivot ở tâm, không có world-contact semantic (spec §5.5).
+
 Mode `anchor` (crop soil-plate):
     Scale quanh fixed anchor (anchor giữ nguyên tọa độ), không translate theo
     contactY (spec §5.3).
@@ -65,14 +69,18 @@ def measure(img):
     }
 
 
-def scale_constraint(m, mode, canvas, target, root_x):
+def scale_constraint(m, mode, canvas, target, root_x, margin=MARGIN):
     """Scale tối đa để mọi extent quanh điểm cố định nằm trong margin."""
     cw, ch = canvas
     tx, ty = target
-    lim_l = tx - MARGIN - SAFETY
-    lim_r = (cw - 1 - MARGIN - SAFETY) - tx
-    lim_t = ty - MARGIN - SAFETY
-    lim_b = (ch - 1 - MARGIN - SAFETY) - ty
+    lim_l = tx - margin - SAFETY
+    lim_r = (cw - 1 - margin - SAFETY) - tx
+    lim_t = ty - margin - SAFETY
+    lim_b = (ch - 1 - margin - SAFETY) - ty
+    if mode == 'center':
+        avail_w = cw - 2 * (margin + SAFETY)
+        avail_h = ch - 2 * (margin + SAFETY)
+        return min(1.0, avail_w / m['vis_w'], avail_h / m['vis_h'])
     if mode == 'root':
         # root nằm ở lowest pixel: toàn bộ content ở trên root
         ext = {
@@ -105,7 +113,10 @@ def normalize_file(path, mode, canvas, target, s, root_x_override):
     ms = measure(scaled)
 
     tx, ty = target
-    if mode == 'root':
+    if mode == 'center':
+        off_x = round((canvas[0] - 1) / 2 - (ms['minx'] + ms['maxx']) / 2)
+        off_y = round((canvas[1] - 1) / 2 - (ms['miny'] + ms['maxy']) / 2)
+    elif mode == 'root':
         rx = root_x * s if root_x_override is not None else ms['root_x']
         off_x = round(tx - rx)
         off_y = ty - ms['contact_y']
@@ -139,16 +150,19 @@ def parse_kv(pairs, cast):
     return out
 
 
-def main():
+def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument('--mode', choices=['root', 'anchor'], required=True)
+    ap.add_argument('--mode', choices=['root', 'center', 'anchor'], required=True)
     ap.add_argument('--canvas', nargs=2, type=int, required=True)
     ap.add_argument('--target', nargs=2, type=int, required=True)
     ap.add_argument('--scale', type=float, help='scale cố định cho cả pack (bỏ qua auto)')
     ap.add_argument('--file-scale', nargs='*', help='override per-file: basename=scale')
     ap.add_argument('--rootx', nargs='*', help='override rootX nguồn per-file: basename=x')
+    ap.add_argument('--margin', type=int, default=MARGIN,
+                    help='margin tối thiểu quanh content (tool icon cần rộng hơn '
+                         'để chừa chỗ cho glow của state selected)')
     ap.add_argument('files', nargs='+')
-    args = ap.parse_args()
+    args = ap.parse_args(argv)
 
     canvas = tuple(args.canvas)
     target = tuple(args.target)
@@ -164,7 +178,7 @@ def main():
         rx = rootx_over.get(os.path.basename(path), m['root_x'])
         metas.append((path, m, rx))
         if not args.scale:
-            pack_s = min(pack_s, scale_constraint(m, args.mode, canvas, target, rx))
+            pack_s = min(pack_s, scale_constraint(m, args.mode, canvas, target, rx, args.margin))
     if not args.scale:
         print(f"auto pack scale = {pack_s:.4f}")
 
