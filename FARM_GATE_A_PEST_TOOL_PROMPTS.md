@@ -253,16 +253,21 @@ any produce.
 
 ## 6. Pipeline after download
 
-**Fake alpha is a Work-mode symptom, not a platform change.** *(corrected 2026-09-12)*
-A thread running on **Work** mode returns PNG colortype 2 with a white/grey checkerboard
-*painted into the pixels* in place of transparency, and `Save` just bakes it into the file.
-A thread in the **mayhoa project on Chat mode returns real RGBA (colortype 6)** — verified on
-`watering-can`, `pest-catcher` and `harvest-hand`, none of which needed any alpha repair.
-So the fix is to generate on Chat mode, not to run a repair pass by default.
+**Fake alpha is not universal — check, do not assume.** *(2026-09-12)* Some raws come back
+as PNG colour type 2 with a white/grey checkerboard *painted into the pixels* in place of
+transparency; `Save` then bakes that checkerboard into the file. Others come back as real
+RGBA (colour type 6) and need no repair at all.
 
-Check `IHDR` colour type before doing anything else; run `tools/dechecker.py` only when it
-reads 2. It stays in the repo as a safety net for raws inherited from a Work-mode thread
-(`tool_hoe_*_v02.png` came in that way).
+**Always read the `IHDR` colour type first**, and run `tools/dechecker.py` only when it reads
+2. Never skip that check on the strength of the hypothesis below.
+
+*Working hypothesis, not established:* the split tracked the chat mode. Every one of the 7
+model-generated images in the Work-mode thread `/c/6aa2df26-…` was type 2 (the single type-6
+file there was a reference image uploaded by hand), while all 3 generated in the Chat-mode
+project thread `/g/g-p-…/c/6aa3664c-…` were type 6. Both modes were verified programmatically
+at the time, not recalled. But the two threads also differ in **project membership** and in
+**date**, so mode is confounded and n is 2 threads. Generating one image in a Work-mode thread
+*inside* the project would separate the variables; nobody has run that.
 
 1. Raw goes to `.ai-bridge/pests/` or `.ai-bridge/tools/`.
 2. Only if `IHDR` colour type is 2: `python3 tools/dechecker.py raw.png out.png`.

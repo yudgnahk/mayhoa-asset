@@ -111,17 +111,12 @@ Queue: `.ai-bridge/GATE_A_GEN_BRIEF.md`. Prompt spec: `FARM_GATE_A_PEST_TOOL_PRO
 
 **Two pipeline changes from that session — read before generating again:**
 
-- **Fake alpha is a Work-mode symptom, not a platform change.** *(corrected 2026-09-12)*
-  A **Work**-mode thread returns colortype 2 with a checkerboard painted into the pixels; a
-  thread in the mayhoa project on **Chat** mode returns real RGBA. Check the colour type first
-  and run `python3 tools/dechecker.py raw.png out.png` only when it reads 2
-  before anything else. It flood-fills from the edge (a plain color key punches holes
-  through white eyes in the sprite) and then difference-mattes the fringe. The viewer's
-  `Remove BG` button produces nothing usable.
-- **Tool `selected` state is never generated.** The model cannot hold pose and scale
-  steady, so the icon jumps in the toolbar. Derive it with `tools/make_selected.py` from
-  the idle master. Because the glow bleeds past the silhouette, normalize tool idles with
-  `--margin 34`.
+- **Fake alpha is not universal — check, do not assume.** Some raws arrive as colour type 2
+  with a checkerboard painted into the pixels; others arrive as real RGBA. Read the `IHDR`
+  colour type first and run `python3 tools/dechecker.py raw.png out.png` only when it reads 2.
+  Working hypothesis (confounded, unproven): it tracked Work vs Chat mode — 7/7 generated in
+  the Work thread were type 2, 3/3 in the Chat project thread were type 6, but those threads
+  also differ by project and by date
 
 Not yet started from the brief: `carrot` s05 (optional), 4 backgrounds, tree/aquatic,
 weed, the remaining 5 pests.
