@@ -204,6 +204,20 @@ confirm every thumbnail is present before moving on.
    it look sent. Re-focus and retype if it is empty.
 5. `key Return` to send, then confirm the message appears in the thread.
 
+> **Open trap, 2026-09-13, unresolved.** On the project **landing page** (`/project`, no
+> thread yet — see A1) with 2+ reference attachments already uploaded, `type` after
+> `el.focus()` (which itself returns `true`) silently lands nowhere: reading back
+> `document.activeElement.tagName` afterwards shows `MAIN`, not the ProseMirror composer —
+> something steals focus, plausibly a re-render triggered by the attachments. Tried
+> `focus()` alone, `click()+focus()`, and a coordinate click on the composer's own
+> `getBoundingClientRect()` centre — all three lost focus the same way. The same composer
+> took text fine earlier that same day with **no attachments, inside an existing `/c/...`
+> thread** — so the trap may be specific to (landing page) × (has attachments), not the
+> composer in general. **Untested workaround, try this first if you hit it:** send a short
+> throwaway text message with no attachment to create the thread (gets you off `/project`
+> and onto `/c/...`), *then* attach the references and type the prompt inside that thread.
+> Costs one extra message in the project. Report back here whether it works.
+
 ### A4. Wait
 
 Normal progression: `Analyzing images` → `Generating a more detailed image — hang tight`
@@ -228,16 +242,24 @@ rounds maximum, then stop and report.
 
 ### A6. Download
 
-In the fullscreen viewer:
+**Correction, 2026-09-13: the previous version of this section overclaimed.** It said the
+Remove BG/Erase bar's **"Save"** button "has been wrong since 2026-09-12 — the UI changed."
+That is contradicted by a real run: `tool_harvest-hand` was downloaded successfully on
+2026-09-12 using exactly that Save button (`aria-label="Save"`), file landed correct on
+disk. A separate run on 2026-09-13 never reached the download step (stuck earlier, see the
+composer trap below), so it did not confirm or refute the top-right icon either.
 
-- The middle toolbar holds only **Markup / Comment / Remove BG / Erase / Resize** —
-  **there is no download control there.**
-- The download control is the **download icon in the top-right header**, next to Share
-  (around `(1201, 24)` at a 1280-wide viewport).
+**Current best knowledge: check both, trust whichever is actually present.** Both controls
+may coexist (e.g. the header icon shows only once a generate is fully settled, or it varies
+by thread type / viewer state) — this has not been isolated. In the fullscreen viewer:
 
-> Older documentation described a **"Save"** button on the Remove BG / Erase bar. That has
-> been wrong since 2026-09-12 — the UI changed. The chat pane has no download button
-> either; do not hunt for one by hovering.
+- Look for a download icon in the **top-right header**, next to Share (around `(1201, 24)`
+  at a 1280-wide viewport).
+- Also check the middle toolbar (**Markup / Comment / Remove BG / Erase / Resize**) for a
+  **Save** control (`aria-label="Save"` confirmed working 2026-09-12).
+- Do not assume either is missing without actually looking — `find`/snapshot the viewer
+  for any element with a download-shaped icon or an aria-label containing "save" or
+  "download" before concluding there is no control.
 
 The file lands in the configured download directory, named `ChatGPT Image <date time>.png`.
 
