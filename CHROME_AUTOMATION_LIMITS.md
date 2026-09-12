@@ -18,14 +18,26 @@ bật** ("once we enable that capability"). Khi nào Anthropic bật thì kiểm
 Tool browser của Paseo mở một Chrome **mới, chưa đăng nhập** → vào chatgpt.com bị đá
 về màn hình login. Không dùng được cho flow này.
 
-## Cách đi flow, tính tới 2026-09-12
+## Cách đi flow, tính tới 2026-09-12 (đính chính 15:50: bỏ Google Drive)
 
-1. **Kelvin bấm icon "Claude in Chrome"** trên toolbar (side panel, đã đăng nhập sẵn),
-   dán nguyên nội dung `.ai-bridge/<task>/TASK.md` vào cho Claude-trong-Chrome tự chạy.
-2. Hoặc Kelvin tự làm 2 message trong ChatGPT project "mayhoa" theo TASK.md, rồi đưa
-   Drive file ID cho agent terminal normalize + wire.
+**Kelvin mở Claude** (không phải mở tab ChatGPT tay) → Claude tự dùng "Claude in
+Chrome" lái browser vào `chatgpt.com`, gen ảnh qua `@Create image`, rồi **tự bấm nút
+tải xuống ngay trên ảnh** để lưu file thẳng vào đĩa — không còn cầu Google Drive.
 
-Agent làm được phần trước và sau, **không làm được khúc giữa trong trình duyệt**.
+Dán nguyên nội dung `.ai-bridge/<task>/TASK.md` cho Claude đó chạy. Mỗi TASK.md đã
+định sẵn một đường dẫn tuyệt đối `.ai-bridge/<task>/incoming/<tên-file>.png` để lưu
+vào, thư mục `incoming/` đã tạo sẵn từ trước — Claude không phải tự đoán chỗ lưu.
+
+**Lý do bỏ Drive, không chỉ vì thừa bước**: MESSAGE @Google Drive là khúc mong manh
+nhất — cần gọi connector riêng, có bẫy 'Add from library' nằm ngay đầu dropdown dễ
+bấm nhầm thay vì mục 'Google Drive' thật, và tốn thêm vài lần Allow. Cầu Drive chỉ
+cần thiết vì hai *tool* của ChatGPT (Create image và Google Drive) không tự truyền
+binary cho nhau trong cùng một phiên chat — nhưng khi Claude tự lái browser thì nó
+bấm được nút "Download" của chính trình duyệt, không đi qua giới hạn đó nữa.
+
+Agent terminal làm được phần trước (soạn TASK.md, dựng thư mục `incoming/`) và phần
+sau (dechecker, normalize, wire vào game) — **không làm được khúc giữa trong trình
+duyệt**, đó vẫn luôn là phần Kelvin/Claude-trong-Chrome tự chạy.
 
 ## Hai cái bẫy đã mất thì giờ, đừng dính lại
 
