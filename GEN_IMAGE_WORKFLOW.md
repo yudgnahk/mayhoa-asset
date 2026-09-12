@@ -180,7 +180,11 @@ confirm every thumbnail is present before moving on.
 3. `type` the prompt body. **Type it as ONE continuous paragraph, replacing newlines with
    spaces.** A newline character inside `type` sends the message early. A single-paragraph
    prompt still produces correct results, as long as no words are lost.
-4. Screenshot to verify the prompt is complete, then `key Return` to send.
+4. **Verify the composer actually holds your text before sending** — read its content
+   length back, do not just screenshot. A message typed right after `navigate` has been
+   silently dropped (composer empty, nothing in the thread), and pressing Enter blind makes
+   it look sent. Re-focus and retype if it is empty.
+5. `key Return` to send, then confirm the message appears in the thread.
 
 ### A4. Wait
 
@@ -283,8 +287,16 @@ AWAITING: <the expected incoming/ path>
 
 ## Traps that have already cost time — do not hit them again
 
-- **ChatGPT images can come back with a fake checkerboard baked in instead of real alpha.**
-  Always run `tools/dechecker.py` before using one. Hit with `tool_hoe_idle_v02.png`.
+- **A raw may come back with a fake checkerboard baked in instead of real alpha — it varies
+  per generate, so check, do not assume either way.** Colour types of the raws on disk
+  2026-09-12: `raw_tool_hoe_idle` and both `raw_pest_caterpillar-single_*` are type 2 (no
+  alpha); `raw_tool_watering-can_idle` and `raw_tool_harvest-hand_idle` are type 6 (real
+  alpha). Read the type and run `tools/dechecker.py` only when it is 2.
+
+  The leading explanation is that Work mode bakes the checkerboard while Chat mode does not
+  — plausible and consistent with the session notes, but *not established from the files
+  themselves*, which only show that it varies. Do not harden it into a rule you skip the
+  check for.
 - **Do not conclude a transport is broken from identical file bytes.** Four files sharing
   one md5 in 2026-09-12 were read as "the download is grabbing a stale image"; in fact only
   one generate had ever run for that asset and it had simply been downloaded four times.
