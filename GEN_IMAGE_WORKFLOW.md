@@ -157,6 +157,24 @@ project**; you do not need the sidebar's "New chat".
 
 Do NOT close the user's existing tabs. Do NOT restart Chrome.
 
+**Generate in Chat mode, never Work mode — standing decision, 2026-09-12.** Every asset
+that came back needing alpha repair came from a Work-mode thread; every Chat-mode generate
+returned real RGBA. Chat mode also keeps the thread inside the mayhoa project, which is
+where the reference history lives.
+
+Verify the mode before sending anything — do not assume it from the URL:
+
+```
+browser_evaluate:
+  [...document.querySelectorAll('[role=radio]')].map(e => e.innerText + '=' + e.getAttribute('aria-checked'))
+  → expect "Chat=true", "Work=false"
+```
+
+If the thread already exists, read the header instead: a Work thread carries a `Work` badge
+(`document.querySelector('header').innerText`). A project Chat thread shows only the project
+name. Wrong mode → switch it before generating; do not "just try it and check the colour
+type afterwards", that wastes a generate round.
+
 ### A2. Attach reference files
 
 **Do not click the `+` / paperclip button** — it opens a native file picker the agent
@@ -306,10 +324,13 @@ AWAITING: <the expected incoming/ path>
   (outside vs inside), and date (10–11 Sep vs 11–12 Sep, so a backend change is not ruled
   out). With n = 2 threads, mode cannot be separated from project membership.
 
-  Settling it needs one image generated in a **Work-mode thread inside the project** — that
-  single case separates the two variables. It costs a generate round, so it is the user's
-  call, not an agent's. Until then, treat "Work mode causes it" as the leading hypothesis
-  and keep reading the colour type. Do not skip the check on the strength of it.
+  Settling it would need one image generated in a **Work-mode thread inside the project**.
+  **The user decided 2026-09-12 not to run it and to standardise on Chat mode instead** (see
+  A1), which makes the question moot in practice — under Chat mode the raws come back type 6.
+
+  **Keep reading the colour type anyway.** It costs nothing, and if a Chat-mode raw ever
+  comes back type 2 that means something changed upstream — worth knowing, not worth
+  silently repairing.
 - **Do not conclude a transport is broken from identical file bytes.** Four files sharing
   one md5 in 2026-09-12 were read as "the download is grabbing a stale image"; in fact only
   one generate had ever run for that asset and it had simply been downloaded four times.

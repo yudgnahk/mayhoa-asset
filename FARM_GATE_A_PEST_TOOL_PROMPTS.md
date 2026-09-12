@@ -267,7 +267,10 @@ file there was a reference image uploaded by hand), while all 3 generated in the
 project thread `/g/g-p-…/c/6aa3664c-…` were type 6. Both modes were verified programmatically
 at the time, not recalled. But the two threads also differ in **project membership** and in
 **date**, so mode is confounded and n is 2 threads. Generating one image in a Work-mode thread
-*inside* the project would separate the variables; nobody has run that.
+*inside* the project would separate the variables. **The user decided 2026-09-12 not to run
+that experiment and to generate in Chat mode only** (`GEN_IMAGE_WORKFLOW.md` A1), so the
+question stays open but stops mattering in practice — Chat mode returns type 6. Keep the
+colour-type check regardless: a type-2 raw under Chat mode would mean something changed.
 
 1. Raw goes to `.ai-bridge/pests/` or `.ai-bridge/tools/`.
 2. Only if `IHDR` colour type is 2: `python3 tools/dechecker.py raw.png out.png`.

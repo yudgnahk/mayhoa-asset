@@ -116,7 +116,8 @@ Queue: `.ai-bridge/GATE_A_GEN_BRIEF.md`. Prompt spec: `FARM_GATE_A_PEST_TOOL_PRO
   colour type first and run `python3 tools/dechecker.py raw.png out.png` only when it reads 2.
   Working hypothesis (confounded, unproven): it tracked Work vs Chat mode — 7/7 generated in
   the Work thread were type 2, 3/3 in the Chat project thread were type 6, but those threads
-  also differ by project and by date
+  also differ by project and by date. **Resolved operationally 2026-09-12: generate in Chat
+  mode only** — see the settled-decisions list at the bottom of this file.
 
 Not yet started from the brief: `carrot` s05 (optional), 4 backgrounds, tree/aquatic,
 weed, the remaining 5 pests.
@@ -268,3 +269,9 @@ an atlas.
 - `mango`/`rambutan` s05 being smaller than s04 is **accepted** — the s04 flower cluster
   disappears; the tree is not shrinking.
 - `water-mimosa` vs `water-spinach`: **PASS**, they are clearly different species.
+- **Generate in Chat mode only, never Work mode** (user, 2026-09-12). Every raw that needed
+  alpha repair came from a Work thread; every Chat generate returned real RGBA. Chat mode
+  also keeps the thread inside the mayhoa project. The experiment that would have isolated
+  mode from project membership was deliberately not run — standardising was cheaper than
+  proving the mechanism. Verify the mode before sending; keep the colour-type check as a
+  cheap tripwire in case the behaviour shifts.
