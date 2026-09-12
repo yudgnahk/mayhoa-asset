@@ -31,10 +31,27 @@ Note: tools are **not** part of any atlas. `build_atlas.py` builds `farm_crops`,
 `farm_trees`, `farm_aquatic` and `farm_soil` only, so the mixed-canvas guard never saw
 these files. The contract violation was real; the predicted atlas build failure was not.
 
-**Queue: one asset left — `harvest_hand`.** `idle` needs a generate round; `selected` is
-derived offline afterwards. Everything else in the Gate A brief is done.
+**Queue: empty — the Gate A brief is fully generated** *(2026-09-12)*. `harvest_hand` was the
+last asset; it passed §5.6 acceptance (a glove, no arm past the cuff, holding nothing) and its
+`selected` was derived offline. Artwork for P0-2 and P0-3 is complete:
 
-**BLOCKER — the agent holding the Chrome bridge cannot read `~/Downloads`.** macOS TCC
+| Pack | Files |
+|---|---|
+| `pest_caterpillar-single` | `present`, `cleared` |
+| `tool_hoe` | `idle_v02`, `selected_v02` |
+| `tool_watering-can` | `idle_v01`, `selected_v01` |
+| `tool_pest-catcher` | `idle_v01`, `selected_v01` |
+| `tool_harvest-hand` | `idle_v01`, `selected_v01` |
+
+All ten are 512x512 RGBA with margins >= 30px. **This is "artwork done", not "verbs unblocked
+in game"** — see the OPEN GAP below: nothing loads these yet.
+
+**RESOLVED — Chrome now downloads straight into `.ai-bridge/incoming`,** inside the repo, so
+the TCC problem below no longer blocks the pipeline. Verified end to end on `harvest_hand`:
+the file landed at the expected byte count and was read without any permission error. Kept
+for the record:
+
+**(was) BLOCKER — the agent holding the Chrome bridge cannot read `~/Downloads`.** macOS TCC
 (Privacy → Files and Folders), not POSIX permissions: `ls ~/Downloads` returns
 `Operation not permitted` even with the sandbox off, while `stat` shows `drwx------ kelvin`.
 It changed mid-session. Fix chosen: point Chrome's download directory at
@@ -94,9 +111,10 @@ Queue: `.ai-bridge/GATE_A_GEN_BRIEF.md`. Prompt spec: `FARM_GATE_A_PEST_TOOL_PRO
 
 **Two pipeline changes from that session — read before generating again:**
 
-- **Raw ChatGPT output no longer carries alpha.** Create image returns PNG colortype 2 and
-  *paints* a white/grey checkerboard into the pixels in place of transparency; `Save` just
-  bakes that checkerboard into the file. Run `python3 tools/dechecker.py raw.png out.png`
+- **Fake alpha is a Work-mode symptom, not a platform change.** *(corrected 2026-09-12)*
+  A **Work**-mode thread returns colortype 2 with a checkerboard painted into the pixels; a
+  thread in the mayhoa project on **Chat** mode returns real RGBA. Check the colour type first
+  and run `python3 tools/dechecker.py raw.png out.png` only when it reads 2
   before anything else. It flood-fills from the edge (a plain color key punches holes
   through white eyes in the sprite) and then difference-mattes the fringe. The viewer's
   `Remove BG` button produces nothing usable.

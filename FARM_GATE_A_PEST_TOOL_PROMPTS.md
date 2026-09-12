@@ -253,13 +253,19 @@ any produce.
 
 ## 6. Pipeline after download
 
-**Raw ChatGPT output no longer carries alpha.** *(2026-09-11)* Create image now returns
-PNG colortype 2 and **paints a white/grey checkerboard into the pixels** in place of a
-transparent background. Downloading from the fullscreen viewer just bakes that checkerboard
-into the file. Run `tools/dechecker.py` to rebuild the alpha before anything else.
+**Fake alpha is a Work-mode symptom, not a platform change.** *(corrected 2026-09-12)*
+A thread running on **Work** mode returns PNG colortype 2 with a white/grey checkerboard
+*painted into the pixels* in place of transparency, and `Save` just bakes it into the file.
+A thread in the **mayhoa project on Chat mode returns real RGBA (colortype 6)** — verified on
+`watering-can`, `pest-catcher` and `harvest-hand`, none of which needed any alpha repair.
+So the fix is to generate on Chat mode, not to run a repair pass by default.
+
+Check `IHDR` colour type before doing anything else; run `tools/dechecker.py` only when it
+reads 2. It stays in the repo as a safety net for raws inherited from a Work-mode thread
+(`tool_hoe_*_v02.png` came in that way).
 
 1. Raw goes to `.ai-bridge/pests/` or `.ai-bridge/tools/`.
-2. `python3 tools/dechecker.py raw.png out.png` — rebuild alpha from the checkerboard.
+2. Only if `IHDR` colour type is 2: `python3 tools/dechecker.py raw.png out.png`.
 3. `python3 tools/normalize_pack.py --mode center --canvas 512 512 --target 256 256 <file>`
    (for tools, add `--margin 34`).
 4. Tools: `python3 tools/make_selected.py idle.png selected.png`.
