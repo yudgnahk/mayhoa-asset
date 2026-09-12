@@ -204,19 +204,36 @@ confirm every thumbnail is present before moving on.
    it look sent. Re-focus and retype if it is empty.
 5. `key Return` to send, then confirm the message appears in the thread.
 
-> **Open trap, 2026-09-13, unresolved.** On the project **landing page** (`/project`, no
-> thread yet — see A1) with 2+ reference attachments already uploaded, `type` after
-> `el.focus()` (which itself returns `true`) silently lands nowhere: reading back
-> `document.activeElement.tagName` afterwards shows `MAIN`, not the ProseMirror composer —
-> something steals focus, plausibly a re-render triggered by the attachments. Tried
-> `focus()` alone, `click()+focus()`, and a coordinate click on the composer's own
-> `getBoundingClientRect()` centre — all three lost focus the same way. The same composer
-> took text fine earlier that same day with **no attachments, inside an existing `/c/...`
-> thread** — so the trap may be specific to (landing page) × (has attachments), not the
-> composer in general. **Untested workaround, try this first if you hit it:** send a short
-> throwaway text message with no attachment to create the thread (gets you off `/project`
-> and onto `/c/...`), *then* attach the references and type the prompt inside that thread.
-> Costs one extra message in the project. Report back here whether it works.
+> **Open trap, 2026-09-13, unresolved — attachments and the composer do not get along.**
+> Two different failures, two different attempts, same session:
+>
+> 1. On the project **landing page** (`/project`, no thread yet) with 2+ references already
+>    uploaded, `type` after `el.focus()` (which itself returns `true`) silently lands
+>    nowhere: `document.activeElement.tagName` reads back as `MAIN`, not the composer.
+>    Three focus/click variants all failed the same way.
+> 2. **Workaround for #1** — create the thread first with a throwaway no-attachment
+>    message (this part works: sending with no attachment is fine), then attach the
+>    references and type inside the real `/c/...` thread. Typing then worked (859-char
+>    prompt verified intact via `innerText.length`) — but **sending it did not**: focus +
+>    Return, focus + caret-to-end + Return, and a direct click on
+>    `button[aria-label="Send prompt"]` (confirmed `disabled=false`) all left the draft
+>    sitting in the composer, unsent (verified by absence of any generate-in-progress
+>    signal in `document.body.innerText`, not just "it looks sent").
+>
+> Not confirmed as one root cause — the same account sent a message with an attachment
+> successfully in a different thread the day before — but within this session, both
+> failures lined up with an attachment being present. Suspect a race between the
+> attachment-upload re-render and whatever the automation does next; needs an actual repro
+> with instrumentation, not more blind retries. **If you hit either one, do not improvise a
+> 4th method** — stop and report, or ask the user for the one manual keystroke (Enter) that
+> unblocks a fully-prepped composer; that recovery is cheap and does not need debugging.
+>
+> **Separate, confirmed bug: `type` drops plain ASCII out of mixed Vietnamese text.**
+> Typing `"Chuẩn bị task gen soil tile vuông."` (34 chars) landed as `"ẩịô"` in the composer
+> — 3 chars, only the precomposed diacritic letters, every ASCII character silently eaten.
+> Pure ASCII typed 100% correctly. **Type prompts and instructions in ASCII only**; if a
+> Vietnamese string must reach the composer, type it in short chunks and verify
+> `innerText.length` after each chunk rather than trusting one long `type` call.
 
 ### A4. Wait
 
