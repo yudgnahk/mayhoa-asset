@@ -293,10 +293,23 @@ AWAITING: <the expected incoming/ path>
   alpha); `raw_tool_watering-can_idle` and `raw_tool_harvest-hand_idle` are type 6 (real
   alpha). Read the type and run `tools/dechecker.py` only when it is 2.
 
-  The leading explanation is that Work mode bakes the checkerboard while Chat mode does not
-  — plausible and consistent with the session notes, but *not established from the files
-  themselves*, which only show that it varies. Do not harden it into a rule you skip the
-  check for.
+  **What the evidence actually shows.** Two threads were enumerated in-session, reading
+  byte `d[25]` (PNG colour type) of every image in each:
+
+  - Thread A, outside the project, header badge `Work`: **7/7 model-generated images were
+    type 2.** The only type-6 file in it was a reference image uploaded by the agent.
+  - Thread B, inside the mayhoa project, mode radiogroup read as `Chat=true, Work=false`:
+    **3/3 were type 6.**
+
+  A 10/10 split is a strong signal, but it does **not** isolate the cause. The two threads
+  differ in at least three variables at once: mode (Work vs Chat), project membership
+  (outside vs inside), and date (10–11 Sep vs 11–12 Sep, so a backend change is not ruled
+  out). With n = 2 threads, mode cannot be separated from project membership.
+
+  Settling it needs one image generated in a **Work-mode thread inside the project** — that
+  single case separates the two variables. It costs a generate round, so it is the user's
+  call, not an agent's. Until then, treat "Work mode causes it" as the leading hypothesis
+  and keep reading the colour type. Do not skip the check on the strength of it.
 - **Do not conclude a transport is broken from identical file bytes.** Four files sharing
   one md5 in 2026-09-12 were read as "the download is grabbing a stale image"; in fact only
   one generate had ever run for that asset and it had simply been downloaded four times.
