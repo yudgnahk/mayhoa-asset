@@ -1,7 +1,5 @@
 # Phase 1 - Soil Foundation
 
-**Language:** [Tiếng Việt](README.vi.md) · English
-
 **Status:** Canonical Phase 1 soil reference  
 **Project:** Mayhoa  
 **Art style:** Mayhoa Nostalgic Hand-Painted Farm Sprite

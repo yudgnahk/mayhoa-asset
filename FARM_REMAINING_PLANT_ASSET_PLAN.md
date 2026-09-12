@@ -1,11 +1,11 @@
 # Mayhoa — Remaining Plant Asset Generation Plan
 
-**Language:** [Tiếng Việt](FARM_REMAINING_PLANT_ASSET_PLAN.vi.md) · English
+**Language:** [Tiếng Việt](FARM_REMAINING_PLANT_ASSET_PLAN.md) · English
 
 **Status:** Ready for parallel execution  
 **Project:** Mayhoa  
 **Art style:** Mayhoa Nostalgic Hand-Painted Farm Sprite  
-**Canonical references:** `MAYHOA_ART_STYLE_SPEC.en.md`, `FARM_ASSET_GENERATION_PLAN.en.md`  
+**Canonical references:** `MAYHOA_ART_STYLE_SPEC.md`, `FARM_ASSET_GENERATION_PLAN.md`  
 **Purpose:** A checklist and work partition so that several sub-agents can generate the missing plant assets without overlapping.
 
 ---
@@ -14,9 +14,9 @@
 
 **Production can be considered finished.** All 7 species in this file's scope (coconut, dragon-fruit, coffee, rubber, lotus, water-mimosa, water-spinach) already have all 5/5 master files in `masters/farm/` — matching the "Still to generate" snapshot in §1 below, which is already fully ticked `[x]`.
 
-A note before reading on: the more detailed checklists in §4–§9 (per-task checkboxes, acceptance criteria, execution waves, final integration checklist) **were not kept in sync** — only `rubber`, `water-mimosa` and `water-spinach` are ticked there, while `coconut`, `dragon-fruit`, `coffee` and `lotus` still show `[ ]` even though the artwork exists and has been through geometry normalization (see §20.1 of `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.en.md`). Treat **§1 as the correct source for production status**, not the checkboxes further down.
+A note before reading on: the more detailed checklists in §4–§9 (per-task checkboxes, acceptance criteria, execution waves, final integration checklist) **were not kept in sync** — only `rubber`, `water-mimosa` and `water-spinach` are ticked there, while `coconut`, `dragon-fruit`, `coffee` and `lotus` still show `[ ]` even though the artwork exists and has been through geometry normalization (see §20.1 of `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.md`). Treat **§1 as the correct source for production status**, not the checkboxes further down.
 
-This document complements `FARM_ASSET_GENERATION_PLAN.en.md` (Phase 4–8, the original roadmap for these species) and follows the per-species geometry policy in §9.6 of `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.en.md`.
+This document complements `FARM_ASSET_GENERATION_PLAN.md` (Phase 4–8, the original roadmap for these species) and follows the per-species geometry policy in §9.6 of `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.md`.
 
 ---
 
@@ -90,8 +90,8 @@ The tasks write to separate destination paths, so they can be generated/QC'd in 
 
 Every sub-agent must read and follow:
 
-1. `MAYHOA_ART_STYLE_SPEC.en.md`
-2. `FARM_ASSET_GENERATION_PLAN.en.md`
+1. `MAYHOA_ART_STYLE_SPEC.md`
+2. `FARM_ASSET_GENERATION_PLAN.md`
 
 Mandatory rules:
 

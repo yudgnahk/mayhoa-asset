@@ -1,7 +1,7 @@
 # Mayhoa — Farm Missing Asset Plan
 
 **Status:** Ready to generate
-**Language:** English · [Tiếng Việt](FARM_MISSING_ASSET_PLAN.vi.md)
+**Language:** English · [Tiếng Việt](FARM_MISSING_ASSET_PLAN.md)
 **Inventory date:** 2026-09-08
 
 ## Status and relationship to other documents
@@ -10,9 +10,9 @@ This document lists **the assets still missing before the game can run**, derive
 
 How it differs from the documents already here:
 
-- `FARM_ASSET_GENERATION_PLAN.en.md` lists assets by **art category** (soil, crops, trees, weeds, pests, tools). This document lists them by **what is blocking gameplay**.
-- `FARM_REGENERATION_PROMPTS.en.md` covers assets that **exist but do not pass**. This document covers assets that **do not exist at all**.
-- `FARM_REMAINING_PLANT_ASSET_PLAN.en.md` finished the plant work; this document continues for everything that is not a plant.
+- `FARM_ASSET_GENERATION_PLAN.md` lists assets by **art category** (soil, crops, trees, weeds, pests, tools). This document lists them by **what is blocking gameplay**.
+- `FARM_REGENERATION_PROMPTS.md` covers assets that **exist but do not pass**. This document covers assets that **do not exist at all**.
+- `FARM_REMAINING_PLANT_ASSET_PLAN.md` finished the plant work; this document continues for everything that is not a plant.
 
 This is a temporary document: delete it once every P0 and P1 item is done.
 
@@ -28,7 +28,7 @@ Gate A needs roughly 21 of those 107 files. **80% of production so far sits outs
 |---|---|---|---|
 | Soil, 6 states | ✅ Done | A | — |
 | D-008 crops (rice, corn, carrot) | ✅ Done | A | — |
-| `carrot` stage-05 | ⚠️ Geometry passes, **gameplay fails** | A | ✅ `FARM_REGENERATION_PROMPTS.en.md` §B |
+| `carrot` stage-05 | ⚠️ Geometry passes, **gameplay fails** | A | ✅ `FARM_REGENERATION_PROMPTS.md` §B |
 | **Pest** | ❌ Missing | **A** | List only (Phase 10), no detailed spec |
 | **Tool** | ❌ Missing | **A** | List only (Phase 11), no detailed spec |
 | **Farm scene / environment** | ❌ Missing | **A** | ❌ **not in the taxonomy** |
@@ -47,7 +47,7 @@ Gate A needs roughly 21 of those 107 files. **80% of production so far sits outs
 
 ### P0-1 · `carrot` stage-05
 
-Already in the regeneration queue, but **filed at the wrong priority as "polish"**. It actually blocks an acceptance test in `FARM-DEMO-BRIEF.md` §5: *"players can distinguish ready crops at normal zoom"*. Carrot is `crop_tutorial`, the first crop a player ever sees, and its ready cue is currently about 10px at display size. The spec is ready in `FARM_REGENERATION_PROMPTS.en.md` section B.
+Already in the regeneration queue, but **filed at the wrong priority as "polish"**. It actually blocks an acceptance test in `FARM-DEMO-BRIEF.md` §5: *"players can distinguish ready crops at normal zoom"*. Carrot is `crop_tutorial`, the first crop a player ever sees, and its ready cue is currently about 10px at display size. The spec is ready in `FARM_REGENERATION_PROMPTS.md` section B.
 
 ### P0-2 · Pest pack
 
@@ -128,7 +128,7 @@ No asset exists for any of it. A detailed spec can wait until Gate A passes, but
 
 ## 5. Water surface — open decision
 
-`FARM_ASSET_GENERATION_PLAN.en.md` §6.2 states that the water surface, pond edge and ripple FX belong to *"a separate environment/water system"*. **That system does not exist**: it is not in the §2 taxonomy, has no phase, and has no files.
+`FARM_ASSET_GENERATION_PLAN.md` §6.2 states that the water surface, pond edge and ripple FX belong to *"a separate environment/water system"*. **That system does not exist**: it is not in the §2 taxonomy, has no phase, and has no files.
 
 Consequence: the 15 finished aquatic masters **cannot be placed in the game**, because there is no water for them to sit on. Priority depends on whether the `mayhoa` repo brings aquatic crops into Farm V1 scope.
 
@@ -150,6 +150,27 @@ P2   buildings + economy UI
      weeds, the other 5 pests, the last tool
 ```
 
+### Open gap: "asset-complete" is not the same as "reaches the game"
+
+Recorded 2026-09-12. P0-2 and P0-3 have their artwork done and QC'd — 2 pest files and 6
+tool files sit in `masters/` at 512×512 — but **none of them can reach the runtime**.
+`build_atlas.py` declares only `farm_crops_v01`, `farm_trees_v01`, `farm_aquatic_v01` and
+`farm_soil_v01`; nothing points at `masters/farm/pests/` or `masters/farm/tools/`.
+
+On the consumer side, `mayhoa-farm-demo` has no path for them either: `src/assets/loader.ts`
+knows `parseCropAtlas` and `parseSoilAtlas` only, and `src/render/cues.ts` still draws the
+pest procedurally and the tool cursor as an outline — placeholders, not sprites.
+
+Closing this is a cross-repo change, not a one-line spec addition: `build_atlas.py` assumes
+`<class>/<species>/<species>_stage-0N_*.png`, while tools are UI icons (center anchor, no
+lifecycle, key `<tool>_<state>`) and pests are foliage overlays (center anchor, no
+lifecycle).
+
+**Blocked on a decision that belongs to the `mayhoa` repo** (see `README.md` §1): how the
+runtime intends to load pest and tool art — a dedicated atlas, loose sprites, or a
+manifest. Left uncoded on purpose rather than guessing a contract. Until it is resolved,
+treat the P0-2 / P0-3 ticks above as "artwork done", not "verb unblocked in game".
+
 This order **supersedes** §17 of the generation plan until Gate A passes. Adopting it is what closes the `C-ART-02` conflict currently OPEN in the `mayhoa` repo.
 
 ---
@@ -159,7 +180,7 @@ This order **supersedes** §17 of the generation plan until Gate A passes. Adopt
 Recorded so nobody redoes it:
 
 - 6 field crops × 5 stages, packed, anchor `(0.5, 0.89453125)`;
-- **11 trees × 5 stages**, atlas cell `256×256`, **packed into the atlas** — `durian` (the 11th tree) was normalized and packed on 2026-09-10 (see `ASSET_GEOMETRY_FIX_CHECKLIST.en.md` section 10); one content item is still open: its stage-05 fruit is buried in the canopy and needs a regenerate;
+- **11 trees × 5 stages**, atlas cell `256×256`, **packed into the atlas** — `durian` (the 11th tree) was normalized and packed on 2026-09-10 (see `ASSET_GEOMETRY_FIX_CHECKLIST.md` section 10); one content item is still open: its stage-05 fruit is buried in the canopy and needs a regenerate;
 - 3 aquatic crops × 5 stages;
 - 6 soil states, RGBA8, with `soil_tilled` served by `v02`;
 - a reproducible atlas pipeline in `tools/build_atlas.py`, 42 tests, idempotent, with fail-loud guards for off-spec masters;

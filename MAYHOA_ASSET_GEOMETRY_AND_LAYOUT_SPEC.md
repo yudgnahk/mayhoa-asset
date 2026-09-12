@@ -1,19 +1,19 @@
 # Mayhoa — Asset Geometry, Anchor & Layout Spec
 
-**Language:** [Tiếng Việt](MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.vi.md) · English
+**Language:** [Tiếng Việt](MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.md) · English
 
 **Status:** Canonical geometry/layout contract for asset audit and production  
 **Project:** Mayhoa  
 **Scope:** Master assets, multi-stage assets, runtime anchor metadata, normalization/QC  
-**Related specs:** `MAYHOA_ART_STYLE_SPEC.en.md`, `FARM_ASSET_GENERATION_PLAN.en.md`, `FARM_REMAINING_PLANT_ASSET_PLAN.en.md`, `ASSET_GEOMETRY_FIX_CHECKLIST.en.md`
+**Related specs:** `MAYHOA_ART_STYLE_SPEC.md`, `FARM_ASSET_GENERATION_PLAN.md`, `FARM_REMAINING_PLANT_ASSET_PLAN.md`, `ASSET_GEOMETRY_FIX_CHECKLIST.md`
 
 ---
 
 ## Status and relationship to other documents
 
-This is the **active geometry document with the highest precedence** in the repo (see the precedence order this file itself defines in §18: this geometry spec > species-specific lifecycle spec > `FARM_ASSET_GENERATION_PLAN.en.md` > `MAYHOA_ART_STYLE_SPEC.en.md` > existing runtime JSON/README).
+This is the **active geometry document with the highest precedence** in the repo (see the precedence order this file itself defines in §18: this geometry spec > species-specific lifecycle spec > `FARM_ASSET_GENERATION_PLAN.md` > `MAYHOA_ART_STYLE_SPEC.md` > existing runtime JSON/README).
 
-This document complements (does not replace) `MAYHOA_ART_STYLE_SPEC.en.md` (which only governs visual style, not geometry) and `FARM_ASSET_GENERATION_PLAN.en.md` (roadmap/taxonomy/phase order, not the source of exact canvas/anchor numbers). The actual application of the numbers here to the existing `masters/` is recorded in `ASSET_GEOMETRY_FIX_CHECKLIST.en.md` (executed 2026-08-26); §20 of this very file contains the measured baseline and the post-normalize results.
+This document complements (does not replace) `MAYHOA_ART_STYLE_SPEC.md` (which only governs visual style, not geometry) and `FARM_ASSET_GENERATION_PLAN.md` (roadmap/taxonomy/phase order, not the source of exact canvas/anchor numbers). The actual application of the numbers here to the existing `masters/` is recorded in `ASSET_GEOMETRY_FIX_CHECKLIST.md` (executed 2026-08-26); §20 of this very file contains the measured baseline and the post-normalize results.
 
 ---
 
@@ -188,7 +188,7 @@ Meaning:
 
 Coffee was used as the calibration for this anchor and must be re-audited together with the whole tree pack in the next session.
 
-The species in `FARM_REMAINING_PLANT_ASSET_PLAN.en.md` use this contract by default if they keep the `1024×1024` canvas:
+The species in `FARM_REMAINING_PLANT_ASSET_PLAN.md` use this contract by default if they keep the `1024×1024` canvas:
 
 - `coffee`;
 - `dragon-fruit` if it supports a post/trellis and the whole plant envelope still fits safely in the square master;
@@ -234,7 +234,7 @@ placement_anchor_px   ≈ (256, 350)
 
 This legacy reference used to exist in:
 
-- `masters/farm/crops/README.en.md` — updated;
+- `masters/farm/crops/README.md` — updated;
 - `runtime/core_crops_v01.json` — the atlas has been deleted (2026-09-07);
 - `runtime/herb_crops_v01.json` — the atlas has been deleted (2026-09-07).
 
@@ -307,7 +307,7 @@ Measured status 2026-08-26 — `lotus` (now LOCKED):
 
 Decision: lotus is **LOCKED at `1024×1024`, anchor `(512, 970)`**, following the same bottom-padding convention as trees. Resample `×0.835` + align the root manually per stage. `water-mimosa` / `water-spinach` are **LOCKED at `768×768`, anchor `(384, 728)`** — where `728 = round(768 × 970/1024)`, matching the bottom-padding convention ratio of tree/lotus. X align uses the **bbox center** (Profile E), **not** the bottom-band centroid.
 
-Measured status 2026-09-05 — both aquatic horizontal packs are **fully normalized and conformant**: canvas `768×768` uniform across 5/5 stages, RGBA8, contactY = 728 (Δ0), bbox center X = 383.0–384.5 (canvas center 383.5, Δ ≤ 1.5 px), L/R margins symmetric within 1–2 px. Per-stage measurements are in Appendix B of `ASSET_GEOMETRY_FIX_CHECKLIST.en.md`.
+Measured status 2026-09-05 — both aquatic horizontal packs are **fully normalized and conformant**: canvas `768×768` uniform across 5/5 stages, RGBA8, contactY = 728 (Δ0), bbox center X = 383.0–384.5 (canvas center 383.5, Δ ≤ 1.5 px), L/R margins symmetric within 1–2 px. Per-stage measurements are in Appendix B of `ASSET_GEOMETRY_FIX_CHECKLIST.md`.
 
 > **WARNING — DO NOT re-normalize `water-mimosa` / `water-spinach`.**
 > These two packs are already conformant. Running `tools/normalize_pack.py` on them **without a `--rootx` override** will make the bottom-band heuristic **destroy the currently correct alignment**: the bottom-band rootX of `water-mimosa` spans `376.9–474.0` (Δ 97 px) because of aquatic-horizontal morphology, so the script would shift stage s02 by roughly **−90 px**. This is exactly the heuristic-failure case described in §7.1, which names `water-mimosa`. The bottom-band `rootX` of these 2 packs is **reference only**, not a PASS/FAIL number — the PASS/FAIL number is the bbox center X.
@@ -632,7 +632,7 @@ Additional calibration (2026-08-26, after visual review):
 
 ### 9.6 Remaining-plant geometry matrix — REQUIRED SUPPORT
 
-Every species in `FARM_REMAINING_PLANT_ASSET_PLAN.en.md` must be audited against this matrix:
+Every species in `FARM_REMAINING_PLANT_ASSET_PLAN.md` must be audited against this matrix:
 
 | Species | Geometry class | Canvas policy | Anchor policy | Size class | Progression profile | Dominant growth metric | Stage-05 scale policy |
 |---|---|---|---|---|---|---|---|
@@ -844,7 +844,7 @@ when master canvases inside one atlas are not uniform, or when `anchorSpread.y` 
 pixels inside the cell exceeds 2.0 px. Legitimate canvas mixing is declared via
 `mixed_canvas_ok` in `ATLAS_SPECS` (`farm_aquatic_v01`: lotus 1024 vs water-* 768) or
 `--allow-mixed-canvas`; a drifting anchor has no override because it is always a master
-defect. See `ASSET_GEOMETRY_FIX_CHECKLIST.en.md` section 10.4.
+defect. See `ASSET_GEOMETRY_FIX_CHECKLIST.md` section 10.4.
 
 **An atlas is a product generated from masters — do not edit it by hand.** If the numbers are wrong, fix the master or fix
 the script and rebuild; do not patch the JSON.
@@ -1055,10 +1055,10 @@ Do not use tolerance to legitimize a misalignment that is obvious to the eye.
 
 When older docs contradict each other about geometry, prioritize:
 
-1. **`MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.en.md`** — anchor/canvas/layout/QC geometry.
+1. **`MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.md`** — anchor/canvas/layout/QC geometry.
 2. Species-specific explicit lifecycle spec — morphology/harvest semantics.
-3. `FARM_ASSET_GENERATION_PLAN.en.md` — roadmap/size/lifecycle general contract.
-4. `MAYHOA_ART_STYLE_SPEC.en.md` — visual style/art direction.
+3. `FARM_ASSET_GENERATION_PLAN.md` — roadmap/size/lifecycle general contract.
+4. `MAYHOA_ART_STYLE_SPEC.md` — visual style/art direction.
 5. Existing runtime JSON/README — implementation reference; may be legacy and must be audited.
 
 Key rule:
@@ -1143,14 +1143,14 @@ Measured with `tools/geometry_audit.py` (alpha ≥ 24/255, bottom band 3% of vis
 | culantro | 512² ✓ | 228–352 (Δ125)* | 26 px | increasing ✓ | *Rosette — manual anchor (§7.1) |
 | mint | 512² ✓ | 257–270 (Δ13) | 28 px | increasing ✓ | Near PASS |
 
-Detailed handling plan + scale factors: see `ASSET_GEOMETRY_FIX_CHECKLIST.en.md`.
+Detailed handling plan + scale factors: see `ASSET_GEOMETRY_FIX_CHECKLIST.md`.
 
 ### 20.1 Post-normalize results — 2026-08-26 (same day)
 
 The normalize pass has been completed with `tools/normalize_pack.py`. Re-measured results:
 
 - **All 10 tree packs + lotus**: canvas `1024×1024`, contactY = 970 (Δ0), rootX 511.6–512.5 (Δ ≤ 1 px), every margin ≥ 25 px — **all PASS**.
-- **durian** (the 11th pack, added after this round): audited 2026-09-10 as FAIL 5/5 and fixed the same day by a per-stage rescale — canvas `1024×1024`, contactY = 970 (Δ0), rootX 511.6–512.3, tightest margin 26 px, ratios 0.400 / 0.600 / 0.821 / 0.939 / 1.0 inside the Profile A band — **PASS**. Details in `ASSET_GEOMETRY_FIX_CHECKLIST.en.md` section 10.
+- **durian** (the 11th pack, added after this round): audited 2026-09-10 as FAIL 5/5 and fixed the same day by a per-stage rescale — canvas `1024×1024`, contactY = 970 (Δ0), rootX 511.6–512.3, tightest margin 26 px, ratios 0.400 / 0.600 / 0.821 / 0.939 / 1.0 inside the Profile A band — **PASS**. Details in `ASSET_GEOMETRY_FIX_CHECKLIST.md` section 10.
 - **coconut**: per-stage rescale following Profile B, new ratios 0.332 / 0.506 / 0.725 / 0.916 / 1.0 — within band.
 - **crops (final rev 2, same day)**: two steps — (a) the composite QC found crop bases sticking out below the soil plate; (b) the calibration sheet confirmed the plant must stand at the **plate center**, leading to crops being switched to **bottom-anchor sprites** with root `(256, 458)`. Transform from the originals (single resample): rice / tonkin-jasmine / culantro / mint scale 1.0 (translate only), corn 0.8855, carrot 0.904. Herb rosettes align X by bbox center. The runtime `placementAnchor` in both JSONs changed → `(0.5, 0.89453125)`, textures rebuilt. All 3 palette packs became RGBA8. Composite of 30 frames + playground verify PASS. **Awaiting confirmation from the game-code side: the pin point on the tile = the plate center.**
 - **Visual QC**: 6/6 cases in the regenerate queue PASS — no file had to be regenerated.

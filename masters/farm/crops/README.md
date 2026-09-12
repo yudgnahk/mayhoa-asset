@@ -1,7 +1,5 @@
 # Phase 2 Core Crops and Phase 3 Herb / Low Crop
 
-**Language:** [Tiếng Việt](README.vi.md) · English
-
 **Status:** Canonical Phase 2 and Phase 3 growth-stage reference<br>
 **Project:** Mayhoa<br>
 **Art style:** Mayhoa Nostalgic Hand-Painted Farm Sprite

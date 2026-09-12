@@ -1,6 +1,6 @@
 # Mayhoa Art Style Spec — Nostalgic Hand-Painted Farm Sprite
 
-**Language:** [Tiếng Việt](MAYHOA_ART_STYLE_SPEC.vi.md) · English
+**Language:** [Tiếng Việt](MAYHOA_ART_STYLE_SPEC.md) · English
 
 ## 1. Goal
 
@@ -632,7 +632,7 @@ Every generation prompt for mayhoa should implicitly or explicitly include:
 - no neon colors
 - no over-detail
 
-For multi-stage lifecycle assets, prompts must also state the **number of output images**, **shared anchor**, **growth progression**, and **stage semantics** explicitly; style language alone is not sufficient and the model must not be left to infer output count or lifecycle behavior. For 5-stage fruit trees, use the hard contract in `FARM_ASSET_GENERATION_PLAN.en.md`: exactly five separate images, one shared root anchor, monotonically increasing scale, stage 02 as a sapling with no flowers/fruit, stage 03 with no flowers/fruit, stage 04 flowering/mature, and stage 05 harvestable/fruiting.
+For multi-stage lifecycle assets, prompts must also state the **number of output images**, **shared anchor**, **growth progression**, and **stage semantics** explicitly; style language alone is not sufficient and the model must not be left to infer output count or lifecycle behavior. For 5-stage fruit trees, use the hard contract in `FARM_ASSET_GENERATION_PLAN.md`: exactly five separate images, one shared root anchor, monotonically increasing scale, stage 02 as a sapling with no flowers/fruit, stage 03 with no flowers/fruit, stage 04 flowering/mature, and stage 05 harvestable/fruiting.
 
 ---
 

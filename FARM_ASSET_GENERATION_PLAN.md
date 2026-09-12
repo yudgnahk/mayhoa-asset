@@ -1,12 +1,12 @@
 # Mayhoa Farm Asset Generation Plan
 
-**Language:** [Tiếng Việt](FARM_ASSET_GENERATION_PLAN.vi.md) · English
+**Language:** [Tiếng Việt](FARM_ASSET_GENERATION_PLAN.md) · English
 
 **Status:** Production roadmap  
 **Project:** Mayhoa  
 **Art style:** Mayhoa Nostalgic Hand-Painted Farm Sprite  
 
-This document defines the artwork generation plan for the first Mayhoa farm system. Every asset in this plan must follow `MAYHOA_ART_STYLE_SPEC.en.md`.
+This document defines the artwork generation plan for the first Mayhoa farm system. Every asset in this plan must follow `MAYHOA_ART_STYLE_SPEC.md`.
 
 ---
 
@@ -14,7 +14,7 @@ This document defines the artwork generation plan for the first Mayhoa farm syst
 
 This document is **still active** for the roadmap part: asset taxonomy (§2–3), the growth-stage system (§4), the folder/naming convention (§10–11), production phases and the **official execution order** (§12, §17).
 
-The **specific canvas/anchor content in §5 (Size system) has been superseded by `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.en.md`** — that geometry spec is the source of truth for the real canvas/anchor measurements (for example, the crop anchor has changed relative to the values implied here). When the two documents disagree on geometry numbers, `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.en.md` wins.
+The **specific canvas/anchor content in §5 (Size system) has been superseded by `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.md`** — that geometry spec is the source of truth for the real canvas/anchor measurements (for example, the crop anchor has changed relative to the values implied here). When the two documents disagree on geometry numbers, `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.md` wins.
 
 Operational note: the phase order in §17 (pest = Phase 10, tool = Phase 11, both placed after the tree/aquatic Phases 4–8) is the source of conflict `C-ART-02`, currently OPEN in the `mayhoa` repo — the demo's Gate A needs pest + tool earlier than this order prescribes. See `README.md` at the root of this repo for details.
 
@@ -693,7 +693,7 @@ Canonical transport flow:
 
 ```text
 ChatGPT Create image output
--> open the image in the fullscreen viewer, click the "Save" button
+-> open the image in the fullscreen viewer, click the download icon in the top-right header
 -> the file lands in ~/Downloads, named "ChatGPT Image <date time>.png"
 -> identify the new file by timestamp
 -> verify MIME, dimensions, real alpha
@@ -711,10 +711,12 @@ find ~/Downloads -name 'ChatGPT Image*.png' -newer "$MARK" -print0 | xargs -0 ls
 
 Rules:
 
-- The download button is named **"Save"** and exists only in the fullscreen viewer (same bar as Remove BG / Erase). The chat pane has NO Download button.
+- The download control is the **download icon in the fullscreen viewer's top-right header**, next to Share. The middle toolbar (Markup / Comment / Remove BG / Erase / Resize) has no download control, and neither does the chat pane. *(Before 2026-09-12 it was a "Save" button on the Remove BG / Erase bar — the UI changed.)*
+- Chrome must have "Ask where to save each file" (`prompt_for_download`) turned off. While it is on, a native Save dialog blocks the download and an agent cannot click it. Check before clicking download — see `GEN_IMAGE_WORKFLOW.md` section A0.
 - This approach only works when Chrome and the repo are on the **same machine** — which is the case for the current setup. If they are split across machines, you must go back to using a staging layer.
 - Do not rely on ChatGPT `openai/fileParams` for canonical asset transport.
 - Do not invoke local Codex, Codex CLI, `codex exec`, or any Codex-backed executor to sync assets.
+- **The step-by-step runbook lives in `GEN_IMAGE_WORKFLOW.md`** — any agent about to run this flow must read it first, including to learn whether it can run it at all (a Paseo agent cannot).
 - Keep raws + prompts in `.ai-bridge/<species>/`; only approved assets are moved into `masters/`.
 - The downloaded file must be verified as the correct image type and as having real alpha before it is accepted into the canonical asset set.
 
