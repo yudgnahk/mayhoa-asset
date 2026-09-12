@@ -40,7 +40,7 @@ is far cheaper than regenerating five images.
 - **A genuinely transparent background** (no white/black matte, no scene, no baked-in soil/tile).
 - A single plant/object only, no contact sheet, no text/watermark.
 - For multi-stage packs: the same individual plant growing, with the structure genuinely changing (not one image scaled up).
-- **The height ratio between stages inside one pack** must land inside that species' profile band (Profile A/B/C, `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.en.md` §523–560). The pipeline applies one shared scale factor per pack, so it **cannot** repair a wrong growth curve.
+- **The height ratio between stages inside one pack** must land inside that species' profile band (Profile A/B/C, `MAYHOA_ASSET_GEOMETRY_AND_LAYOUT_SPEC.en.md` §523–560). A wrong band can still be patched with a per-stage `--file-scale` (coconut, durian), but only once and only while the masters are untransformed — do not treat it as a safety net.
 
 ---
 
@@ -202,8 +202,13 @@ Stage 05 — fruiting: full mature silhouette, harvest-ready fruit as focal cue.
 > broke Profile B (`0.65/0.84/0.95/0.99`) and `durian` broke Profile A
 > (`0.66/0.95/0.99/1.00`) — the tree stops growing after stage 02.
 >
-> `normalize_pack.py` applies **one** scale factor to the whole pack, so it
-> **cannot** repair a flat growth curve: getting this wrong means regenerating.
+> A flat curve **can** still be rescued with `normalize_pack.py --file-scale`
+> (a separate scale per stage, resampled exactly once) — both `coconut` and
+> `durian` were rescued that way, see `ASSET_GEOMETRY_FIX_CHECKLIST.en.md`
+> sections 3 and 10. But that is damage control: a rescale shrinks the whole
+> stage, so detail and the harvest cue shrink with it, and it only applies while
+> the masters are still untransformed original artwork. Get `HEIGHT:` right the
+> first time.
 >
 > The numbers above are **Profile A** (upright woody trees — E–J, `durian`,
 > `coffee`, `rubber`). Species on another profile need different numbers:

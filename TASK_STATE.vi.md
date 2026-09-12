@@ -6,6 +6,40 @@
 >
 > **Cập nhật 2026-09-10:** PR #2 và PR #3 đều đã merge, `master` ở `795e0b0`. Mục "Đang ở đâu" bên dưới là ảnh chụp phiên 09-05/07, giữ lại làm lịch sử.
 
+## Phiên 2026-09-11 — Gate A pest + tool
+
+Queue: `.ai-bridge/GATE_A_GEN_BRIEF.md`. Prompt spec: `FARM_GATE_A_PEST_TOOL_PROMPTS.vi.md`.
+
+**Xong:**
+- `pest_caterpillar-single` — `present` + `cleared`, 512×512, đã QC composite lên
+  rice/corn/carrot ở cell 192px. P0-2 đóng.
+- `tool_hoe` — `idle` + `selected`.
+
+**Còn lại 6 file:** `watering-can`, `pest-catcher`, `harvest-hand` (mỗi cái idle +
+selected). `watering-can` đã generate xong trên ChatGPT nhưng **chưa tải về được**.
+
+**BLOCKER — Chrome chặn download từ chatgpt.com.** Sau vài file đầu, cả download
+bằng script lẫn nút `Save` ở fullscreen viewer đều im lặng không ra file. Reload
+trang không gỡ được. Cần bấm cho phép trong UI của chính Chrome (thanh địa chỉ →
+biểu tượng download bị chặn, hoặc Settings → Site settings → chatgpt.com →
+Automatic downloads → Allow). Browser tool không chạm được UI native của Chrome.
+
+**Hai thay đổi pipeline trong phiên này — đọc trước khi gen tiếp:**
+
+- **Raw ChatGPT không còn có alpha.** Create image trả PNG colortype 2 và *vẽ* lưới
+  caro trắng/xám vào pixel thay cho nền trong suốt; `Save` chỉ bake cái caro đó ra
+  file. Chạy `python3 tools/dechecker.py raw.png out.png` trước mọi bước khác.
+  Flood fill từ mép (color key thuần sẽ đục thủng mắt trắng trong sprite) rồi
+  difference matting ở rìa. Nút `Remove BG` của viewer không sinh ra gì.
+- **Tool state `selected` không generate.** Model không giữ nổi pose/scale nên icon
+  nhảy trong thanh công cụ. Dùng `tools/make_selected.py` trên chính master idle.
+  Vì glow tràn ra ngoài silhouette, tool idle normalize với `--margin 34`.
+
+Chưa làm theo brief: `carrot` s05 (optional), 4 background, tree/aquatic, weed,
+5 pest còn lại.
+
+---
+
 ## Mục tiêu đang theo đuổi
 
 Đưa 19 pack asset (95 file) về đúng geometry contract, rồi chạy nốt queue regenerate.
@@ -31,7 +65,7 @@ Kết quả QC: geometry core (canvas / contactY Δ0 / rootX / RGBA8) **PASS 95/
 | `soil_tilled` | generate lại thành `v02` (v01 hỏng IDAT vĩnh viễn) |
 | 3 doc gap | `rubber` / `water-mimosa` / `water-spinach` đã normalize nhưng không được ghi |
 | Species tiếng Việt | `thien-ly` → `tonkin-jasmine`, `ngo-gai` → `culantro` |
-| `tools/build_atlas.py` | mới, 33 test, idempotent — atlas giờ tái tạo được |
+| `tools/build_atlas.py` | mới, 33 test, idempotent — atlas giờ tái tạo được *(2026-09-10: thêm guard canvas/anchor, 42 test)* |
 | 4 atlas runtime | gom theo class, thay 5 atlas cũ |
 | Asset transport | bỏ hẳn chặng Google Drive + `gws` |
 
@@ -86,7 +120,9 @@ Chi tiết đầy đủ: mục "Asset sync transport" trong `FARM_ASSET_GENERATI
 python3 tools/geometry_audit.py masters/farm/<class>/<species>/*.png
 python3 tools/build_atlas.py --dry-run          # xem kế hoạch
 python3 tools/build_atlas.py                    # build lại 4 atlas
-python3 -m unittest discover -s tools -p 'test_*.py'   # 33 test
+python3 -m unittest discover -s tools -p 'test_*.py'   # 67 test
+python3 tools/dechecker.py raw.png out.png            # dựng lại alpha từ nền caro
+python3 tools/make_selected.py idle.png selected.png  # state selected của tool icon
 ```
 
 Atlas là **build product** — sửa master rồi chạy lại script, đừng sửa tay atlas.

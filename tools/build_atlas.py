@@ -33,11 +33,15 @@ Nguyên tắc (xem báo cáo kèm PR để biết vì sao):
 - Cùng một tile có nhiều version thì lấy version CAO NHẤT ĐỌC ĐƯỢC; version cao
   hơn nhưng hỏng thì tụt xuống và ghi rõ lý do. Không version nào đọc được ->
   FAIL cả build, không im lặng bỏ qua.
+- Guard trước khi ghi (validate_plan): canvas trộn ngoài khai báo, hoặc
+  anchorY lệch quá 2px trong cell -> FAIL và KHÔNG ghi gì, kể cả khi chỉ có
+  NOTE QC. Bài học durian 2026-09-10: tool cũ in NOTE rồi vẫn ghi đè.
 - Idempotent: chạy 2 lần ra byte y hệt nhau. Build fail thì không ghi gì.
 
 Usage:
     python3 tools/build_atlas.py --dry-run
     python3 tools/build_atlas.py --atlas farm_soil_v01
+    python3 tools/build_atlas.py --allow-mixed-canvas   # chỉ khi trộn canvas là chủ ý
 """
 import argparse
 import json
@@ -64,6 +68,7 @@ ANCHOR_PRECISION = 6
 ANCHOR_X = 0.5  # master đã căn tâm canvas -> anchorX là hằng số, không đo
 MAX_TEXTURE_PX = 4096
 CENTROID_QC_PX = 2.0  # centroid lệch tâm quá ngần này (px trong cell) thì ghi NOTE
+MAX_ANCHOR_DRIFT_PX = 2.0  # anchorY lệch quá ngần này (px trong cell) thì FAIL build
 FORMAT_TEMPLATE = 'mayhoa-{name}-atlas-v1'
 VERSION_RE = re.compile(r'^(?P<stem>.+)_v(?P<version>\d+)$')
 STAGE_RE = re.compile(r'stage-\d+')
@@ -82,13 +87,17 @@ class AtlasSpec:
     cell: int
     entity_key: str      # key chứa danh sách species/tile trong JSON
     staged: bool         # True = mỗi species 1 thư mục 5 stage
+    mixed_canvas_ok: bool = False   # atlas ĐƯỢC PHÉP trộn nhiều master canvas
 
 
 ATLAS_SPECS = (
     AtlasSpec('farm_crops_v01', 'farm', 'crops', 'farm/crops', 192, 'crops', True),
     AtlasSpec('farm_trees_v01', 'farm', 'trees', 'farm/trees', 256, 'trees', True),
+    # aquatic trộn canvas CÓ CHỦ Ý: lotus 1024 (cây đứng) vs water-* 768 (bò
+    # ngang). masterCanvasBySpecies đã đủ để game bù display-scale (§9.5), nên
+    # khai báo ngay ở hợp đồng thay vì bắt người chạy nhớ gõ --allow-mixed-canvas.
     AtlasSpec('farm_aquatic_v01', 'farm', 'aquatic', 'farm/aquatic-crops', 192,
-              'aquatic', True),
+              'aquatic', True, mixed_canvas_ok=True),
     AtlasSpec('farm_soil_v01', 'farm', 'soil', 'farm/soil', 192, 'tiles', False),
 )
 
@@ -435,6 +444,64 @@ def plan_atlas(spec, repo_root):
         notes=centroid_qc_notes(spec.atlas, spec.cell, plan.frames))
 
 
+# --- guard trước khi ghi ---------------------------------------------------
+def canvas_uniformity_errors(plan, allow_mixed=False):
+    """Lỗi nếu 1 atlas trộn nhiều master canvas mà không khai báo trước.
+
+    Mọi frame bị downscale về cùng một cell vuông, nên hai master canvas khác
+    nhau nghĩa là hai species hiển thị ở hai tỷ lệ khác nhau. Game chỉ bù được
+    khi biết trước (`masterCanvasBySpecies`, §9.5). Trộn NGOÀI Ý MUỐN — durian
+    canvas 1254 lọt vào atlas toàn 1024 — làm lệch tỷ lệ cả atlas mà không có
+    tín hiệu nào, nên mặc định phải fail; hợp lệ thì khai báo `mixed_canvas_ok`
+    ở ATLAS_SPECS (aquatic) hoặc bật `--allow-mixed-canvas` cho lần chạy đó.
+    """
+    if allow_mixed or plan.spec.mixed_canvas_ok:
+        return ()
+    by_size = {}
+    for species in plan.species:
+        by_size.setdefault(plan.canvases[species], []).append(species)
+    if len(by_size) <= 1:
+        return ()
+    detail = '; '.join(f'{w}x{h}: {", ".join(by_size[(w, h)])}'
+                       for w, h in sorted(by_size))
+    return (f'{plan.spec.atlas}: master canvas không đồng nhất ({detail}) — '
+            f'normalize lại master, hoặc khai báo mixed_canvas_ok trong '
+            f'ATLAS_SPECS / chạy với --allow-mixed-canvas nếu đây là chủ ý',)
+
+
+def anchor_spread_errors(plan):
+    """Lỗi nếu anchorY của các frame lệch nhau quá MAX_ANCHOR_DRIFT_PX.
+
+    anchorY là điểm sprite chạm đất. Lệch nhau nghĩa là cây nhảy gốc mỗi lần
+    đổi stage — thứ người chơi nhìn thấy là ĐỘ LỆCH TÍNH RA PIXEL, nên ngưỡng
+    đặt theo px trong cell chứ không theo tỷ lệ (cùng một spread, cell 256 lệch
+    gấp rưỡi cell 192). Chọn 2.0px — cùng bậc dung sai với CENTROID_QC_PX, và
+    là mức mà một pixel làm tròn ở master to nhất vẫn nằm dưới.
+
+    Đối chiếu thực tế: 4 atlas đạt chuẩn nằm ở 0.0-0.4px (chênh 1px làm tròn
+    giữa 728/768 và 970/1024), còn durian chưa normalize đẩy spread lên 44.5px.
+    Không có flag override: anchorY lệch luôn là lỗi của master, không phải một
+    lựa chọn hợp lệ như canvas trộn.
+
+    anchorX không kiểm — nó là hằng số ANCHOR_X, không đo từ file.
+    """
+    _, uniform, spread = _anchor_stats([f.anchor for f in plan.frames])
+    drift = spread[1] * plan.spec.cell
+    if drift <= MAX_ANCHOR_DRIFT_PX:
+        return ()
+    ys = sorted({f.anchor[1] for f in plan.frames})
+    return (f'{plan.spec.atlas}: anchorSpread.y = {spread[1]} '
+            f'(y {ys[0]}..{ys[-1]}) -> sprite nhảy gốc {drift:.1f}px trong cell '
+            f'{plan.spec.cell}, vượt ngưỡng {MAX_ANCHOR_DRIFT_PX}px; '
+            f'anchorUniform={uniform}. Master chưa normalize về cùng contactY',)
+
+
+def validate_plan(plan, allow_mixed_canvas=False):
+    """Mọi lỗi chặn ghi của 1 plan. Rỗng = an toàn để ghi đè runtime/."""
+    return (canvas_uniformity_errors(plan, allow_mixed_canvas)
+            + anchor_spread_errors(plan))
+
+
 # --- sinh metadata ---------------------------------------------------------
 def _representative(values):
     """Giá trị xuất hiện nhiều nhất; hoà thì lấy nhỏ nhất (để deterministic)."""
@@ -564,6 +631,8 @@ def parse_args(argv):
                     help='gốc repo chứa masters/ và runtime/ (mặc định: repo của script)')
     ap.add_argument('--dry-run', action='store_true',
                     help='chỉ in kế hoạch, không ghi file nào')
+    ap.add_argument('--allow-mixed-canvas', action='store_true',
+                    help='chấp nhận atlas trộn nhiều master canvas cho lần chạy này')
     return ap.parse_args(argv)
 
 
@@ -578,6 +647,7 @@ def main(argv=None):
         print(f'ERROR {err}', file=sys.stderr)
         return 1
 
+    errors = []
     for plan in plans:
         for line in describe(plan, repo_root):
             print(line)
@@ -585,6 +655,15 @@ def main(argv=None):
             print(f'  WARN {warning}')
         for note in plan.notes:
             print(f'  NOTE {note}')
+        errors.extend(validate_plan(plan, args.allow_mixed_canvas))
+
+    # Guard chạy TRƯỚC cả --dry-run: --dry-run là bước kiểm trước khi build, nó
+    # phải nói "không được build" chứ không phải im lặng rồi để lần chạy thật
+    # ghi đè runtime/ bằng dữ liệu hỏng.
+    if errors:
+        for err in errors:
+            print(f'ERROR {err}', file=sys.stderr)
+        return 1
 
     if args.dry_run:
         print('dry-run: không ghi file nào')

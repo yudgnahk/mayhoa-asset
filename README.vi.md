@@ -34,7 +34,7 @@ Repo duy trì **song ngữ đầy đủ**: mọi tài liệu đều có cả b�
 - **Soil** — 6 trạng thái (`empty`, `tilled`, `wet`, `planted`, `dry`, `harvested`), tất cả RGBA8. `soil_tilled_v01.png` hỏng IDAT vĩnh viễn và **đã được thay bằng `soil_tilled_v02.png`** (2026-09-05); file `v01` vẫn nằm trong repo để đối chiếu lịch sử, đừng dùng.
 - **Field crops** (6 species × 5 stage) — rice, corn, carrot, tonkin-jasmine (thiên lý), culantro (ngò gai), mint.
 - **Fruit/perennial trees** (11 species × 5 stage) — mango, pomelo, lemon, star-apple, rambutan, lychee, coconut, dragon-fruit, coffee, rubber, durian.
-  `durian` (2026-09-09) là ngoại lệ: có master nhưng **chưa normalize, FAIL geometry, chưa vào atlas** — xem `ASSET_GEOMETRY_FIX_CHECKLIST.vi.md` mục 10.
+  `durian` (2026-09-09) vào repo mà chưa normalize và FAIL geometry 5/5; **đã sửa 2026-09-10** bằng per-stage rescale và nay đã nằm trong atlas — xem `ASSET_GEOMETRY_FIX_CHECKLIST.vi.md` mục 10.
 - **Aquatic crops** (3 species × 5 stage) — lotus, water-mimosa, water-spinach.
 
 **Chưa làm:**
@@ -44,7 +44,7 @@ Repo duy trì **song ngữ đầy đủ**: mọi tài liệu đều có cả b�
 - **Tools** — chưa generate (Phase 11).
 
 **Đang chờ regenerate** (xem `FARM_REGENERATION_PROMPTS.vi.md`). Phần polish: `carrot` stage-05, toàn bộ pack `tonkin-jasmine` (chuyển sang dạng leo giàn), `lotus` stage-05, và cả 6 fruit tree pack (silhouette hiện chưa phân biệt rõ loài).
-Phần **hỏng thật, không phải polish**: `durian` stage-01/02/03 sai band Profile A và stage-05 có quả chìm trong tán.
+Phần **hỏng thật, không phải polish**: `durian` stage-05 có quả chìm trong tán (lỗi nội dung artwork, rescale không cứu được). Riêng band Profile A của durian stage-01/02/03 **đã sửa xong 2026-09-10**, không cần generate lại.
 
 > ### ⚠️ Lưu ý quan trọng — `C-ART-02`
 >
@@ -82,7 +82,7 @@ python3 tools/build_atlas.py             # build lại cả 4 atlas
 | Atlas | Nội dung | Kích thước | Cell |
 |---|---|---|---|
 | `farm_crops_v01` | 6 species × 5 stage | 960×1152 | 192 |
-| `farm_trees_v01` | 10 species × 5 stage (**chưa gồm `durian`**) | 1280×2560 | 256 |
+| `farm_trees_v01` | 11 species × 5 stage (gồm cả `durian` từ 2026-09-10) | 1280×2816 | 256 |
 | `farm_aquatic_v01` | 3 species × 5 stage | 960×576 | 192 |
 | `farm_soil_v01` | 6 tile | 576×384 | 192 |
 
