@@ -246,6 +246,17 @@ than individual calls. Measured: **~60–90 seconds**, not "a few minutes".
 
 **NEVER resend the prompt while a generate is running.**
 
+> **Your tab group can vanish mid-run.** `tabs_context_mcp` returned "No tab group exists"
+> partway through a 2026-09-14 run even though nothing was closed. Fix: `createIfEmpty`,
+> then `navigate` back to the thread's own `/c/<id>` URL — the thread persists server-side,
+> nothing is lost. Don't chase a stale `tabId`; re-navigate by URL instead.
+
+> **The model can return more than one image per generate.** 2026-09-14: one `Create
+> image` call produced 2 candidates, labelled in the viewer as "Image 1 of 2:
+> `<title A>`" and "Image 2 of 2: `<title B>`" — only one of the two actually matched the
+> prompt. **Read the label and pick the one that matches the brief**, don't grab
+> whichever the DOM happens to list last.
+
 ### A5. QC before downloading
 
 Click the image → **fullscreen viewer**. Use `zoom` to inspect region by region; do not QC
@@ -259,24 +270,25 @@ rounds maximum, then stop and report.
 
 ### A6. Download
 
-**Correction, 2026-09-13: the previous version of this section overclaimed.** It said the
-Remove BG/Erase bar's **"Save"** button "has been wrong since 2026-09-12 — the UI changed."
-That is contradicted by a real run: `tool_harvest-hand` was downloaded successfully on
-2026-09-12 using exactly that Save button (`aria-label="Save"`), file landed correct on
-disk. A separate run on 2026-09-13 never reached the download step (stuck earlier, see the
-composer trap below), so it did not confirm or refute the top-right icon either.
+**Settled, 2026-09-14, by a full button enumeration — use "Save", stop looking for a
+top-right icon.** A complete list of every control in the fullscreen viewer, read on
+2026-09-14 during the `soil_square` run:
 
-**Current best knowledge: check both, trust whichever is actually present.** Both controls
-may coexist (e.g. the header icon shows only once a generate is fully settled, or it varies
-by thread type / viewer state) — this has not been isolated. In the fullscreen viewer:
+```
+Close fullscreen view | Markup | Comment | Remove BG | Erase | Resize | Share | Save |
+Show more | Zoom
+```
 
-- Look for a download icon in the **top-right header**, next to Share (around `(1201, 24)`
-  at a 1280-wide viewport).
-- Also check the middle toolbar (**Markup / Comment / Remove BG / Erase / Resize**) for a
-  **Save** control (`aria-label="Save"` confirmed working 2026-09-12).
-- Do not assume either is missing without actually looking — `find`/snapshot the viewer
-  for any element with a download-shaped icon or an aria-label containing "save" or
-  "download" before concluding there is no control.
+**There is no separate download icon** anywhere in that list, top-right or otherwise —
+the earlier "download icon in the top-right header, next to Share" claim (in the original
+version of this doc) was never actually confirmed by an enumeration, only inferred, and is
+now superseded. **`Save` (`aria-label="Save"`) is the one and only download control.** It
+downloaded `tool_harvest-hand` correctly on 2026-09-12 and `soil_square` correctly on
+2026-09-14 — two confirmations, zero for the top-right icon. Stop re-litigating this; if a
+future run somehow can't find `Save`, re-enumerate the buttons rather than hunting for an
+icon that has never been shown to exist.
+
+The file lands in the configured download directory, named `ChatGPT Image <date time>.png`.
 
 The file lands in the configured download directory, named `ChatGPT Image <date time>.png`.
 
@@ -344,6 +356,17 @@ AWAITING: <the expected incoming/ path>
 
 ## Traps that have already cost time — do not hit them again
 
+- **A full-bleed tile (no transparent regions at all, e.g. `soil_square`) can come back with
+  real, uniform alpha that never reaches 255** — `soil_square_v01.png` measured 219-247
+  across the whole 1254x1254 canvas, checked with `getchannel('A').getextrema()`. This is
+  not the checkerboard bug (colour type was already RGBA, values weren't a hard binary
+  split) and `dechecker.py` doesn't apply. For a tile meant to butt edge-to-edge against
+  its neighbours with no transparent border, this is a real defect (two overlapping
+  semi-transparent tiles composite to the wrong colour). Fix in Lane B, once the file is on
+  disk: force alpha to 255 wherever it's already high (`a.point(lambda v: 255)` is enough
+  when there's no legitimate transparent region), then resize to the 512x512 master
+  convention. Don't try to fix this by re-generating — it's a one-line, deterministic
+  post-process, not a QC failure worth spending another Create-image round on.
 - **A raw may come back with a fake checkerboard baked in instead of real alpha — it varies
   per generate, so check, do not assume either way.** Colour types of the raws on disk
   2026-09-12: `raw_tool_hoe_idle` and both `raw_pest_caterpillar-single_*` are type 2 (no
