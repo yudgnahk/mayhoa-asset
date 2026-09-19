@@ -14,6 +14,16 @@
 `97a2230` (`--no-ff`, zero conflicts — the two branches touched disjoint file sets).
 All 11 Gate A commits are now ancestors of HEAD. Work on the merged branch from here.
 
+**Branch state, verified 2026-09-19.** `assets/downloads-sync-2026-09-12` is at `21eaf30`
+locally and `origin/assets/downloads-sync-2026-09-12` is the same commit — **fully pushed,
+nothing local-only**. It sits **29 commits ahead of `master`** (`5058ac2`) with **no PR
+open**; all the Gate A art is on it and nowhere else. The one open PR, **#5**, is a
+different branch — `fix/durian-rescale-and-atlas-guard` at `3272edb`, base `master` — and
+carries only the earlier subset (both `pest_caterpillar-single` files, `tool_hoe_*_v01`,
+`tool_watering-can_*_v01`). It does **not** carry `tool_harvest-hand`,
+`tool_pest-catcher`, the `v02` hoe renormalization or `soil_tilled_square_v01`. Merging #5
+does not land Gate A.
+
 **Tool pack is now contract-clean.** Every file in `masters/farm/tools/` is 512×512 per
 geometry contract §4, verified with `geometry_audit.py`:
 
@@ -44,7 +54,8 @@ last asset; it passed §5.6 acceptance (a glove, no arm past the cuff, holding n
 | `tool_harvest-hand` | `idle_v01`, `selected_v01` |
 
 All ten are 512x512 RGBA with margins >= 30px. **This is "artwork done", not "verbs unblocked
-in game"** — see the OPEN GAP below: nothing loads these yet.
+in game"** — see the OPEN GAP below: as of 2026-09-19 a spike branch loads four of them by
+hand, the rest still reach nothing.
 
 **RESOLVED — Chrome now downloads straight into `.ai-bridge/incoming`,** inside the repo, so
 the TCC problem below no longer blocks the pipeline. Verified end to end on `harvest_hand`:
@@ -66,17 +77,35 @@ the verification step was checking too early and the wrong conclusion stuck. `ch
 now has `automatic_downloads` set to allow on Profile 1, which does no harm but was not
 the cause.
 
-**OPEN GAP — pest and tool assets have no runtime path.** Found 2026-09-12 while
-verifying the atlas claim above. `build_atlas.py` declares exactly four `AtlasSpec`
-entries (`farm_crops_v01`, `farm_trees_v01`, `farm_aquatic_v01`, `farm_soil_v01`) and
-`runtime/` holds only those four. Nothing references `masters/farm/pests/` or
-`masters/farm/tools/`, so the 2 pest files and 6 tool files that have passed QC cannot
-reach the game.
+**OPEN GAP — pest and tool assets have no *build-product* path.** Found 2026-09-12 while
+verifying the atlas claim above; **narrowed 2026-09-19**. `build_atlas.py` declares exactly
+four `AtlasSpec` entries (`farm_crops_v01`, `farm_trees_v01`, `farm_aquatic_v01`,
+`farm_soil_v01`) and `runtime/` holds only those four. Nothing here references
+`masters/farm/pests/`, `masters/farm/tools/` or `masters/farm/soil-square/`, so the 2 pest
+files, 8 tool files and the square soil tile still reach no atlas.
 
-The consumer side is equally unbuilt — checked in `mayhoa-farm-demo`:
-`src/assets/loader.ts` only knows `parseCropAtlas` and `parseSoilAtlas`, and
-`src/render/cues.ts` still draws the pest procedurally (a tinted circle with an X) and
-the tool cursor as a diamond outline. Both are placeholders, not sprites.
+**The consumer side is no longer empty.** `mayhoa-farm-demo` branch
+`spike/stardew-perspective` (`ce93090`, pushed to `yudgnahk/mayhoa` as
+`farm-demo/spike-stardew-square-grid`, branch only, no PR) hand-copies six masters into
+`public/assets/` and actually loads four: `soil_tilled_square_v01` and
+`pest_caterpillar-single_present_v01` as standalone textures in `main.ts`
+(`SOIL_SQUARE_TEXTURE_URL` / `PEST_TEXTURE_URL`, drawn by `field-view.ts`), plus
+`tool_hoe_idle` and `tool_watering-can_idle` as tray icons. All four bypass the atlas —
+`src/assets/loader.ts` still knows only `parseCropAtlas`, `parseSoilAtlas` and a generic
+`loadStandaloneTexture`. On the demo's own line (`feat/growth-animation-d014`) nothing
+outside `runtime/` is copied at all.
+
+Still consumed by nothing, anywhere: `tool_harvest-hand` (idle + selected),
+`tool_pest-catcher` (idle + selected), the `selected` state of both `tool_hoe` and
+`tool_watering-can`, and `pest_caterpillar-single_cleared`. The spike also copied
+`tool_hoe_*_v01`, the version this repo deleted when it renormalized to `v02`.
+
+**Reproducibility gap — the hand copies are pinned by nothing.** `mayhoa-farm-demo`'s
+`assets.lock.json` pins this repo at `5058ac2` and lists exactly four files: the
+`farm_crops_v01` and `farm_soil_v01` json + png. The six PNGs under
+`public/assets/mayhoa/masters/` and the five under `public/assets/mayhoa/tray-icons/` are
+outside it — no commit recorded, no hash, nothing that would notice them drifting from
+`masters/`. Any pest/tool integration has to close this, not just add an `AtlasSpec`.
 
 So this is not "add one AtlasSpec line". It spans both repos:
 1. Extend `build_atlas.py` to handle a non-`<species>_stage-0N` structure, with tests.
