@@ -1,8 +1,8 @@
 # Mayhoa — T3 regeneration: 9 crop images (2026-10-05)
 
-**Status:** prompts ready, nothing generated yet. **Blocked on a human or a Lane A session:**
-the agent that wrote this ran as a subagent with no `mcp__claude-in-chrome__*` tools and no
-image API in the environment (`GEN_IMAGE_WORKFLOW.md` Step 0 → Lane B).
+**Status (2026-10-05): done.** All 9 generated with `codex1 exec` (codex-cli built-in `image_gen`,
+references via `-i`), normalised into `masters/` as `_v02`. Retries: dragon fruit s2 and s3 took 2 tries
+(s2 too close to s1; s3 canopy floated over a bare gap), the rest passed first time.
 **Queue source:** `mayhoa/docs/slice/TASKS.md` T3. **Style:** `MAYHOA_ART_STYLE_SPEC.md`,
 `mayhoa/docs/slice/ART-DIRECTION.md` §5–§6.
 
