@@ -462,5 +462,137 @@ class TestSpecs(unittest.TestCase):
             build_atlas.spec_by_name('does_not_exist_v01')
 
 
+TREE_STAGES = (
+    'stage-01_sprout', 'stage-02_sapling', 'stage-03_young',
+    'stage-04_flowering', 'stage-05_fruiting',
+)
+
+AQUATIC_STAGES = (
+    'stage-01_planted', 'stage-02_sprout', 'stage-03_young',
+    'stage-04_mature', 'stage-05_harvestable',
+)
+
+# canvas/box cho fixture guard. Anchor = contactY/canvas.
+BIG_TREE = (128, (8, 8, 119, 120))    # anchorY 0.9375
+SMALL_TREE = (64, (4, 4, 59, 60))     # anchorY 0.9375, canvas khác BIG_TREE
+LOW_TREE = (64, (4, 4, 59, 40))       # anchorY 0.625, cùng canvas SMALL_TREE
+LOTUS_LIKE = (128, (8, 8, 119, 121))  # anchorY 0.945313 (~970/1024)
+WATER_LIKE = (96, (8, 8, 87, 91))     # anchorY 0.947917 (~728/768)
+
+
+def _make_pack(root, cls, stages, packs):
+    """packs: dict species -> (canvas, box). Trả về root cho tiện chain."""
+    for species, (canvas, box) in packs.items():
+        _make_species(root, cls, species, stages, canvas, box)
+    return root
+
+
+class TestCanvasUniformityGuard(unittest.TestCase):
+    """Trộn master canvas ngoài ý muốn phải làm FAIL build, không ghi đè runtime.
+
+    Tiền lệ: durian (canvas 1254) lọt vào farm_trees_v01 toàn canvas 1024
+    (2026-09-10). Tool khi đó chỉ in NOTE QC rồi vẫn ghi đè runtime/.
+    """
+
+    def test_mixed_canvas_fails_build(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            _make_pack(tmp, 'trees', TREE_STAGES,
+                       {'lemon': BIG_TREE, 'mango': SMALL_TREE})
+            status, out = _capture(['--repo-root', tmp, '--atlas', 'farm_trees_v01'])
+            wrote = os.path.exists(os.path.join(tmp, 'runtime'))
+
+        self.assertEqual(status, 1, 'canvas trộn phải fail, không được ghi im lặng')
+        self.assertIn('canvas', out)
+        self.assertIn('128x128', out)
+        self.assertIn('64x64', out)
+        self.assertFalse(wrote, 'build fail thì không được ghi file nào')
+
+    def test_mixed_canvas_dry_run_also_fails(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            _make_pack(tmp, 'trees', TREE_STAGES,
+                       {'lemon': BIG_TREE, 'mango': SMALL_TREE})
+            status, out = _capture(['--repo-root', tmp, '--dry-run',
+                                    '--atlas', 'farm_trees_v01'])
+
+        self.assertEqual(status, 1, '--dry-run là bước kiểm trước khi build: phải báo lỗi')
+        self.assertIn('farm_trees_v01', out)
+
+    def test_allow_mixed_canvas_flag_unblocks_build(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            _make_pack(tmp, 'trees', TREE_STAGES,
+                       {'lemon': BIG_TREE, 'mango': SMALL_TREE})
+            status, _ = _capture(['--repo-root', tmp, '--allow-mixed-canvas',
+                                  '--atlas', 'farm_trees_v01'])
+            meta, _ = _read_pair(tmp, 'farm_trees_v01', 'trees')
+
+        self.assertEqual(status, 0)
+        self.assertIn('masterCanvasBySpecies', meta)
+
+    def test_aquatic_mixed_canvas_is_allowed_by_contract(self):
+        """lotus 1024 vs water-* 768 là hợp lệ — không cần ai nhớ gõ flag."""
+        with tempfile.TemporaryDirectory() as tmp:
+            _make_pack(tmp, 'aquatic-crops', AQUATIC_STAGES,
+                       {'lotus': LOTUS_LIKE, 'water-mimosa': WATER_LIKE})
+            status, _ = _capture(['--repo-root', tmp, '--atlas', 'farm_aquatic_v01'])
+            meta, _ = _read_pair(tmp, 'farm_aquatic_v01', 'aquatic')
+
+        self.assertEqual(status, 0, 'atlas aquatic đang đúng không được bị chặn')
+        self.assertIn('masterCanvasBySpecies', meta)
+        self.assertTrue(build_atlas.spec_by_name('farm_aquatic_v01').mixed_canvas_ok)
+
+    def test_uniform_canvas_produces_no_error(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            _make_pack(tmp, 'trees', TREE_STAGES,
+                       {'lemon': SMALL_TREE, 'mango': SMALL_TREE})
+            plan = build_atlas.plan_atlas(build_atlas.spec_by_name('farm_trees_v01'), tmp)
+
+        self.assertEqual(build_atlas.validate_plan(plan), ())
+
+
+class TestAnchorSpreadGuard(unittest.TestCase):
+    """anchorY lệch giữa các frame = sprite nhảy gốc khi đổi stage -> FAIL."""
+
+    def test_anchor_spread_beyond_threshold_fails_build(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            _make_pack(tmp, 'trees', TREE_STAGES,
+                       {'lemon': SMALL_TREE, 'mango': LOW_TREE})
+            status, out = _capture(['--repo-root', tmp, '--atlas', 'farm_trees_v01'])
+            wrote = os.path.exists(os.path.join(tmp, 'runtime'))
+
+        self.assertEqual(status, 1)
+        self.assertIn('anchor', out.lower())
+        self.assertFalse(wrote, 'build fail thì không được ghi file nào')
+
+    def test_sub_pixel_spread_is_tolerated(self):
+        """768 vs 1024 lệch nhau 1px làm tròn — đây là mức bình thường, phải qua."""
+        with tempfile.TemporaryDirectory() as tmp:
+            _make_pack(tmp, 'aquatic-crops', AQUATIC_STAGES,
+                       {'lotus': LOTUS_LIKE, 'water-mimosa': WATER_LIKE})
+            plan = build_atlas.plan_atlas(build_atlas.spec_by_name('farm_aquatic_v01'), tmp)
+            meta = build_atlas.build_metadata(plan)
+
+        self.assertGreater(meta['anchorSpread']['y'], 0.0)
+        self.assertLess(meta['anchorSpread']['y'] * plan.spec.cell,
+                        build_atlas.MAX_ANCHOR_DRIFT_PX)
+        self.assertEqual(build_atlas.validate_plan(plan), ())
+
+    def test_threshold_is_measured_in_cell_pixels(self):
+        """Ngưỡng phải quy ra px trong cell — cùng ratio, cell to thì lệch nhiều hơn."""
+        self.assertGreater(build_atlas.MAX_ANCHOR_DRIFT_PX, 0)
+        self.assertLess(build_atlas.MAX_ANCHOR_DRIFT_PX, 8,
+                        'ngưỡng lỏng quá thì durian 44.5px vẫn lọt')
+
+    def test_allow_mixed_canvas_does_not_silence_anchor_guard(self):
+        """Flag chỉ mở khoá canvas; anchor lệch luôn là lỗi master, không có escape."""
+        with tempfile.TemporaryDirectory() as tmp:
+            _make_pack(tmp, 'trees', TREE_STAGES,
+                       {'lemon': SMALL_TREE, 'mango': LOW_TREE})
+            status, out = _capture(['--repo-root', tmp, '--allow-mixed-canvas',
+                                    '--atlas', 'farm_trees_v01'])
+
+        self.assertEqual(status, 1)
+        self.assertIn('anchor', out.lower())
+
+
 if __name__ == '__main__':
     unittest.main()
